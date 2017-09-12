@@ -1,23 +1,28 @@
 package model;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Computer {
-	private int id;
+	private Integer id;
 	private String name;
-	private String introduced;
-	private String discontinued;
-	private String companyId;
-	
-	public Computer() {}
-	
+	private Date introduced;
+	private Date discontinued;
+	private Integer companyId;
+
+	public Computer() {
+	}
+
 	public Computer(String name) {
 		this.name = name;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -29,27 +34,37 @@ public class Computer {
 		this.name = name;
 	}
 
-	public String getIntroduced() {
+	public Date getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(String introduced) {
+	public void setIntroduced(Date introduced) {
 		this.introduced = introduced;
 	}
 
-	public String getDiscontinued() {
+	public Date getDiscontinued() {
 		return discontinued;
 	}
 
-	public void setDiscontinued(String discontinued) {
+	public void setDiscontinued(Date discontinued) {
 		this.discontinued = discontinued;
 	}
 
-	public String getCompanyId() {
+	public Integer getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(String companyId) {
+	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
+	
+//	public List<String> toArray() {
+//		List<String> ret = new ArrayList<String>();
+//		ret.add(this.id.toString());
+//		ret.add(this.name);
+//		ret.add(this.introduced.toString());
+//		ret.add(this.discontinued.toString());
+//		ret.add(this.companyId.toString());
+//		return ret;
+//	}
 }
