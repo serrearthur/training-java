@@ -1,8 +1,6 @@
 package model;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Computer {
 	private Integer id;
@@ -57,14 +55,4 @@ public class Computer {
 	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
-	
-//	public List<String> toArray() {
-//		List<String> ret = new ArrayList<String>();
-//		ret.add(this.id.toString());
-//		ret.add(this.name);
-//		ret.add(this.introduced.toString());
-//		ret.add(this.discontinued.toString());
-//		ret.add(this.companyId.toString());
-//		return ret;
-//	}
 }

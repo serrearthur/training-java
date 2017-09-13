@@ -14,7 +14,7 @@
 		    -`<i>list cpn</i>' : List companies<br/>
 		    -`<i>show [-i ID | -n NAME]</i>' : Show computer details (the detailed information of only one computer)<br/>
 		    -`<i>create NAME</i>' : Create a computer<br/>
-		    -`<i>update ID NAME [DATE_INTRODUCED DATE_DISCONTINUED COMPANY_ID]</i>' : Update a computer<br/>
+		    -`<i>update ID [NAME DATE_INTRODUCED DATE_DISCONTINUED COMPANY_ID]</i>' : Update a computer<br/>
 		    -`<i>delete [-i ID | -n NAME]</i>' : Delete a computer<br/>
 	    </blockquote>
 	</div>

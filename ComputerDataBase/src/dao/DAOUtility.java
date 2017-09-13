@@ -75,12 +75,12 @@ public final class DAOUtility {
 	 * Initialise la requête préparée basée sur la connection passée en argument,
 	 * avec la requête SQL et les objets donnés.
 	 */
-	public static PreparedStatement initPreparedStatement(Connection connection, String sql,
-			boolean returnGeneratedKeys, Object... objets) throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement(sql,
+	public static PreparedStatement initPreparedStatement(Connection connection, String request,
+			boolean returnGeneratedKeys, Object... objects) throws SQLException {
+		PreparedStatement preparedStatement = connection.prepareStatement(request,
 				returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
-		for (int i = 0; i < objets.length; i++) {
-			preparedStatement.setObject(i + 1, objets[i]);
+		for (int i = 0; i < objects.length; i++) {
+			preparedStatement.setObject(i + 1, objects[i]);
 		}
 		return preparedStatement;
 	}

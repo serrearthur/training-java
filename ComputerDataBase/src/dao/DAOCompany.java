@@ -6,11 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import dao.exceptions.DAOException;
 import model.Company;
 
-public class DAOCompany implements IDAOCompany {
+public class DAOCompany {
 	private DAOFactory factory;
 
 	public DAOCompany(DAOFactory factory) {
@@ -24,7 +26,6 @@ public class DAOCompany implements IDAOCompany {
 		return company;
 	}
 
-	@Override
 	public void create(Company company) throws DAOException {
 		String request = "INSERT INTO company (id, name) VALUES (NULL, ?)";
 		Connection connection = null;
@@ -55,61 +56,6 @@ public class DAOCompany implements IDAOCompany {
 		}
 	}
 
-	@Override
-	public Company getFromName(String name) throws DAOException {
-		String request = "SELECT id, name FROM company WHERE name = ?";
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Company company = null;
-
-		try {
-			/* Récupération d'une connection depuis la Factory */
-			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, name);
-			resultSet = preparedStatement.executeQuery();
-
-			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
-			if (resultSet.next()) {
-				company = map(resultSet);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			silentShutdown(resultSet, preparedStatement, connection);
-		}
-
-		return company;
-	}
-
-	@Override
-	public Company getFromId(Integer id) throws DAOException {
-		String request = "SELECT id, name FROM company WHERE id = ?";
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		Company company = null;
-
-		try {
-			/* Récupération d'une connection depuis la Factory */
-			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, id);
-			resultSet = preparedStatement.executeQuery();
-
-			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
-			if (resultSet.next()) {
-				company = map(resultSet);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			silentShutdown(resultSet, preparedStatement, connection);
-		}
-
-		return company;
-	}
-
-	@Override
 	public void update(Company company) throws DAOException {
 		String request = "UPDATE company SET name=? WHERE id=?";
 		Connection connection = null;
@@ -132,7 +78,6 @@ public class DAOCompany implements IDAOCompany {
 		}
 	}
 
-	@Override
 	public void delete(Company company) throws DAOException {
 		String request = "DELETE FROM company WHERE id=?";
 		Connection connection = null;
@@ -153,5 +98,45 @@ public class DAOCompany implements IDAOCompany {
 		} finally {
 			silentShutdown(resultSet, preparedStatement, connection);
 		}
+	}
+	
+	private List<Company> getCompanies(String request, Object...param ) throws DAOException {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		List<Company> companies = new ArrayList<Company>();
+
+		try {
+			/* Récupération d'une connection depuis la Factory */
+			connection = factory.getConnection();
+			preparedStatement = initPreparedStatement(connection, request, false, param);
+			resultSet = preparedStatement.executeQuery();
+
+			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
+			while (resultSet.next()) {
+				companies.add(map(resultSet));
+			}
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			silentShutdown(resultSet, preparedStatement, connection);
+		}
+
+		return companies;
+	}
+	
+	public List<Company> getFromId(String id) throws DAOException {
+		String request="SELECT id, name FROM company WHERE id = ?";
+		return getCompanies(request, id);
+	}
+	
+	public List<Company> getFromName(String name) throws DAOException {
+		String request="SELECT id, name FROM company WHERE name = ?";
+		return getCompanies(request, name);
+	}
+	
+	public List<Company> getAll() throws DAOException {
+		String request="SELECT id, name FROM company";
+		return getCompanies(request);
 	}
 }

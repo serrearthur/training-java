@@ -1,8 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Company {
 	private Integer id;
 	private String name;
@@ -29,11 +26,4 @@ public class Company {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-//	public List<String> toArray() {
-//		List<String> ret = new ArrayList<String>();
-//		ret.add(this.id.toString());
-//		ret.add(this.name);
-//		return ret;
-//	}
 }
