@@ -1,4 +1,4 @@
-package dao;
+package dao.implem;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,15 +7,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.ConnexionManager;
+import dao.IDAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
 
 import static dao.DAOUtility.*;
 
-public class DAOComputer {
-	private DAOFactory factory;
+public class DAOComputer implements IDAOComputer {
+	private final static String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
+	private final static String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
+	private final static String REQUEST_DELETE = "DELETE FROM computer WHERE id=?";
+	private final static String REQUEST_SELECT_ID = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id = ?";
+	private final static String REQUEST_SELECT_NAME = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE name = ?";
+	private final static String REQUEST_SELECT_COMPANY = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE company_id = ?";
+	private final static String REQUEST_SELECT_ALL = "SELECT id, name, introduced, discontinued, company_id FROM computer";
 
-	public DAOComputer(DAOFactory factory) {
+	private ConnexionManager factory;
+
+	public DAOComputer(ConnexionManager factory) {
 		this.factory = factory;
 	}
 
@@ -29,8 +39,8 @@ public class DAOComputer {
 		return computer;
 	}
 
+	@Override
 	public void create(Computer computer) throws DAOException {
-		String request = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -38,7 +48,7 @@ public class DAOComputer {
 		try {
 			/* Récupération d'une connection depuis la Factory */
 			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, true, computer.getName(),
+			preparedStatement = initPreparedStatement(connection, REQUEST_CREATE, true, computer.getName(),
 					computer.getIntroduced(), computer.getDiscontinued(), computer.getCompanyId());
 			int statut = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
@@ -59,9 +69,9 @@ public class DAOComputer {
 			silentShutdown(resultSet, preparedStatement, connection);
 		}
 	}
-	
+
+	@Override
 	public void update(Computer computer) throws DAOException {
-		String request = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -69,7 +79,7 @@ public class DAOComputer {
 		try {
 			/* Récupération d'une connection depuis la Factory */
 			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, computer.getName(),
+			preparedStatement = initPreparedStatement(connection, REQUEST_UPDATE, false, computer.getName(),
 					computer.getIntroduced(), computer.getDiscontinued(), computer.getCompanyId(), computer.getId());
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
@@ -83,8 +93,8 @@ public class DAOComputer {
 		}
 	}
 
+	@Override
 	public void delete(Computer computer) throws DAOException {
-		String request = "DELETE FROM computer WHERE id=?";
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -92,7 +102,7 @@ public class DAOComputer {
 		try {
 			/* Récupération d'une connection depuis la Factory */
 			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, computer.getId());
+			preparedStatement = initPreparedStatement(connection, REQUEST_DELETE, false, computer.getId());
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
@@ -104,8 +114,8 @@ public class DAOComputer {
 			silentShutdown(resultSet, preparedStatement, connection);
 		}
 	}
-	
-	private List<Computer> getComputers(String request, Object...param ) throws DAOException {
+
+	private List<Computer> getComputers(String request, Object... param) throws DAOException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -130,23 +140,23 @@ public class DAOComputer {
 		return computers;
 	}
 
+	@Override
 	public List<Computer> getFromName(String name) throws DAOException {
-		String request = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE name = ?";
-		return getComputers(request, name);
+		return getComputers(REQUEST_SELECT_NAME, name);
 	}
 
+	@Override
 	public List<Computer> getFromId(String id) throws DAOException {
-		String request = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id = ?";
-		return getComputers(request, id);
+		return getComputers(REQUEST_SELECT_ID, id);
 	}
-	
+
+	@Override
 	public List<Computer> getFromCompanyId(String id) throws DAOException {
-		String request = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE company_id = ?";
-		return getComputers(request);
+		return getComputers(REQUEST_SELECT_COMPANY);
 	}
-	
+
+	@Override
 	public List<Computer> getAll() throws DAOException {
-		String request = "SELECT id, name, introduced, discontinued, company_id FROM computer";
-		return getComputers(request);
+		return getComputers(REQUEST_SELECT_ALL);
 	}
 }

@@ -6,19 +6,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.DAOFactory;
+import dao.ConnexionManager;
 import model.Company;
 import model.Computer;
 
 public class CLICommand {
 	private String command;
-	private DAOFactory factory;
+	private ConnexionManager factory;
 	private List<Computer> computers;
 	private List<Company> companies;
 
 	public CLICommand(String command) {
 		this.command = command;
-		this.factory = DAOFactory.getInstance();
+		this.factory = ConnexionManager.getInstance();
 		this.companies = new ArrayList<Company>();
 		this.computers = new ArrayList<Computer>();
 	}

@@ -8,8 +8,10 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import dao.exceptions.DAOConfigurationException;
+import dao.implem.DAOCompany;
+import dao.implem.DAOComputer;
 
-public class DAOFactory {
+public class ConnexionManager {
 	private static final String CONFIG_FILE = "dao/dao.properties";
 	private static final String PROPERTY_URL = "url";
 	private static final String PROPERTY_DRIVER = "driver";
@@ -19,28 +21,26 @@ public class DAOFactory {
 	private String url;
 	private String username;
 	private String password;
-	private DAOComputer daoComputer;
-	private DAOCompany daoCompany;
+	private IDAOComputer daoComputer;
+	private IDAOCompany daoCompany;
 
-	//implémentation du singleton
-  	/** Holder */
-	private static class SingletonHolder
-  	{		
-  		/** Instance unique non préinitialisée */
-  		private final static DAOFactory instance=new DAOFactory();
-  	}
-   
-  	/** Point d'accès pour l'instance unique du singleton */
-  	public static DAOFactory getInstance()
-  	{
-  		return SingletonHolder.instance;
-  	}
-  	
+	// implémentation du singleton
+	/** Holder */
+	private static class SingletonHolder {
+		/** Instance unique non préinitialisée */
+		private final static ConnexionManager instance = new ConnexionManager();
+	}
+
+	/** Point d'accès pour l'instance unique du singleton */
+	public static ConnexionManager getInstance() {
+		return SingletonHolder.instance;
+	}
+
 	/**
 	 * Méthode chargée de récupérer les informations de connection à la base de
 	 * données, charger le driver JDBC et retourner une instance de la Factory
 	 */
-	public DAOFactory() throws DAOConfigurationException {
+	private ConnexionManager() throws DAOConfigurationException {
 		Properties properties = new Properties();
 		String url;
 		String driver;
@@ -69,7 +69,7 @@ public class DAOFactory {
 		} catch (ClassNotFoundException e) {
 			throw new DAOConfigurationException("Le driver est introuvable dans le classpath.", e);
 		}
-		
+
 		this.url = url;
 		this.username = username;
 		this.password = password;
@@ -78,17 +78,17 @@ public class DAOFactory {
 	}
 
 	/**
-	 *  Méthode chargée de fournir une connection à la base de données
+	 * Méthode chargée de fournir une connection à la base de données
 	 */
-	Connection getConnection() throws SQLException {
+	public Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(url, username, password);
 	}
 
-	public DAOComputer getComputerDao() {
+	public IDAOComputer getComputerDao() {
 		return daoComputer;
 	}
 
-	public DAOCompany getCompanyDao() {
+	public IDAOCompany getCompanyDao() {
 		return daoCompany;
 	}
 }

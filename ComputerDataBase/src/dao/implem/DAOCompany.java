@@ -1,4 +1,4 @@
-package dao;
+package dao.implem;
 
 import static dao.DAOUtility.*;
 
@@ -9,13 +9,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.ConnexionManager;
+import dao.IDAOCompany;
 import dao.exceptions.DAOException;
 import model.Company;
 
-public class DAOCompany {
-	private DAOFactory factory;
+public class DAOCompany implements IDAOCompany {
+	private final static String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
+	private final static String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
+	private final static String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
+	private final static String REQUEST_SELECT_ID = "SELECT id, name FROM company WHERE id = ?";
+	private final static String REQUEST_SELECT_NAME = "SELECT id, name FROM company WHERE name = ?";
+	private final static String REQUEST_SELECT_ALL = "SELECT id, name FROM company";
 
-	public DAOCompany(DAOFactory factory) {
+	private ConnexionManager factory;
+
+	public DAOCompany(ConnexionManager factory) {
 		this.factory = factory;
 	}
 
@@ -26,8 +35,8 @@ public class DAOCompany {
 		return company;
 	}
 
+	@Override
 	public void create(Company company) throws DAOException {
-		String request = "INSERT INTO company (id, name) VALUES (NULL, ?)";
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -35,7 +44,7 @@ public class DAOCompany {
 		try {
 			/* Récupération d'une connection depuis la Factory */
 			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, true, company.getName());
+			preparedStatement = initPreparedStatement(connection, REQUEST_CREATE, true, company.getName());
 			int statut = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (statut == 0) {
@@ -56,8 +65,8 @@ public class DAOCompany {
 		}
 	}
 
+	@Override
 	public void update(Company company) throws DAOException {
-		String request = "UPDATE company SET name=? WHERE id=?";
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -65,7 +74,8 @@ public class DAOCompany {
 		try {
 			/* Récupération d'une connection depuis la Factory */
 			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, company.getName(), company.getId());
+			preparedStatement = initPreparedStatement(connection, REQUEST_UPDATE, false, company.getName(),
+					company.getId());
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
@@ -78,8 +88,8 @@ public class DAOCompany {
 		}
 	}
 
+	@Override
 	public void delete(Company company) throws DAOException {
-		String request = "DELETE FROM company WHERE id=?";
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -87,7 +97,7 @@ public class DAOCompany {
 		try {
 			/* Récupération d'une connection depuis la Factory */
 			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, company.getId());
+			preparedStatement = initPreparedStatement(connection, REQUEST_DELETE, false, company.getId());
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
@@ -99,8 +109,8 @@ public class DAOCompany {
 			silentShutdown(resultSet, preparedStatement, connection);
 		}
 	}
-	
-	private List<Company> getCompanies(String request, Object...param ) throws DAOException {
+
+	private List<Company> getCompanies(String request, Object... param) throws DAOException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -124,19 +134,19 @@ public class DAOCompany {
 
 		return companies;
 	}
-	
+
+	@Override
 	public List<Company> getFromId(String id) throws DAOException {
-		String request="SELECT id, name FROM company WHERE id = ?";
-		return getCompanies(request, id);
+		return getCompanies(REQUEST_SELECT_ID, id);
 	}
-	
+
+	@Override
 	public List<Company> getFromName(String name) throws DAOException {
-		String request="SELECT id, name FROM company WHERE name = ?";
-		return getCompanies(request, name);
+		return getCompanies(REQUEST_SELECT_NAME, name);
 	}
-	
+
+	@Override
 	public List<Company> getAll() throws DAOException {
-		String request="SELECT id, name FROM company";
-		return getCompanies(request);
+		return getCompanies(REQUEST_SELECT_ALL);
 	}
 }
