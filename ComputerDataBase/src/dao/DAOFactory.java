@@ -60,7 +60,9 @@ public class DAOFactory {
 			driver = properties.getProperty(PROPERTY_DRIVER);
 			username = properties.getProperty(PROPERTY_USER);
 			password = properties.getProperty(PROPERTY_PASS);
+			System.out.println("found");
 		} catch (IOException e) {
+			System.out.println("not found");
 			throw new DAOConfigurationException("Impossible de charger le fichier properties " + CONFIG_FILE, e);
 		}
 

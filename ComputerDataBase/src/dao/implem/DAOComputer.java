@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +31,17 @@ public class DAOComputer implements IDAOComputer {
 	}
 
 	private static Computer map(ResultSet resultSet) throws SQLException {
+		Timestamp introduced = resultSet.getTimestamp("introduced");
+		Timestamp discontinued = resultSet.getTimestamp("discontinued");
 		Computer computer = new Computer();
 		computer.setId(resultSet.getInt("id"));
 		computer.setName(resultSet.getString("name"));
-		computer.setIntroduced(resultSet.getTimestamp("introduced").toLocalDateTime());
-		computer.setDiscontinued(resultSet.getTimestamp("discontinued").toLocalDateTime());
+		if (introduced!=null) {
+			computer.setIntroduced(introduced.toLocalDateTime());
+		}
+		if (discontinued!=null) {
+			computer.setDiscontinued(discontinued.toLocalDateTime());
+		}
 		computer.setCompanyId(resultSet.getInt("company_id"));
 		return computer;
 	}
@@ -116,6 +123,7 @@ public class DAOComputer implements IDAOComputer {
 	}
 
 	private List<Computer> getComputers(String request, Object... param) throws DAOException {
+		System.out.println("ok");
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -126,10 +134,11 @@ public class DAOComputer implements IDAOComputer {
 			connection = factory.getConnection();
 			preparedStatement = initPreparedStatement(connection, request, false, param);
 			resultSet = preparedStatement.executeQuery();
-
+			System.out.println("ok2");
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			while (resultSet.next()) {
 				computers.add(map(resultSet));
+				System.out.println("ok3");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
