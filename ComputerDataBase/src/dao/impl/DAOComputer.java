@@ -1,4 +1,4 @@
-package dao.implem;
+package dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,13 +33,14 @@ public class DAOComputer implements IDAOComputer {
 	private static Computer map(ResultSet resultSet) throws SQLException {
 		Timestamp introduced = resultSet.getTimestamp("introduced");
 		Timestamp discontinued = resultSet.getTimestamp("discontinued");
+
 		Computer computer = new Computer();
 		computer.setId(resultSet.getInt("id"));
 		computer.setName(resultSet.getString("name"));
-		if (introduced!=null) {
+		if (introduced != null) {
 			computer.setIntroduced(introduced.toLocalDateTime());
 		}
-		if (discontinued!=null) {
+		if (discontinued != null) {
 			computer.setDiscontinued(discontinued.toLocalDateTime());
 		}
 		computer.setCompanyId(resultSet.getInt("company_id"));

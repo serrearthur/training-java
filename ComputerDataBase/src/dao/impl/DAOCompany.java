@@ -1,4 +1,4 @@
-package dao.implem;
+package dao.impl;
 
 import static dao.DAOUtility.*;
 
