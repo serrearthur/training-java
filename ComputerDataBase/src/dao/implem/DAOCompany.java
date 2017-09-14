@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ConnexionManager;
+import dao.DAOFactory;
 import dao.IDAOCompany;
 import dao.exceptions.DAOException;
 import model.Company;
@@ -22,9 +22,9 @@ public class DAOCompany implements IDAOCompany {
 	private final static String REQUEST_SELECT_NAME = "SELECT id, name FROM company WHERE name = ?";
 	private final static String REQUEST_SELECT_ALL = "SELECT id, name FROM company";
 
-	private ConnexionManager factory;
+	private DAOFactory factory;
 
-	public DAOCompany(ConnexionManager factory) {
+	public DAOCompany(DAOFactory factory) {
 		this.factory = factory;
 	}
 

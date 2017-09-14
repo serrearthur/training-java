@@ -1,24 +1,25 @@
 package controller;
 
-import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ConnexionManager;
+import dao.DAOFactory;
 import model.Company;
 import model.Computer;
 
 public class CLICommand {
 	private String command;
-	private ConnexionManager factory;
+	private DAOFactory factory;
 	private List<Computer> computers;
 	private List<Company> companies;
 
 	public CLICommand(String command) {
 		this.command = command;
-		this.factory = ConnexionManager.getInstance();
+		this.factory = DAOFactory.getInstance();
 		this.companies = new ArrayList<Company>();
 		this.computers = new ArrayList<Computer>();
 	}
@@ -84,17 +85,18 @@ public class CLICommand {
 		// case when parsed[0] == "update"
 		else if (parsed.length >= 2 && parsed[0].equals("update")) {
 			Computer c = new Computer();
-			SimpleDateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			c.setId(Integer.parseInt(parsed[1]));
 			// we check if each parameter is present, if yes we add it to our computer
 			// object
 			if (parsed.length >= 3 && !parsed[2].isEmpty()) {
 				c.setName(parsed[2]);
 				if (parsed.length >= 4 && !parsed[3].isEmpty()) {
-					c.setIntroduced(new Date(df.parse(parsed[3]).getTime()));
+					c.setIntroduced(LocalDateTime.of(LocalDate.parse(parsed[3], df), null));
+							//Date(df.parse(parsed[3]).getTime()));
 					if (parsed.length >= 5 && !parsed[4].isEmpty()) {
-						c.setDiscontinued(new Date(df.parse(parsed[3]).getTime()));
-						if (parsed.length >= 5 && !parsed[5].isEmpty()) {
+						c.setDiscontinued(LocalDateTime.of(LocalDate.parse(parsed[4], df), null));
+						if (parsed.length >= 6 && !parsed[5].isEmpty()) {
 							c.setCompanyId(Integer.parseInt(parsed[5]));
 						}
 					}

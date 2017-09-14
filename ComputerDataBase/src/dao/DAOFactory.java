@@ -11,7 +11,7 @@ import dao.exceptions.DAOConfigurationException;
 import dao.implem.DAOCompany;
 import dao.implem.DAOComputer;
 
-public class ConnexionManager {
+public class DAOFactory {
 	private static final String CONFIG_FILE = "dao/dao.properties";
 	private static final String PROPERTY_URL = "url";
 	private static final String PROPERTY_DRIVER = "driver";
@@ -28,11 +28,11 @@ public class ConnexionManager {
 	/** Holder */
 	private static class SingletonHolder {
 		/** Instance unique non préinitialisée */
-		private final static ConnexionManager instance = new ConnexionManager();
+		private final static DAOFactory instance = new DAOFactory();
 	}
 
 	/** Point d'accès pour l'instance unique du singleton */
-	public static ConnexionManager getInstance() {
+	public static DAOFactory getInstance() {
 		return SingletonHolder.instance;
 	}
 
@@ -40,7 +40,7 @@ public class ConnexionManager {
 	 * Méthode chargée de récupérer les informations de connection à la base de
 	 * données, charger le driver JDBC et retourner une instance de la Factory
 	 */
-	private ConnexionManager() throws DAOConfigurationException {
+	private DAOFactory() throws DAOConfigurationException {
 		Properties properties = new Properties();
 		String url;
 		String driver;

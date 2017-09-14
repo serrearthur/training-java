@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ConnexionManager;
+import dao.DAOFactory;
 import dao.IDAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
@@ -23,9 +23,9 @@ public class DAOComputer implements IDAOComputer {
 	private final static String REQUEST_SELECT_COMPANY = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE company_id = ?";
 	private final static String REQUEST_SELECT_ALL = "SELECT id, name, introduced, discontinued, company_id FROM computer";
 
-	private ConnexionManager factory;
+	private DAOFactory factory;
 
-	public DAOComputer(ConnexionManager factory) {
+	public DAOComputer(DAOFactory factory) {
 		this.factory = factory;
 	}
 
@@ -33,8 +33,8 @@ public class DAOComputer implements IDAOComputer {
 		Computer computer = new Computer();
 		computer.setId(resultSet.getInt("id"));
 		computer.setName(resultSet.getString("name"));
-		computer.setIntroduced(resultSet.getDate("introduced"));
-		computer.setDiscontinued(resultSet.getDate("discontinued"));
+		computer.setIntroduced(resultSet.getTimestamp("introduced").toLocalDateTime());
+		computer.setDiscontinued(resultSet.getTimestamp("discontinued").toLocalDateTime());
 		computer.setCompanyId(resultSet.getInt("company_id"));
 		return computer;
 	}
