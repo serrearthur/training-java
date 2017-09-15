@@ -27,7 +27,7 @@ public class CLICommand {
 	public boolean parse() throws ParseException {
 		String[] parsed = command.split(" ");
 		boolean ret = false;
-		// we reinitialize the values for the request
+		// we reset the values for the request
 		this.companies = new ArrayList<Company>();
 		this.computers = new ArrayList<Computer>();
 

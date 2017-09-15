@@ -1,5 +1,7 @@
 package dao.impl;
 
+import static dao.impl.DAOUtility.*;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,16 +15,14 @@ import dao.IDAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
 
-import static dao.DAOUtility.*;
-
 public class DAOComputer implements IDAOComputer {
 	private final static String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
 	private final static String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
 	private final static String REQUEST_DELETE = "DELETE FROM computer WHERE id=?";
-	private final static String REQUEST_SELECT_ID = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id = ?";
-	private final static String REQUEST_SELECT_NAME = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE name = ?";
-	private final static String REQUEST_SELECT_COMPANY = "SELECT id, name, introduced, discontinued, company_id FROM computer WHERE company_id = ?";
-	private final static String REQUEST_SELECT_ALL = "SELECT id, name, introduced, discontinued, company_id FROM computer";
+	private final static String REQUEST_SELECT_ID = "SELECT * FROM computer WHERE id = ?";
+	private final static String REQUEST_SELECT_NAME = "SELECT * FROM computer WHERE name = ?";
+	private final static String REQUEST_SELECT_COMPANY = "SELECT * FROM computer WHERE company_id = ?";
+	private final static String REQUEST_SELECT_ALL = "SELECT * FROM computer";
 
 	private DAOFactory factory;
 
@@ -61,7 +61,7 @@ public class DAOComputer implements IDAOComputer {
 			int statut = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (statut == 0) {
-				throw new DAOException("Échec de la création de l'ordinateur, aucune ligne ajoutée dans la table.");
+				throw new DAOException("Unable to create this computer, no row added to the table.");
 			}
 			/* Récupération de l'id auto-généré par la requête d'insertion */
 			resultSet = preparedStatement.getGeneratedKeys();
@@ -69,7 +69,7 @@ public class DAOComputer implements IDAOComputer {
 				/* Puis initialisation de la propriété id du bean Utilisateur avec sa valeur */
 				computer.setId(resultSet.getInt(1));
 			} else {
-				throw new DAOException("Échec de la création de l'ordinateur en base, aucun ID auto-généré retourné.");
+				throw new DAOException("Unable to create this computer, no generated key given.");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -92,7 +92,7 @@ public class DAOComputer implements IDAOComputer {
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
-				throw new DAOException("Échec de la mise a jour de l'ordinateur, aucune ligne modifiée dans la table.");
+				throw new DAOException("Unable to update this computer, no row modified in the table.");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -114,7 +114,7 @@ public class DAOComputer implements IDAOComputer {
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
-				throw new DAOException("Échec de la suppression de l'ordinateur, aucune ligne modifiée dans la table.");
+				throw new DAOException("Unable to delete this computer, no row removed from the table.");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -124,7 +124,6 @@ public class DAOComputer implements IDAOComputer {
 	}
 
 	private List<Computer> getComputers(String request, Object... param) throws DAOException {
-		System.out.println("ok");
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -135,11 +134,9 @@ public class DAOComputer implements IDAOComputer {
 			connection = factory.getConnection();
 			preparedStatement = initPreparedStatement(connection, request, false, param);
 			resultSet = preparedStatement.executeQuery();
-			System.out.println("ok2");
 			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
 			while (resultSet.next()) {
 				computers.add(map(resultSet));
-				System.out.println("ok3");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);

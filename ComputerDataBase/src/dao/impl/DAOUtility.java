@@ -1,4 +1,4 @@
-package dao;
+package dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,14 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public final class DAOUtility {
-
-	/**
-	 * Constructeur caché par défaut (car c'est une classe finale utilitaire,
-	 * contenant uniquement des méthode appelées de manière statique)
-	 */
-	private DAOUtility() {
-	}
-
 	/**
 	 * Fermeture silencieuse du resultset
 	 */
@@ -23,7 +15,7 @@ public final class DAOUtility {
 			try {
 				resultSet.close();
 			} catch (SQLException e) {
-				System.out.println("Échec de la fermeture du ResultSet : " + e.getMessage());
+				System.out.println("Unable to close ResultSet : " + e.getMessage());
 			}
 		}
 	}
@@ -36,7 +28,7 @@ public final class DAOUtility {
 			try {
 				statement.close();
 			} catch (SQLException e) {
-				System.out.println("Échec de la fermeture du Statement : " + e.getMessage());
+				System.out.println("Unable to close Statement : " + e.getMessage());
 			}
 		}
 	}
@@ -49,7 +41,7 @@ public final class DAOUtility {
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				System.out.println("Échec de la fermeture de la connection : " + e.getMessage());
+				System.out.println("Unable to close Connection : " + e.getMessage());
 			}
 		}
 	}

@@ -43,7 +43,7 @@ public class ConsoleView {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		CLICommand cli = new CLICommand("");
 		boolean parseResult;
 		String readInput;
@@ -66,6 +66,7 @@ public class ConsoleView {
 			} catch (Exception e) {
 				// ignoble
 				System.err.println("found error : " + e.getMessage());
+				throw e;
 			}
 		}
 		System.out.println("Farewell!");

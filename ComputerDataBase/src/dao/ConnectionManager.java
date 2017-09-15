@@ -19,58 +19,50 @@ public class ConnectionManager {
 	private String url;
 	private String username;
 	private String password;
+	private String driver;
 
 	private Connection connection;
 
 	public ConnectionManager() throws DAOConfigurationException {
-		Properties properties = new Properties();
-		String url;
-		String driver;
-		String username;
-		String password;
-
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream propertyFile = classLoader.getResourceAsStream(CONFIG_FILE);
-
-		if (propertyFile == null) {
-			throw new DAOConfigurationException("Le fichier properties \"" + CONFIG_FILE + "\" est introuvable.");
-		}
-
-		try {
-			properties.load(propertyFile);
-			url = properties.getProperty(PROPERTY_URL);
-			driver = properties.getProperty(PROPERTY_DRIVER);
-			username = properties.getProperty(PROPERTY_USER);
-			password = properties.getProperty(PROPERTY_PASS);
-		} catch (IOException e) {
-			throw new DAOConfigurationException("Impossible de charger le fichier properties " + CONFIG_FILE, e);
-		}
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			throw new DAOConfigurationException("Le driver est introuvable dans le classpath.", e);
-		}
-
-		try {
-			this.connection = DriverManager.getConnection(url, username, password);
-			this.url = url;
-			this.username = username;
-			this.password = password;
-		} catch (SQLException e) {
-			throw new DAOConfigurationException("Problème de connexion a la BDD : " + e.getMessage());
-		}
+		loadConfigFile();
+		startConnection();
 	}
 
 	public Connection getConnection() {
 		return connection;
 	}
 
-	public void restartConnection() throws DAOConfigurationException {
+	public void startConnection() throws DAOConfigurationException {
+		try {
+			Class.forName(this.driver);
+		} catch (ClassNotFoundException e) {
+			throw new DAOConfigurationException("Can't find driver in classpath : ", e);
+		}
+		
 		try {
 			this.connection = DriverManager.getConnection(this.url, this.username, this.password);
 		} catch (SQLException e) {
-			throw new DAOConfigurationException("Problème de connexion a la BDD : " + e.getMessage());
+			throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
+		}
+	}
+	
+	public void loadConfigFile() throws DAOConfigurationException{
+		Properties properties = new Properties();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream propertyFile = classLoader.getResourceAsStream(CONFIG_FILE);
+
+		if (propertyFile == null) {
+			throw new DAOConfigurationException("The properties file \"" + CONFIG_FILE + "\" does not exist.");
+		}
+
+		try {
+			properties.load(propertyFile);
+			this.url = properties.getProperty(PROPERTY_URL);
+			this.driver = properties.getProperty(PROPERTY_DRIVER);
+			this.username = properties.getProperty(PROPERTY_USER);
+			this.password = properties.getProperty(PROPERTY_PASS);
+		} catch (IOException e) {
+			throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
 		}
 	}
 }

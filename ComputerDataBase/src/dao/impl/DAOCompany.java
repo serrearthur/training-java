@@ -1,6 +1,6 @@
 package dao.impl;
 
-import static dao.DAOUtility.*;
+import static dao.impl.DAOUtility.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,9 +18,9 @@ public class DAOCompany implements IDAOCompany {
 	private final static String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
 	private final static String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
 	private final static String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
-	private final static String REQUEST_SELECT_ID = "SELECT id, name FROM company WHERE id = ?";
-	private final static String REQUEST_SELECT_NAME = "SELECT id, name FROM company WHERE name = ?";
-	private final static String REQUEST_SELECT_ALL = "SELECT id, name FROM company";
+	private final static String REQUEST_SELECT_ID = "SELECT * FROM company WHERE id = ?";
+	private final static String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
+	private final static String REQUEST_SELECT_ALL = "SELECT * FROM company";
 
 	private DAOFactory factory;
 
@@ -48,7 +48,7 @@ public class DAOCompany implements IDAOCompany {
 			int statut = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (statut == 0) {
-				throw new DAOException("Échec de la création de l'entreprise, aucune ligne ajoutée dans la table.");
+				throw new DAOException("Unable to create this company, no row added to the table.");
 			}
 			/* Récupération de l'id auto-généré par la requête d'insertion */
 			resultSet = preparedStatement.getGeneratedKeys();
@@ -56,7 +56,7 @@ public class DAOCompany implements IDAOCompany {
 				/* Puis initialisation de la propriété id du bean Utilisateur avec sa valeur */
 				company.setId(resultSet.getInt(1));
 			} else {
-				throw new DAOException("Échec de la création de l'entreprise en base, aucun ID auto-généré retourné.");
+				throw new DAOException("Unable to create this company, no generated key given.");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -79,7 +79,7 @@ public class DAOCompany implements IDAOCompany {
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
-				throw new DAOException("Échec de la mise a jour de l'entreprise, aucune ligne modifiée dans la table.");
+				throw new DAOException("Unable to update this company, no row modified in the table.");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
@@ -101,7 +101,7 @@ public class DAOCompany implements IDAOCompany {
 			int status = preparedStatement.executeUpdate();
 			/* Analyse du statut retourné par la requête d'insertion */
 			if (status == 0) {
-				throw new DAOException("Échec de la suppression de l'entreprise, aucune ligne modifiée dans la table.");
+				throw new DAOException("Unable to delete this company, no row removed from the table.");
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);

@@ -27,9 +27,13 @@ public class DAOFactory {
 	 * données, charger le driver JDBC et retourner une instance de la Factory
 	 */
 	private DAOFactory() throws DAOConfigurationException {
-		this.manager = new ConnectionManager();
-		this.daoComputer = new DAOComputer(this);
-		this.daoCompany = new DAOCompany(this);
+		try {
+			this.manager = new ConnectionManager();
+			this.daoComputer = new DAOComputer(this);
+			this.daoCompany = new DAOCompany(this);
+		} catch (DAOConfigurationException e) {
+			throw e;
+		}
 	}
 
 	/**
