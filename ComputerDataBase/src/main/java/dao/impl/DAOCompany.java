@@ -35,6 +35,31 @@ public class DAOCompany implements IDAOCompany {
 		return company;
 	}
 
+	private List<Company> getCompanies(String request, Object... param) throws DAOException {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		List<Company> companies = new ArrayList<Company>();
+
+		try {
+			/* Récupération d'une connection depuis la Factory */
+			connection = factory.getConnection();
+			preparedStatement = initPreparedStatement(connection, request, false, param);
+			resultSet = preparedStatement.executeQuery();
+
+			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
+			while (resultSet.next()) {
+				companies.add(map(resultSet));
+			}
+		} catch (SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			silentShutdown(resultSet, preparedStatement, connection);
+		}
+
+		return companies;
+	}
+	
 	@Override
 	public void create(Company company) throws DAOException {
 		Connection connection = null;
@@ -110,34 +135,9 @@ public class DAOCompany implements IDAOCompany {
 		}
 	}
 
-	private List<Company> getCompanies(String request, Object... param) throws DAOException {
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		List<Company> companies = new ArrayList<Company>();
-
-		try {
-			/* Récupération d'une connection depuis la Factory */
-			connection = factory.getConnection();
-			preparedStatement = initPreparedStatement(connection, request, false, param);
-			resultSet = preparedStatement.executeQuery();
-
-			/* Parcours de la ligne de données de l'éventuel ResulSet retourné */
-			while (resultSet.next()) {
-				companies.add(map(resultSet));
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			silentShutdown(resultSet, preparedStatement, connection);
-		}
-
-		return companies;
-	}
-
 	@Override
-	public List<Company> getFromId(String id) throws DAOException {
-		return getCompanies(REQUEST_SELECT_ID, id);
+	public List<Company> getFromId(Integer id) throws DAOException {
+		return getCompanies(REQUEST_SELECT_ID, id.toString());
 	}
 
 	@Override

@@ -1,38 +1,43 @@
-package tests.view;
+package dao;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class TestPage {
+public class DAOCompanyTest {
 
 	@Test
-	public void testPage() {
+	public void testDAOCompany() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	public void testGetByPageNumber() {
+	public void testCreate() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	public void testGetCurrentPage() {
+	public void testUpdate() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	public void testMoveToNextPage() {
+	public void testDelete() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	public void testMoveToPreviousPage() {
+	public void testGetFromId() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	public void testMoveToPageNumber() {
+	public void testGetFromName() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testGetAll() {
 		fail("Not yet implemented"); // TODO
 	}
 

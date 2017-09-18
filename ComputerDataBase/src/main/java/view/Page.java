@@ -48,7 +48,7 @@ public class Page<T> {
 	
 	public void moveToPageNumber(int nb) {
 		if (nb > 0 && nb <= totalPage) {
-			currentPage=nb;
+			currentPage = nb;
 		}
 	}
 }

@@ -12,7 +12,7 @@ public interface IDAOCompany {
 
 	public void delete(Company company) throws DAOException;
 
-	public List<Company> getFromId(String id) throws DAOException;
+	public List<Company> getFromId(Integer id) throws DAOException;
 
 	public List<Company> getFromName(String name) throws DAOException;
 

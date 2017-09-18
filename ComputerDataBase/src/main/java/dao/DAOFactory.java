@@ -1,12 +1,13 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import dao.exceptions.DAOConfigurationException;
 import dao.impl.DAOCompany;
 import dao.impl.DAOComputer;
 
-public class DAOFactory {
+public final class DAOFactory {
 	private ConnectionManager manager;
 	private IDAOComputer daoComputer;
 	private IDAOCompany daoCompany;
@@ -38,8 +39,13 @@ public class DAOFactory {
 
 	/**
 	 * Méthode chargée de fournir une connection à la base de données
+	 * 
+	 * @throws SQLException
 	 */
-	public Connection getConnection() {
+	public Connection getConnection() throws SQLException {
+		if (manager.getConnection() == null || manager.getConnection().isClosed()) {
+			manager.startConnection();
+		}
 		return manager.getConnection();
 	}
 

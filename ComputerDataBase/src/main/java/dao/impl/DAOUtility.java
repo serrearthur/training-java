@@ -5,8 +5,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public final class DAOUtility {
+	public static Timestamp dateTimeToTimestamp(LocalDateTime ldt) {
+		if (ldt != null) {
+			return Timestamp.valueOf(ldt);
+		} else {
+			return null;
+		}
+	}
+
+	public static LocalDateTime timestampToDateTime(Timestamp tsp) {
+		if (tsp != null) {
+			return tsp.toLocalDateTime();
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Fermeture silencieuse du resultset
 	 */

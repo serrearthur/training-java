@@ -10,7 +10,7 @@ import java.util.Properties;
 import dao.exceptions.DAOConfigurationException;
 
 public class ConnectionManager {
-	private static final String CONFIG_FILE = "dao/dao.properties";
+	private static final String CONFIG_FILE = "dao.properties";
 	private static final String PROPERTY_URL = "url";
 	private static final String PROPERTY_DRIVER = "driver";
 	private static final String PROPERTY_USER = "username";
@@ -25,44 +25,39 @@ public class ConnectionManager {
 
 	public ConnectionManager() throws DAOConfigurationException {
 		loadConfigFile();
-		startConnection();
 	}
 
 	public Connection getConnection() {
 		return connection;
 	}
 
+    public void loadConfigFile() throws DAOConfigurationException {
+        Properties properties = new Properties();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream propertyFile = classLoader.getResourceAsStream(CONFIG_FILE);
+
+        if (propertyFile == null) {
+            throw new DAOConfigurationException("The properties file \"" + CONFIG_FILE + "\" does not exist.");
+        }
+        try {
+            properties.load(propertyFile);
+            this.url = properties.getProperty(PROPERTY_URL);
+            this.driver = properties.getProperty(PROPERTY_DRIVER);
+            this.username = properties.getProperty(PROPERTY_USER);
+            this.password = properties.getProperty(PROPERTY_PASS);
+        } catch (IOException e) {
+            throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
+        }
+    }
+	
 	public void startConnection() throws DAOConfigurationException {
 		try {
 			Class.forName(this.driver);
+			this.connection = DriverManager.getConnection(this.url, this.username, this.password);
 		} catch (ClassNotFoundException e) {
 			throw new DAOConfigurationException("Can't find driver in classpath : ", e);
-		}
-		
-		try {
-			this.connection = DriverManager.getConnection(this.url, this.username, this.password);
 		} catch (SQLException e) {
 			throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
-		}
-	}
-	
-	public void loadConfigFile() throws DAOConfigurationException{
-		Properties properties = new Properties();
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream propertyFile = classLoader.getResourceAsStream(CONFIG_FILE);
-
-		if (propertyFile == null) {
-			throw new DAOConfigurationException("The properties file \"" + CONFIG_FILE + "\" does not exist.");
-		}
-
-		try {
-			properties.load(propertyFile);
-			this.url = properties.getProperty(PROPERTY_URL);
-			this.driver = properties.getProperty(PROPERTY_DRIVER);
-			this.username = properties.getProperty(PROPERTY_USER);
-			this.password = properties.getProperty(PROPERTY_PASS);
-		} catch (IOException e) {
-			throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
 		}
 	}
 }

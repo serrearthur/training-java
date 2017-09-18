@@ -14,9 +14,9 @@ public interface IDAOComputer {
 
 	public List<Computer> getFromName(String name) throws DAOException;
 
-	public List<Computer> getFromId(String id) throws DAOException;
+	public List<Computer> getFromId(Integer id) throws DAOException;
 
-	public List<Computer> getFromCompanyId(String id) throws DAOException;
+	public List<Computer> getFromCompanyId(Integer id) throws DAOException;
 
 	public List<Computer> getAll() throws DAOException;
 }

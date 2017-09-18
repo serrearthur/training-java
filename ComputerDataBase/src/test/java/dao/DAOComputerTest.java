@@ -1,4 +1,4 @@
-package tests.dao;
+package dao;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestDAOComputer {
+public class DAOComputerTest {
 
 	@Test
 	public void testDAOComputer() {
