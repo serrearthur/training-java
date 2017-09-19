@@ -10,26 +10,26 @@ import java.util.Properties;
 import dao.exceptions.DAOConfigurationException;
 
 public class ConnectionManager {
-	private static final String CONFIG_FILE = "dao.properties";
-	private static final String PROPERTY_URL = "url";
-	private static final String PROPERTY_DRIVER = "driver";
-	private static final String PROPERTY_USER = "username";
-	private static final String PROPERTY_PASS = "password";
+    private static final String CONFIG_FILE = "dao.properties";
+    private static final String PROPERTY_URL = "url";
+    private static final String PROPERTY_DRIVER = "driver";
+    private static final String PROPERTY_USER = "username";
+    private static final String PROPERTY_PASS = "password";
 
-	private String url;
-	private String username;
-	private String password;
-	private String driver;
+    private String url;
+    private String username;
+    private String password;
+    private String driver;
 
-	private Connection connection;
+    private Connection connection;
 
-	public ConnectionManager() throws DAOConfigurationException {
-		loadConfigFile();
-	}
+    public ConnectionManager() throws DAOConfigurationException {
+        loadConfigFile();
+    }
 
-	public Connection getConnection() {
-		return connection;
-	}
+    public Connection getConnection() {
+        return connection;
+    }
 
     public void loadConfigFile() throws DAOConfigurationException {
         Properties properties = new Properties();
@@ -49,15 +49,15 @@ public class ConnectionManager {
             throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
         }
     }
-	
-	public void startConnection() throws DAOConfigurationException {
-		try {
-			Class.forName(this.driver);
-			this.connection = DriverManager.getConnection(this.url, this.username, this.password);
-		} catch (ClassNotFoundException e) {
-			throw new DAOConfigurationException("Can't find driver in classpath : ", e);
-		} catch (SQLException e) {
-			throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
-		}
-	}
+
+    public void startConnection() throws DAOConfigurationException {
+        try {
+            Class.forName(this.driver);
+            this.connection = DriverManager.getConnection(this.url, this.username, this.password);
+        } catch (ClassNotFoundException e) {
+            throw new DAOConfigurationException("Can't find driver in classpath : ", e);
+        } catch (SQLException e) {
+            throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
+        }
+    }
 }

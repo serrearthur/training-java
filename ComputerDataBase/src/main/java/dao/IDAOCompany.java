@@ -6,15 +6,15 @@ import dao.exceptions.DAOException;
 import model.Company;
 
 public interface IDAOCompany {
-	public void create(Company company) throws DAOException;
+    void create(Company company) throws DAOException;
 
-	public void update(Company company) throws DAOException;
+    void update(Company company) throws DAOException;
 
-	public void delete(Company company) throws DAOException;
+    void delete(Company company) throws DAOException;
 
-	public List<Company> getFromId(Integer id) throws DAOException;
+    List<Company> getFromId(Integer id) throws DAOException;
 
-	public List<Company> getFromName(String name) throws DAOException;
+    List<Company> getFromName(String name) throws DAOException;
 
-	public List<Company> getAll() throws DAOException;
+    List<Company> getAll() throws DAOException;
 }

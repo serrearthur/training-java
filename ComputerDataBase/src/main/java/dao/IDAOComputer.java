@@ -6,17 +6,17 @@ import dao.exceptions.DAOException;
 import model.Computer;
 
 public interface IDAOComputer {
-	public void create(Computer computer) throws DAOException;
+    void create(Computer computer) throws DAOException;
 
-	public void update(Computer computer) throws DAOException;
+    void update(Computer computer) throws DAOException;
 
-	public void delete(Computer computer) throws DAOException;
+    void delete(Computer computer) throws DAOException;
 
-	public List<Computer> getFromName(String name) throws DAOException;
+    List<Computer> getFromName(String name) throws DAOException;
 
-	public List<Computer> getFromId(Integer id) throws DAOException;
+    List<Computer> getFromId(Integer id) throws DAOException;
 
-	public List<Computer> getFromCompanyId(Integer id) throws DAOException;
+    List<Computer> getFromCompanyId(Integer id) throws DAOException;
 
-	public List<Computer> getAll() throws DAOException;
+    List<Computer> getAll() throws DAOException;
 }
