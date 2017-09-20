@@ -15,6 +15,11 @@ public class Computer {
     public Computer(String name) {
         this.name = name;
     }
+    
+    public Computer(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;

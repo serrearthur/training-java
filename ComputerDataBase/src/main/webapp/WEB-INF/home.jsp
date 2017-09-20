@@ -20,7 +20,7 @@
 	</div>
 
 	<form id="deleteForm" action="#" method="POST">
-		<input type="hidden" name="selection" value="">
+		<input type="hidden" name="selection" value="bloup">
 	</form>
 
 	<div class="container" style="margin-top: 10px;">
@@ -33,7 +33,7 @@
 					<th class="editMode" style="width: 60px; height: 22px;"><input
 						type="checkbox" id="selectall" /> <span
 						style="vertical-align: top;"> - <a href="#"
-							id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
+							id="deleteSelected" onclick="$.fn.deleteSelected();" > <i
 								class="fa fa-trash-o fa-lg"></i>
 						</a>
 					</span></th>
@@ -51,11 +51,11 @@
 				<c:forEach items="${page.currentPage}" var="c">
 					<tr>
 						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">${c.name}</a></td>
-						<td>${c.introduced.toLocalDate()}</td>
-						<td>${c.discontinued.toLocalDate()}</td>
-						<td>${c.companyId}</td>
+							class="cb" value="${c.id}"></td>
+						<td><a href='<c:url value="/EditComputer?computerId=${c.id}"/>' onclick="">${c.name}</a></td>
+						<td>${c.introduced}</td>
+						<td>${c.discontinued}</td>
+						<td>${c.company}</td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -71,8 +71,7 @@
 			<li><a
 				href="<c:url value="/home?pageNumber=${page.getPreviousPageNumber()}"/>"
 				aria-label="Previous"> <span aria-hidden="true">&lt;</span></a></li>
-			<c:forEach var="i" begin="${page.getDisplayMin()}"
-				end="${page.getDisplayMax()}">
+			<c:forEach var="i" begin="${page.getDisplayMin()}" end="${page.getDisplayMax()}">
 				<li class=${i eq page.currentPageNumber?"active":"" }><a
 					href="<c:url value="/home?pageNumber=${i}"/>">${i}</a></li>
 			</c:forEach>

@@ -89,6 +89,7 @@ public class Page<T> {
     public void setElementPerPage(int i) {
         this.elementPerPage = i;
         this.totalPage = 1 + this.data.size() / this.elementPerPage;
+        this.currentPageNumber = Math.min(this.currentPageNumber, this.totalPage);
     }
 
     public int getTotalCount() {
