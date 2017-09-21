@@ -42,7 +42,6 @@ public class DAOComputerTest extends TestCase {
             { null, null, null, null, null },
             { 1, 0, "bob", null, null },
             { null, null, null, "1989-08-30 00:00:00", "2017-09-20 00:00:00" },
-            { "a", "b", 1, 1, 1 }
         });
     }
 
@@ -68,7 +67,7 @@ public class DAOComputerTest extends TestCase {
                 .getTimestamp("introduced");
         Mockito.doReturn(discontinued == null ? null : Timestamp.valueOf(discontinued)).when(resultSet)
                 .getTimestamp("discontinued");
-        Mockito.doReturn(companyId instanceof Integer ? id : 0).when(resultSet).getInt("company_id");
+        Mockito.doReturn(companyId instanceof Integer ? companyId : 0).when(resultSet).getInt("company_id");
         if (!(companyId instanceof Integer)) {
             Mockito.doReturn(true).when(resultSet).wasNull();
         }

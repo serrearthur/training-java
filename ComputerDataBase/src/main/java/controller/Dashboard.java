@@ -1,4 +1,4 @@
-package controller.servlet;
+package controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -18,7 +18,7 @@ import view.Page;
  */
 @SuppressWarnings("unchecked")
 @WebServlet("/home")
-public class HomeView extends HttpServlet {
+public class Dashboard extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/home.jsp";
     private static final String ATT_PAGE = "page";

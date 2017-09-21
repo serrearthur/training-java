@@ -1,4 +1,4 @@
-package controller.servlet;
+package controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,27 +10,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import controller.validator.ComputerValidator;
+import service.validation.ComputerValidator;
 import dao.DAOFactory;
 import model.Computer;
-import view.dto.DTOComputer;
 
 /**
- * Servlet implementation class EditComputerView
+ * Servlet implementation class AddComputerView
  */
-@WebServlet("/EditComputer")
-public class EditComputerView extends HttpServlet {
+@WebServlet("/AddComputer")
+public class AddComputer extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final String VIEW = "/WEB-INF/editComputer.jsp";
-    private static final String ATT_COMPUTERID = "computerId";
-    private static final String FIELD_ID = "id";
+    private static final String VIEW = "/WEB-INF/addComputer.jsp";
     private static final String FIELD_NAME = "computerName";
     private static final String FIELD_INTRODUCED = "introduced";
     private static final String FIELD_DISONTINUED = "continued";
     private static final String FIELD_COMPANYID = "companyId";
 
     private static final DAOFactory FACTORY = DAOFactory.getInstance();
-    private DTOComputer currentComputer = null;
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -38,13 +34,6 @@ public class EditComputerView extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String computerID = request.getParameter(ATT_COMPUTERID);
-        if (computerID != null) {
-            currentComputer = view.dto.DTOComputer
-                    .toDTOComputer(FACTORY.getComputerDao().getFromId(Integer.parseInt(computerID))).get(0);
-        }
-
-        request.setAttribute("computer", currentComputer);
         request.setAttribute("companies", FACTORY.getCompanyDao().getAll());
         this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
     }
@@ -55,7 +44,6 @@ public class EditComputerView extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter(FIELD_ID);
         String name = request.getParameter(FIELD_NAME);
         String introduced = request.getParameter(FIELD_INTRODUCED);
         String discontinued = request.getParameter(FIELD_DISONTINUED);
@@ -63,13 +51,13 @@ public class EditComputerView extends HttpServlet {
 
         List<String> errors = new ArrayList<String>();
         Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
-        
+
         if (errors.isEmpty()) {
-            c.setId(Integer.parseInt(id));
-            FACTORY.getComputerDao().update(c);
+            FACTORY.getComputerDao().create(c);
             request.getSession().invalidate();
             response.sendRedirect("/ComputerDataBase/home");
         } else {
+            System.out.println(errors.get(0));
             request.setAttribute("errors", errors);
             doGet(request, response);
         }

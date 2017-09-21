@@ -45,17 +45,17 @@ public class ConnectionManager {
             this.driver = properties.getProperty(PROPERTY_DRIVER);
             this.username = properties.getProperty(PROPERTY_USER);
             this.password = properties.getProperty(PROPERTY_PASS);
+            Class.forName(this.driver);
         } catch (IOException e) {
             throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
+        } catch (ClassNotFoundException e) {
+            throw new DAOConfigurationException("Can't find driver in classpath : ", e);
         }
     }
 
     public void startConnection() throws DAOConfigurationException {
         try {
-            Class.forName(this.driver);
             this.connection = DriverManager.getConnection(this.url, this.username, this.password);
-        } catch (ClassNotFoundException e) {
-            throw new DAOConfigurationException("Can't find driver in classpath : ", e);
         } catch (SQLException e) {
             throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
         }

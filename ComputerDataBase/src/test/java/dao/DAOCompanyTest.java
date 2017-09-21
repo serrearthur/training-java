@@ -41,8 +41,7 @@ public class DAOCompanyTest extends TestCase {
             { 1, "Apple"},
             { 0, null},
             { 1, null },
-            { null, 1},
-            { "a", 1}
+            { null, "a"},
         });
     }
 
