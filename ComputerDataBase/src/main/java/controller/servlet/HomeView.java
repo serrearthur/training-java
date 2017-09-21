@@ -36,17 +36,17 @@ public class HomeView extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(true);
-        page = (Page<DTOComputer>) session.getAttribute("page");
+        HttpSession session = request.getSession();
+        page = (Page<DTOComputer>) session.getAttribute(ATT_PAGE);
 
         if (page == null) {
-            page = new Page<DTOComputer>(view.dto.DTOComputer.toDTOComputer(FACTORY.getComputerDao().getAll()), 10);
+            page = new Page<DTOComputer>(DTOComputer.toDTOComputer(FACTORY.getComputerDao().getAll()), 10);
         }
 
         String requestedSearch = request.getParameter(FIELD_SEARCH);
         if (requestedSearch != null) {
             page = new Page<DTOComputer>(
-                    view.dto.DTOComputer.toDTOComputer(FACTORY.getComputerDao().getFromName(requestedSearch)),
+                    DTOComputer.toDTOComputer(FACTORY.getComputerDao().getFromName(requestedSearch)),
                     page.getElementPerPage());
         }
 
@@ -65,7 +65,7 @@ public class HomeView extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        page = (Page<DTOComputer>) session.getAttribute("page");
+        page = (Page<DTOComputer>) session.getAttribute(ATT_PAGE);
         String requestedPageSize = request.getParameter(FIELD_PAGESIZE);
         if (requestedPageSize != null) {
             page.setElementPerPage(Integer.parseInt(requestedPageSize));
@@ -76,10 +76,13 @@ public class HomeView extends HttpServlet {
             for (String s : requestedDelete.split(",")) {
                 FACTORY.getComputerDao().delete(new Computer(Integer.parseInt(s), ""));
             }
-            page = new Page<DTOComputer>(view.dto.DTOComputer.toDTOComputer(FACTORY.getComputerDao().getAll()),
+            page = new Page<DTOComputer>(DTOComputer.toDTOComputer(FACTORY.getComputerDao().getAll()),
                     page.getElementPerPage());
+            session.setAttribute(ATT_PAGE, page);
+            response.sendRedirect("/ComputerDataBase/home");
+        } else {
+            session.setAttribute(ATT_PAGE, page);
+            doGet(request, response);
         }
-        session.setAttribute(ATT_PAGE, page);
-        doGet(request, response);
     }
 }

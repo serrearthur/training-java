@@ -32,13 +32,19 @@ public class DAOComputer implements IDAOComputer {
         this.factory = factory;
     }
 
-    private static Computer map(ResultSet resultSet) throws SQLException {
+    public static Computer map(ResultSet resultSet) throws SQLException {
         Computer computer = new Computer();
         computer.setId(resultSet.getInt("id"));
+        if (resultSet.wasNull()) {
+            computer.setId(null);
+        }
         computer.setName(resultSet.getString("name"));
         computer.setIntroduced(timestampToDateTime(resultSet.getTimestamp("introduced")));
         computer.setDiscontinued(timestampToDateTime(resultSet.getTimestamp("discontinued")));
         computer.setCompanyId(resultSet.getInt("company_id"));
+        if (resultSet.wasNull()) {
+            computer.setCompanyId(null);
+        }
         return computer;
     }
 
@@ -62,7 +68,6 @@ public class DAOComputer implements IDAOComputer {
         } finally {
             silentShutdown(resultSet, preparedStatement, connection);
         }
-
         return computers;
     }
 

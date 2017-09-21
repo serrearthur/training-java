@@ -29,9 +29,12 @@ public class DAOCompany implements IDAOCompany {
         this.factory = factory;
     }
 
-    private static Company map(ResultSet resultSet) throws SQLException {
+    public static Company map(ResultSet resultSet) throws SQLException {
         Company company = new Company();
         company.setId(resultSet.getInt("id"));
+        if (resultSet.wasNull()) {
+            company.setId(null);
+        }
         company.setName(resultSet.getString("name"));
         return company;
     }

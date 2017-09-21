@@ -1,8 +1,6 @@
 package controller.servlet;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import controller.validator.ComputerValidator;
 import dao.DAOFactory;
 import model.Computer;
 import view.dto.DTOComputer;
@@ -62,83 +61,17 @@ public class EditComputerView extends HttpServlet {
         String discontinued = request.getParameter(FIELD_DISONTINUED);
         String companyId = request.getParameter(FIELD_COMPANYID);
 
-        String result;
         List<String> errors = new ArrayList<String>();
-        Computer c = new Computer();
-
-        try {
-            c.setId(Integer.parseInt(id));
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-        }
-
-        try {
-            validationName(name);
-            c.setName(name);
-            System.out.println(name + "-" + c.getName());
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-        }
-
-        try {
-            validationIntroduced(introduced);
-            c.setIntroduced(LocalDateTime.of(LocalDate.parse(introduced), null));
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-        }
-
-        try {
-            validationDiscontinued(discontinued);
-            c.setIntroduced(LocalDateTime.of(LocalDate.parse(discontinued), null));
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-        }
-
-        try {
-            validationCompanyId(companyId);
-            c.setCompanyId(Integer.parseInt(companyId));
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-        }
-
-        if (errors.isEmpty()) {
-            result = "ok";
-        } else {
-            result = "nok";
-        }
+        Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
         
-        FACTORY.getComputerDao().update(c);
-        request.setAttribute("errors", errors);
-        request.setAttribute("result", result);
-        doGet(request, response);
-    }
-
-    private void validationName(String name) throws Exception {
-        if (name == null || name.trim().length() == 0)
-            throw new Exception("Le nom du nouveau membre ne peut pas être vide");
-    }
-
-    private void validationIntroduced(String introduced) throws Exception {
-        try {
-            LocalDate.parse(introduced);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    private void validationDiscontinued(String discontinued) throws Exception {
-        try {
-            LocalDate.parse(discontinued);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    private void validationCompanyId(String companyId) throws Exception {
-        try {
-            Integer.parseInt(companyId);
-        } catch (Exception e) {
-            throw e;
+        if (errors.isEmpty()) {
+            c.setId(Integer.parseInt(id));
+            FACTORY.getComputerDao().update(c);
+            request.getSession().invalidate();
+            response.sendRedirect("/ComputerDataBase/home");
+        } else {
+            request.setAttribute("errors", errors);
+            doGet(request, response);
         }
     }
 }

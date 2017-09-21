@@ -1,44 +1,67 @@
 package dao;
 
-import static org.junit.Assert.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collection;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
-public class DAOCompanyTest {
+import dao.impl.DAOCompany;
+import junit.framework.TestCase;
+import model.Company;
 
-    @Test
-    public void testDAOCompany() {
-        fail("Not yet implemented"); // TODO
+@RunWith(Parameterized.class)
+public class DAOCompanyTest extends TestCase {
+
+    private ResultSet resultSet;
+
+    @Override
+    @Before
+    public void setUp() {
+        resultSet = Mockito.mock(ResultSet.class);
     }
 
-    @Test
-    public void testCreate() {
-        fail("Not yet implemented"); // TODO
+    @Override
+    @After
+    public void tearDown() {
+
+    }
+    
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+            { 1, "Apple"},
+            { 0, null},
+            { 1, null },
+            { null, 1},
+            { "a", 1}
+        });
     }
 
-    @Test
-    public void testUpdate() {
-        fail("Not yet implemented"); // TODO
-    }
+    @Parameter
+    public Integer id;
+    @Parameter(1)
+    public String name;
 
     @Test
-    public void testDelete() {
-        fail("Not yet implemented"); // TODO
-    }
+    public void testMapComputer()
+            throws SQLException {
+        Mockito.doReturn(id instanceof Integer ? id : 0).when(resultSet).getInt("id");
+        if (!(id instanceof Integer)) {
+            Mockito.doReturn(true).when(resultSet).wasNull();
+        }
+        Mockito.doReturn(name).when(resultSet).getString("name");
 
-    @Test
-    public void testGetFromId() {
-        fail("Not yet implemented"); // TODO
+        Company company = DAOCompany.map(resultSet);
+        assertEquals(company.getId(), id);
+        assertEquals(company.getName(), name);
     }
-
-    @Test
-    public void testGetFromName() {
-        fail("Not yet implemented"); // TODO
-    }
-
-    @Test
-    public void testGetAll() {
-        fail("Not yet implemented"); // TODO
-    }
-
 }
