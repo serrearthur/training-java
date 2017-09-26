@@ -7,9 +7,21 @@ import cli.controller.CLICommand;
 import model.Company;
 import model.Computer;
 
+/**
+ * Class designed to display a menu for the user to enter their input,
+ * and display the result of their query.
+ * <p>
+ * Only called when the app is used in CLI mode.
+ *
+ * @author aserre
+ */
 public class CLIView {
     static Scanner sc = new Scanner(System.in);
 
+    /**
+     * Displays the main menu and reads the input of the user.
+     * @return input of the user
+     */
     public static String homeView() {
         System.out.println("Available command lines :\n" + "\t-`list cpt' : List computers\n"
                 + "\t-`list cpn' : List companies\n"
@@ -21,6 +33,10 @@ public class CLIView {
         return command;
     }
 
+    /**
+     * Displays the result of a command once it has been parsed.
+     * @param cli {@link CLICommand} object containing a parsed request
+     */
     public static void cliResultView(CLICommand cli) {
         System.out.println("Request : " + cli.getCommand() + "\n------------------------------------");
         String format = "%-5s%-30s%-20s%-20s%-5s%n";
@@ -43,6 +59,12 @@ public class CLIView {
         }
     }
 
+    /**
+     * Infinite loop used to call the main menu, parse the input of the user
+     * and display the result of their request.
+     * @param args required for the main function signature
+     * @throws IOException thrown by {@link System.in#read()}
+     */
     public static void main(String[] args) throws IOException  {
         CLICommand cli = new CLICommand("");
         boolean parseResult;

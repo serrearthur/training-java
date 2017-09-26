@@ -12,12 +12,26 @@ import dao.DAOFactory;
 import model.Company;
 import model.Computer;
 
+/**
+ * Class designed to parse a user input and execute backend actions accordingly.
+ * <p>
+ * Only called when the app is used in CLI mode.
+ *
+ * @author aserre
+ */
 public class CLICommand {
     private String command;
     private DAOFactory factory;
     private List<Computer> result_computers;
     private List<Company> result_companies;
 
+    /**
+     * Creates a CLICommand object from a command line input. A CLICommand contains
+     * methods to convert text input to backend actions.
+     *
+     * @param command
+     *            User input to analyze
+     */
     public CLICommand(String command) {
         this.command = command;
         this.factory = DAOFactory.getInstance();
@@ -25,6 +39,11 @@ public class CLICommand {
         this.result_computers = new ArrayList<Computer>();
     }
 
+    /**
+     * Command-line instruction to parse.
+     *
+     * @return this CLICommand command String
+     */
     public String getCommand() {
         return command;
     }
@@ -33,14 +52,34 @@ public class CLICommand {
         this.command = command;
     }
 
+    /**
+     * {@link ArrayList} containing the computers resulting from the parsed
+     * {@link #command}.
+     *
+     * @return result of the backend operations on the computers
+     */
     public List<Computer> getComputers() {
         return result_computers;
     }
 
+    /**
+     * {@link ArrayList} containing the companies resulting from the parsed
+     * {@link #command}.
+     *
+     * @return result of the backend operations on the companies
+     */
     public List<Company> getCompanies() {
         return result_companies;
     }
 
+    /**
+     * Method called to parse this object {@link #command} String. It first splits
+     * the {@link #command} string, then call the relevant parsing method according
+     * to the keywords encountered.
+     *
+     * @return boolean <code>true</code> if the command was valid,
+     *         <code>false</code> otherwise
+     */
     public boolean parse() {
         // we reset the values for the request
         boolean ret = false;
@@ -79,6 +118,16 @@ public class CLICommand {
         return ret;
     }
 
+    /**
+     * Method called if the string 'list' is encountered in the {@link #command}. It
+     * returns either all the computers, or all the companies, depending wether the
+     * user called 'list cpt' or 'list cpn'.
+     *
+     * @param parsed
+     *            sub command to parse
+     * @return result of the Query from the database
+     * @see DAOFactory
+     */
     private boolean parseList(List<String> parsed) {
         boolean ret = false;
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
@@ -97,6 +146,18 @@ public class CLICommand {
         return ret;
     }
 
+    /**
+     * Method called if the string 'show' is encountered in the {@link #command}. It
+     * returns a list of computers from the database according to their
+     * {@link Computer#getId()}, {@link Computer#getName()} or
+     * {@link Computer#getCompanyId()}, depending on wether the user called 'show -i
+     * ID', 'show -n NAME' or 'show -c COMPANYID'.
+     *
+     * @param parsed
+     *            sub command to parse
+     * @return result of the Query from the database
+     * @see DAOFactory
+     */
     private boolean parseShow(List<String> parsed) {
         boolean ret = false;
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
@@ -121,7 +182,8 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with name X
                 System.out.println("SHOW -c " + parsed.get(2));
-                this.result_computers.addAll(factory.getComputerDao().getFromCompanyId(Integer.parseInt(parsed.get(2))));
+                this.result_computers
+                        .addAll(factory.getComputerDao().getFromCompanyId(Integer.parseInt(parsed.get(2))));
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");
@@ -132,6 +194,17 @@ public class CLICommand {
         return ret;
     }
 
+    /**
+     * Method called if the string 'create' is encountered in the {@link #command}.
+     * It creates a new {@link Computer} in the database if the {@link #command}
+     * follows the syntax 'create NAME'.
+     *
+     * @param parsed
+     *            sub command to parse
+     * @return <code>true</code> if the command was valid, <code>false</code>
+     *         otherwise
+     * @see DAOFactory
+     */
     private boolean parseCreate(List<String> parsed) {
         boolean ret = false;
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
@@ -145,12 +218,25 @@ public class CLICommand {
         return ret;
     }
 
+    /**
+     * Method called if the string 'update' is encountered in the {@link #command}.
+     * It updates a new {@link Computer} in the database if the {@link #command}
+     * follows the syntax 'update ID NAME [INTRODUCED DISCONTINUED COMPANYID]'.
+     * Dates must be in the "dd/MM/yyyy" format.
+     *
+     * @param parsed
+     *            sub command to parse
+     * @return <code>true</code> if the command was valid, <code>false</code>
+     *         otherwise
+     * @see DAOFactory
+     */
     private boolean parseUpdate(List<String> parsed) {
         boolean ret = false;
-        // we check if each parameter is present, if yes we add it to our computer object
+        // we check if each parameter is present, if yes we add it to our computer
+        // object
         if (parsed.size() >= 3 && !parsed.get(2).isEmpty()) {
-            Computer c = new Computer();
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            Computer c = new Computer();
             c.setId(Integer.parseInt(parsed.get(1)));
             c.setName(parsed.get(2));
             if (parsed.size() >= 4 && !parsed.get(3).isEmpty()) {
@@ -171,6 +257,18 @@ public class CLICommand {
         return ret;
     }
 
+    /**
+     * Method called if the string 'delete' is encountered in the {@link #command}.
+     * It deletes a list of computers from the database according to their
+     * {@link Computer#getId()} or {@link Computer#getName()}, depending on wether
+     * the user called 'delete -i ID' or 'delete -n NAME'.
+     *
+     * @param parsed
+     *            sub command to parse
+     * @return <code>true</code> if the command was valid, <code>false</code>
+     *         otherwise
+     * @see DAOFactory
+     */
     private boolean parseDelete(List<String> parsed) {
         boolean ret = false;
         Computer c = new Computer();

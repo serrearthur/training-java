@@ -34,15 +34,10 @@ public class DAOCompanyTest extends TestCase {
     public void tearDown() {
 
     }
-    
+
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-            { 1, "Apple"},
-            { 0, null},
-            { 1, null },
-            { null, "a"},
-        });
+        return Arrays.asList(new Object[][] {{1, "Apple"}, {0, null}, {1, null}, {null, "a"}});
     }
 
     @Parameter
@@ -51,8 +46,7 @@ public class DAOCompanyTest extends TestCase {
     public String name;
 
     @Test
-    public void testMapComputer()
-            throws SQLException {
+    public void testMapComputer() throws SQLException {
         Mockito.doReturn(id instanceof Integer ? id : 0).when(resultSet).getInt("id");
         if (!(id instanceof Integer)) {
             Mockito.doReturn(true).when(resultSet).wasNull();

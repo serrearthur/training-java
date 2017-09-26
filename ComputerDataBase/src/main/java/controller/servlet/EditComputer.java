@@ -1,7 +1,6 @@
-package controller;
+package controller.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -10,63 +9,64 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import service.validation.ComputerValidator;
-import dao.DAOFactory;
-import model.Computer;
+import controller.service.CompanyService;
+import controller.service.ComputerService;
 import view.dto.DTOComputer;
 
 /**
- * Servlet implementation class EditComputerView
+ * Servlet implementing the mechanics behind the edition of a computer.
+ * @author aserre
  */
 @WebServlet("/EditComputer")
 public class EditComputer extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/editComputer.jsp";
-    private static final String ATT_COMPUTERID = "computerId";
-    private static final String FIELD_ID = "id";
+    private static final String ATT_COMPUTERID = "id";
     private static final String FIELD_NAME = "computerName";
     private static final String FIELD_INTRODUCED = "introduced";
-    private static final String FIELD_DISONTINUED = "continued";
+    private static final String FIELD_DISCONTINUED = "discontinued";
     private static final String FIELD_COMPANYID = "companyId";
 
-    private static final DAOFactory FACTORY = DAOFactory.getInstance();
-    private DTOComputer currentComputer = null;
-
     /**
+     * @param request HTTP request
+     * @param response HTTP response to the request
+     * @throws ServletException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
+     * @throws IOException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        DTOComputer currentComputer = null;
         String computerID = request.getParameter(ATT_COMPUTERID);
         if (computerID != null) {
-            currentComputer = view.dto.DTOComputer
-                    .toDTOComputer(FACTORY.getComputerDao().getFromId(Integer.parseInt(computerID))).get(0);
+            currentComputer = ComputerService.getComputer(computerID);
         }
 
         request.setAttribute("computer", currentComputer);
-        request.setAttribute("companies", FACTORY.getCompanyDao().getAll());
+        request.setAttribute("companies", CompanyService.getCompanies());
         this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
     }
 
     /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     * @param request HTTP request
+     * @param response HTTP response to the request
+     * @throws ServletException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
+     * @throws IOException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter(FIELD_ID);
+        String id = request.getParameter(ATT_COMPUTERID);
         String name = request.getParameter(FIELD_NAME);
         String introduced = request.getParameter(FIELD_INTRODUCED);
-        String discontinued = request.getParameter(FIELD_DISONTINUED);
+        String discontinued = request.getParameter(FIELD_DISCONTINUED);
         String companyId = request.getParameter(FIELD_COMPANYID);
 
-        List<String> errors = new ArrayList<String>();
-        Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
-        
+        List<String> errors = ComputerService.editComputer(id, name, introduced, discontinued, companyId);
+
         if (errors.isEmpty()) {
-            c.setId(Integer.parseInt(id));
-            FACTORY.getComputerDao().update(c);
             request.getSession().invalidate();
             response.sendRedirect("/ComputerDataBase/home");
         } else {

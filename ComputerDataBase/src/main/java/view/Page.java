@@ -5,23 +5,23 @@ import java.util.List;
 
 public class Page<T> {
     private List<T> data;
-    private int elementPerPage;
+    private int limit;
     private int totalPage;
     private int currentPageNumber;
     private static final int DISPLAY_PAGE_BORDERS = 4;
 
-    public Page(List<T> data, int elementPerPage) {
+    public Page(List<T> data, int limit) {
         this.data = new ArrayList<T>();
         this.data.addAll(data);
-        this.elementPerPage = elementPerPage;
+        this.limit = limit;
         this.currentPageNumber = 1;
-        this.totalPage = 1 + this.data.size() / this.elementPerPage;
+        this.totalPage = 1 + this.data.size() / this.limit;
     }
 
     public List<T> getByPageNumber(int nb) {
         List<T> ret = new ArrayList<T>();
         if (nb > 0 && nb <= this.totalPage) {
-            for (int i = (nb - 1) * this.elementPerPage; i < nb * this.elementPerPage; i++) {
+            for (int i = (nb - 1) * this.limit; i < nb * this.limit; i++) {
                 if (i >= this.data.size()) {
                     break;
                 }
@@ -82,13 +82,13 @@ public class Page<T> {
         }
     }
 
-    public int getElementPerPage() {
-        return this.elementPerPage;
+    public int getLimit() {
+        return this.limit;
     }
 
-    public void setElementPerPage(int i) {
-        this.elementPerPage = i;
-        this.totalPage = 1 + this.data.size() / this.elementPerPage;
+    public void setLimit(int i) {
+        this.limit = i;
+        this.totalPage = 1 + this.data.size() / this.limit;
         this.currentPageNumber = Math.min(this.currentPageNumber, this.totalPage);
     }
 

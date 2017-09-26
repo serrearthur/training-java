@@ -38,10 +38,10 @@ public class DAOComputerTest extends TestCase {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-            { 1, 0, "bob", "1989-08-30 00:00:00", "2017-09-20 00:00:00" },
-            { null, null, null, null, null },
-            { 1, 0, "bob", null, null },
-            { null, null, null, "1989-08-30 00:00:00", "2017-09-20 00:00:00" },
+            {1, 0, "bob", "1989-08-30 00:00:00", "2017-09-20 00:00:00"},
+            {null, null, null, null, null},
+            {1, 0, "bob", null, null},
+            {null, null, null, "1989-08-30 00:00:00", "2017-09-20 00:00:00"},
         });
     }
 

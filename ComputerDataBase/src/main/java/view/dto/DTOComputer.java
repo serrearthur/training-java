@@ -1,11 +1,5 @@
 package view.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import dao.DAOFactory;
-import model.Computer;
-
 public class DTOComputer {
     private String id;
     private String name;
@@ -14,38 +8,7 @@ public class DTOComputer {
     private String company;
     private String companyId;
 
-    public static List<DTOComputer> toDTOComputer(List<Computer> l) {
-        List<DTOComputer> ret = new ArrayList<DTOComputer>();
-        for (Computer c : l) {
-            ret.add(new DTOComputer(c));
-        }
-        return ret;
-    }
-
-    public DTOComputer(Computer c) {
-        this.id = c.getId().toString();
-        this.name = c.getName();
-        try {
-            this.introduced = c.getIntroduced().toLocalDate().toString();
-        } catch (NullPointerException e) {
-            this.introduced = null;
-        }
-        try {
-            this.discontinued = c.getDiscontinued().toLocalDate().toString();
-        } catch (NullPointerException e) {
-            this.discontinued = null;
-        }
-        try {
-            this.company = DAOFactory.getInstance().getCompanyDao().getFromId(c.getCompanyId()).get(0).getName();
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
-            this.company = null;
-        }
-        try {
-            this.companyId = c.getCompanyId().toString();
-        } catch (NullPointerException e) {
-            this.companyId = null;
-        }
-
+    public DTOComputer() {
     }
 
     public String getId() {
