@@ -1,5 +1,9 @@
 package view.dto;
 
+/**
+ * DTO representation of a {@link model.Computer}.
+ * @author aserre
+ */
 public class DTOComputer {
     private String id;
     private String name;
@@ -8,6 +12,9 @@ public class DTOComputer {
     private String company;
     private String companyId;
 
+    /**
+     * Constructor.
+     */
     public DTOComputer() {
     }
 

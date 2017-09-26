@@ -1,1 +1,12 @@
 cli.controller
+cli.view
+controller.service
+controller.servlet
+controller.validation
+dao
+dao.exceptions
+dao.impl
+model
+view
+view.dto
+view.mapper

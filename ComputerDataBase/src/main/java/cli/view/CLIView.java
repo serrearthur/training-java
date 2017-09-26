@@ -63,7 +63,7 @@ public class CLIView {
      * Infinite loop used to call the main menu, parse the input of the user
      * and display the result of their request.
      * @param args required for the main function signature
-     * @throws IOException thrown by {@link System.in#read()}
+     * @throws IOException thrown by the System.in.read()
      */
     public static void main(String[] args) throws IOException  {
         CLICommand cli = new CLICommand("");

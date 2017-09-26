@@ -17,6 +17,10 @@ import dao.IDAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
 
+/**
+ * Class maping the request made to the database and the {@link Computer}.
+ * @author aserre
+ */
 public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
@@ -28,10 +32,20 @@ public class DAOComputer implements IDAOComputer {
 
     private final DAOFactory factory;
 
+    /**
+     * Constructor for the DAOComputer.
+     * @param factory singleton holding the DAOFactory
+     */
     public DAOComputer(DAOFactory factory) {
         this.factory = factory;
     }
 
+    /**
+     * Function mapping a {@link ResultSet} to a {@link Computer}.
+     * @param resultSet result of an SQL request
+     * @return a {@link Computer} mapped from the result of the request
+     * @throws SQLException thrown by {@link ResultSet}
+     */
     public static Computer map(ResultSet resultSet) throws SQLException {
         Computer computer = new Computer();
         computer.setId(resultSet.getInt("id"));
@@ -48,6 +62,14 @@ public class DAOComputer implements IDAOComputer {
         return computer;
     }
 
+    /**
+     * Make an SQL request to select a list of companies from the database.
+     * @param request SQL request to execute
+     * @param param parameters needed for the request
+     * @return the list of Computers corresponding to the request
+     * @throws DAOException thrown if the internal {@link Connection}, {@link PreparedStatement} or {@link ResultSet}
+     * throw an error
+     */
     private List<Computer> getComputers(String request, Object... param) throws DAOException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;

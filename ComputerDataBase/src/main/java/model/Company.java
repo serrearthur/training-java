@@ -1,12 +1,23 @@
 package model;
 
+/**
+ * Model class implementing a Company.
+ * @author aserre
+ */
 public class Company {
     private Integer id;
     private String name;
 
+    /**
+     * Constructor.
+     */
     public Company() {
     }
 
+    /**
+     * Constructor.
+     * @param name name of the company
+     */
     public Company(String name) {
         this.name = name;
     }

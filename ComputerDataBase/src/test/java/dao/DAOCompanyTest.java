@@ -18,6 +18,10 @@ import dao.impl.DAOCompany;
 import junit.framework.TestCase;
 import model.Company;
 
+/**
+ * Test class for {@link DAOCompany}.
+ * @author aserre
+ */
 @RunWith(Parameterized.class)
 public class DAOCompanyTest extends TestCase {
 
@@ -35,6 +39,10 @@ public class DAOCompanyTest extends TestCase {
 
     }
 
+    /**
+     * Sample data used for this test case.
+     * @return an array of values to be used for the test
+     */
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {{1, "Apple"}, {0, null}, {1, null}, {null, "a"}});
@@ -45,6 +53,10 @@ public class DAOCompanyTest extends TestCase {
     @Parameter(1)
     public String name;
 
+    /**
+     * Test of the {@link DAOCompany#map(ResultSet)} method.
+     * @throws SQLException thrown by the {@link ResultSet}
+     */
     @Test
     public void testMapComputer() throws SQLException {
         Mockito.doReturn(id instanceof Integer ? id : 0).when(resultSet).getInt("id");

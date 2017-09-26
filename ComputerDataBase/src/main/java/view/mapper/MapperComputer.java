@@ -10,7 +10,16 @@ import dao.DAOFactory;
 import model.Computer;
 import view.dto.DTOComputer;
 
+/**
+ * Mapper allowing to map {@link DTOComputer} and {@link Computer}.
+ * @author aserre
+ */
 public class MapperComputer {
+    /**
+     * Function converting a {@link Computer} into a {@link DTOComputer}.
+     * @param c original {@link Computer}
+     * @return result {@link DTOComputer}
+     */
     public static DTOComputer toDTOComputer(Computer c) {
         DTOComputer ret = new DTOComputer();
         ret.setId(c.getId().toString());
@@ -37,7 +46,12 @@ public class MapperComputer {
         }
         return ret;
     }
-    
+
+    /**
+     * Function converting a {@link DTOComputer} into a {@link Computer}.
+     * @param c original {@link DTOComputer}
+     * @return result {@link Computer}
+     */
     public static Computer toComputer(DTOComputer c) {
         Computer ret = new Computer();
         ret.setId(Integer.parseInt(c.getId()));
@@ -59,7 +73,12 @@ public class MapperComputer {
         }
         return ret;
     }
-    
+
+    /**
+     * Function converting a list of {@link Computer} into a list of {@link DTOComputer}.
+     * @param l original list of {@link Computer}
+     * @return result list of {@link DTOComputer}
+     */
     public static List<DTOComputer> toDTOComputer(List<Computer> l) {
         List<DTOComputer> ret = new ArrayList<DTOComputer>();
         for (Computer c : l) {
@@ -67,7 +86,12 @@ public class MapperComputer {
         }
         return ret;
     }
-    
+
+    /**
+     * Function converting a list of {@link DTOComputer} into a list of {@link Computer}.
+     * @param l original list of {@link DTOComputer}
+     * @return result list of {@link Computer}
+     */
     public static List<Computer> toComputer(List<DTOComputer> l) {
         List<Computer> ret = new ArrayList<Computer>();
         for (DTOComputer c : l) {

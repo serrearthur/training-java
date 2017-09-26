@@ -15,6 +15,10 @@ import dao.IDAOCompany;
 import dao.exceptions.DAOException;
 import model.Company;
 
+/**
+ * Class maping the request made to the database and the {@link Company}.
+ * @author aserre
+ */
 public class DAOCompany implements IDAOCompany {
     private final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
     private final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
@@ -25,10 +29,20 @@ public class DAOCompany implements IDAOCompany {
 
     private DAOFactory factory;
 
+    /**
+     * Constructor for the DAOCompany.
+     * @param factory singleton holding the DAOFactory
+     */
     public DAOCompany(DAOFactory factory) {
         this.factory = factory;
     }
 
+    /**
+     * Function mapping a {@link ResultSet} to a {@link Company}.
+     * @param resultSet result of an SQL request
+     * @return a {@link Company} mapped from the result of the request
+     * @throws SQLException thrown by {@link ResultSet#getInt(String)} and {@link ResultSet#getString(String)}
+     */
     public static Company map(ResultSet resultSet) throws SQLException {
         Company company = new Company();
         company.setId(resultSet.getInt("id"));
@@ -39,6 +53,14 @@ public class DAOCompany implements IDAOCompany {
         return company;
     }
 
+    /**
+     * Make an SQL request to select a list of companies from the database.
+     * @param request SQL request to execute
+     * @param param parameters needed for the request
+     * @return the list of Companies corresponding to the request
+     * @throws DAOException thrown if the internal {@link Connection}, {@link PreparedStatement} or {@link ResultSet}
+     * throw an error
+     */
     private List<Company> getCompanies(String request, Object... param) throws DAOException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;

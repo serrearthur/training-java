@@ -9,6 +9,10 @@ import java.util.Properties;
 
 import dao.exceptions.DAOConfigurationException;
 
+/**
+ * Class containing the methods to configure a connection to the database.
+ * @author aserre
+ */
 public class ConnectionManager {
     private static final String CONFIG_FILE = "dao.properties";
     private static final String PROPERTY_URL = "url";
@@ -23,6 +27,10 @@ public class ConnectionManager {
 
     private Connection connection;
 
+    /**
+     * Contructor for a new ConnectionManger.
+     * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
+     */
     public ConnectionManager() throws DAOConfigurationException {
         loadConfigFile();
     }
@@ -31,6 +39,10 @@ public class ConnectionManager {
         return connection;
     }
 
+    /**
+     * Load the dao.config file and configure the JDBC driver accordingly.
+     * @throws DAOConfigurationException thrown if the dao.config file can't be found
+     */
     public void loadConfigFile() throws DAOConfigurationException {
         Properties properties = new Properties();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -53,6 +65,10 @@ public class ConnectionManager {
         }
     }
 
+    /**
+     * Starts a new connection.
+     * @throws DAOConfigurationException thrown by the JDBC driver
+     */
     public void startConnection() throws DAOConfigurationException {
         try {
             this.connection = DriverManager.getConnection(this.url, this.username, this.password);

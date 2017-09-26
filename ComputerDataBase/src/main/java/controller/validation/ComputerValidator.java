@@ -21,7 +21,7 @@ public class ComputerValidator {
      * @param discontinued Discontinued date to validate
      * @param companyId companyId to validate
      * @param errors array where error messages are stored
-     * @return a properly formated {@link Compouter} object
+     * @return a properly formated {@link Computer} object
      */
     public static Computer validate(String id, String name, String introduced, String discontinued, String companyId,
             List<String> errors) {
@@ -41,7 +41,7 @@ public class ComputerValidator {
      * @param discontinued Discontinued date to validate
      * @param companyId companyId to validate
      * @param errors array where error messages are stored
-     * @return a properly formated {@link Compouter} object
+     * @return a properly formated {@link Computer} object
      */
     public static Computer validate(String name, String introduced, String discontinued, String companyId,
             List<String> errors) {

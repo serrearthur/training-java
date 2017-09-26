@@ -2,6 +2,10 @@ package model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Model class implementing a Computer.
+ * @author aserre
+ */
 public class Computer {
     private Integer id;
     private String name;
@@ -9,13 +13,25 @@ public class Computer {
     private LocalDateTime discontinued;
     private Integer companyId;
 
+    /**
+     * Constructor.
+     */
     public Computer() {
     }
 
+    /**
+     * Constructor.
+     * @param name name of the computer
+     */
     public Computer(String name) {
         this.name = name;
     }
 
+    /**
+     * Constructor.
+     * @param id id of the computer
+     * @param name name of the constructor
+     */
     public Computer(int id, String name) {
         this.id = id;
         this.name = name;

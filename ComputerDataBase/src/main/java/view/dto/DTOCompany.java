@@ -1,9 +1,17 @@
 package view.dto;
 
+/**
+ * DTO representation of a {@link model.Company}.
+ * @author aserre
+ *
+ */
 public class DTOCompany {
     String id;
     String name;
 
+    /**
+     * Constructor.
+     */
     public DTOCompany() {
     }
 
