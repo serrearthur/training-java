@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import controller.validation.ComputerValidator;
-import dao.DAOFactory;
+import dao.impl.DAOComputer;
 import model.Computer;
 import view.Page;
 import view.dto.DTOComputer;
@@ -15,15 +15,13 @@ import view.mapper.MapperComputer;
  * @author aserre
  */
 public class ComputerService {
-    private static final DAOFactory FACTORY = DAOFactory.getInstance();
-
     /**
      * Gets the current page from the database.
      * @param limit The maximum number of Computer per page
      * @return a list of computers in {@link DTOComputer} format
      */
     public static Page<DTOComputer> getPage(int limit) {
-        return new Page<DTOComputer>(MapperComputer.toDTOComputer(FACTORY.getComputerDao().getAll()), limit);
+        return new Page<DTOComputer>(MapperComputer.toDTOComputer(DAOComputer.getInstance().getAll()), limit);
     }
 
     /**
@@ -33,7 +31,7 @@ public class ComputerService {
      * @return a list of computers in {@link DTOComputer} format
      */
     public static Page<DTOComputer> getPage(String search, int limit) {
-        return new Page<DTOComputer>(MapperComputer.toDTOComputer(FACTORY.getComputerDao().getFromName(search)), limit);
+        return new Page<DTOComputer>(MapperComputer.toDTOComputer(DAOComputer.getInstance().getFromName(search)), limit);
     }
 
     /**
@@ -42,7 +40,7 @@ public class ComputerService {
      */
     public static void delete(String requestedDelete) {
         for (String s : requestedDelete.split(",")) {
-            FACTORY.getComputerDao().delete(new Computer(Integer.parseInt(s), ""));
+            DAOComputer.getInstance().delete(new Computer(Integer.parseInt(s), ""));
         }
     }
 
@@ -54,7 +52,7 @@ public class ComputerService {
     public static DTOComputer getComputer(String computerID) {
         DTOComputer c = new DTOComputer();
         try {
-            c = MapperComputer.toDTOComputer(FACTORY.getComputerDao().getFromId(Integer.parseInt(computerID))).get(0);
+            c = MapperComputer.toDTOComputer(DAOComputer.getInstance().getFromId(Integer.parseInt(computerID))).get(0);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             System.out.println("Computer \"" + computerID + "\" not found : " + e.getMessage());
         }
@@ -73,7 +71,7 @@ public class ComputerService {
         Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
-            FACTORY.getComputerDao().create(c);
+            DAOComputer.getInstance().create(c);
         }
         return errors;
     }
@@ -92,7 +90,7 @@ public class ComputerService {
         Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(id, name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
-            FACTORY.getComputerDao().update(c);
+            DAOComputer.getInstance().update(c);
         }
         return errors;
     }

@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dao.DAOFactory;
+import dao.impl.DAOCompany;
+import dao.impl.DAOComputer;
 import model.Company;
 import model.Computer;
 
@@ -21,7 +22,6 @@ import model.Computer;
  */
 public class CLICommand {
     private String command;
-    private DAOFactory factory;
     private List<Computer> result_computers;
     private List<Company> result_companies;
 
@@ -34,7 +34,6 @@ public class CLICommand {
      */
     public CLICommand(String command) {
         this.command = command;
-        this.factory = DAOFactory.getInstance();
         this.result_companies = new ArrayList<Company>();
         this.result_computers = new ArrayList<Computer>();
     }
@@ -133,12 +132,12 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            this.result_computers.addAll(factory.getComputerDao().getAll());
+            this.result_computers.addAll(DAOComputer.getInstance().getAll());
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
             System.out.println("LIST CPN");
-            this.result_companies.addAll(factory.getCompanyDao().getAll());
+            this.result_companies.addAll(DAOCompany.getInstance().getAll());
             ret = true;
         } else {
             System.out.println("LIST + ERROR");
@@ -164,7 +163,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with id X
                 System.out.println("SHOW -i " + parsed.get(2));
-                this.result_computers.addAll(factory.getComputerDao().getFromId(Integer.parseInt(parsed.get(2))));
+                this.result_computers.addAll(DAOComputer.getInstance().getFromId(Integer.parseInt(parsed.get(2))));
                 ret = true;
             } else {
                 System.out.println("SHOW -i + EMPTY : " + command);
@@ -173,7 +172,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with name X
                 System.out.println("SHOW -n " + parsed.get(2));
-                this.result_computers.addAll(factory.getComputerDao().getFromName(parsed.get(2)));
+                this.result_computers.addAll(DAOComputer.getInstance().getFromName(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");
@@ -183,7 +182,7 @@ public class CLICommand {
                 // case when we show computer with name X
                 System.out.println("SHOW -c " + parsed.get(2));
                 this.result_computers
-                        .addAll(factory.getComputerDao().getFromCompanyId(Integer.parseInt(parsed.get(2))));
+                        .addAll(DAOComputer.getInstance().getFromCompanyId(Integer.parseInt(parsed.get(2))));
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");
@@ -210,7 +209,7 @@ public class CLICommand {
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
             // case when we create a new computer with name X
             System.out.println("CREATE " + parsed.get(1));
-            factory.getComputerDao().create(new Computer(parsed.get(1)));
+            DAOComputer.getInstance().create(new Computer(parsed.get(1)));
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -249,7 +248,7 @@ public class CLICommand {
                 }
             }
             System.out.println("UPDATE : " + command);
-            factory.getComputerDao().update(c);
+            DAOComputer.getInstance().update(c);
             ret = true;
         } else {
             System.out.println("UPDATE + NOT_ENOUGH_ARGS : " + command);
@@ -276,7 +275,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
                 c.setId(Integer.parseInt(parsed.get(2)));
-                factory.getComputerDao().delete(c);
+                DAOComputer.getInstance().delete(c);
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
@@ -285,10 +284,19 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -n " + parsed.get(2));
                 c.setName(parsed.get(2));
-                factory.getComputerDao().delete(c);
+                DAOComputer.getInstance().delete(c);
                 ret = true;
             } else {
                 System.out.println("DELETE -n + EMPTY");
+            }
+        } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
+            if (!parsed.get(2).isEmpty()) {
+                System.out.println("DELETE -c " + parsed.get(2));
+                c.setCompanyId(Integer.parseInt(parsed.get(2)));
+                DAOComputer.getInstance().deleteCompanyId(c);
+                ret = true;
+            } else {
+                System.out.println("DELETE -c + EMPTY");
             }
         } else {
             System.out.println("DELETE + ERROR : " + command);

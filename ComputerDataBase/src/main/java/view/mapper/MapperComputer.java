@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.DAOFactory;
+import dao.impl.DAOCompany;
 import model.Computer;
 import view.dto.DTOComputer;
 
@@ -35,7 +35,7 @@ public class MapperComputer {
             ret.setDiscontinued(null);
         }
         try {
-            ret.setCompany(DAOFactory.getInstance().getCompanyDao().getFromId(c.getCompanyId()).get(0).getName());
+            ret.setCompany(DAOCompany.getInstance().getFromId(c.getCompanyId()).get(0).getName());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
         }

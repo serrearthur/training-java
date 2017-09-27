@@ -4,6 +4,7 @@
 <%@ attribute name="currentpage" required="true"%>
 <%@ attribute name="totalpage" required="true"%>
 <%@ attribute name="displayrange" required="true"%>
+<%@ attribute name="target" required="true"%>
 
 <c:set var="nextpage" value="${currentpage < totalpage ? currentpage +1 : currentpage }"/>
 <c:set var="previouspage" value="${currentpage > 1 ? currentpage -1 : currentpage }"/>
@@ -18,27 +19,27 @@
 
 <ul class="pagination">
 	<li>
-		<a href="<ex:linker target="/home" pagenb="1"/>" aria-label="First">
+		<a href="<ex:linker target="${target}" pagenb="1"/>" aria-label="First">
 			<span aria-hidden="true">&lt;&lt;</span>
 		</a>
 	</li>
 	<li>
-		<a href="<ex:linker target="/home" pagenb="${previouspage}"/>" aria-label="Previous">
+		<a href="<ex:linker target="${target}" pagenb="${previouspage}"/>" aria-label="Previous">
 			<span aria-hidden="true">&lt;</span>
 		</a>
 	</li>
 	<c:forEach var="i" begin="${displaymin}" end="${displaymax}">
 		<li class=${i eq currentpage?"active":"" }>
-			<a href="<ex:linker target="/home" pagenb="${i}"/>">${i}</a>
+			<a href="<ex:linker target="${target}" pagenb="${i}"/>">${i}</a>
 		</li>
 	</c:forEach>
 	<li>
-		<a href="<ex:linker target="/home" pagenb="${nextpage}"/>" aria-label="Next">
+		<a href="<ex:linker target="${target}" pagenb="${nextpage}"/>" aria-label="Next">
 			<span aria-hidden="true">&gt;</span>
 		</a>
 	</li>
 	<li>
-		<a href="<ex:linker target="/home" pagenb="${totalpage}"/>" aria-label="Last">
+		<a href="<ex:linker target="${target}" pagenb="${totalpage}"/>" aria-label="Last">
 			<span aria-hidden="true">&gt;&gt;</span>
 		</a>
 	</li>
