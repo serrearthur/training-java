@@ -4,15 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.List;
+import java.util.Map;
 
+import controller.ComputerFields;
 import model.Computer;
 
 /**
  * Class designed to assess wether data input from the user respects the format for {@link Computer}.
  * @author aserre
  */
-public class ComputerValidator {
+public class ComputerValidator implements ComputerFields {
     /**
      * Method containing a succession of tests to validate its input parameters.
      * @param id ID to validate
@@ -24,12 +25,12 @@ public class ComputerValidator {
      * @return a properly formated {@link Computer} object
      */
     public static Computer validate(String id, String name, String introduced, String discontinued, String companyId,
-            List<String> errors) {
+            Map<String, String> errors) {
         Computer c = validate(name, introduced, discontinued, companyId, errors);
         try {
             c.setId(validationId(id));
         } catch (ValidationException e) {
-            errors.add(e.getMessage());
+            errors.put(ATT_COMPUTERID, e.getMessage());
         }
         return c;
     }
@@ -44,21 +45,18 @@ public class ComputerValidator {
      * @return a properly formated {@link Computer} object
      */
     public static Computer validate(String name, String introduced, String discontinued, String companyId,
-            List<String> errors) {
+            Map<String, String> errors) {
         Computer c = new Computer();
         try {
             c.setName(validationName(name));
         } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-            errors.add(e.getMessage());
+            errors.put(ATT_NAME, e.getMessage());
         }
 
         try {
             c.setIntroduced(validationIntroduced(introduced));
         } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            errors.add(e.getMessage());
+            errors.put(ATT_INTRODUCED, e.getMessage());
         }
 
         try {
@@ -69,16 +67,13 @@ public class ComputerValidator {
                 throw new ValidationException("Discontinued date must be later than Introduced date.");
             }
         } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            errors.add(e.getMessage());
+            errors.put(ATT_DISCONTINUED, e.getMessage());
         }
 
         try {
             c.setCompanyId(validationCompanyId(companyId));
         } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-            errors.add(e.getMessage());
+            errors.put(ATT_COMPANYID, e.getMessage());
         }
         return c;
     }
@@ -88,11 +83,11 @@ public class ComputerValidator {
      * throws a ValidationException otherwise.
      * @param id ID to validate
      * @return parsed id
-     * @throws ValidationException thrown when the id is invalid
+     * @throws ValidationException thrown when the id is empty
      */
     private static Integer validationId(String id) throws ValidationException {
         if (id == null || id.isEmpty()) {
-            throw new ValidationException("Unable to parse Id.");
+            throw new ValidationException("Id can't be empty.");
         }
         try {
             int i = Integer.parseInt(id);
@@ -111,10 +106,10 @@ public class ComputerValidator {
      * throws a ValidationException otherwise.
      * @param name name to validate
      * @return valid name
-     * @throws ValidationException thrown when the name is invalid
+     * @throws ValidationException thrown when the name is empty
      */
     private static String validationName(String name) throws ValidationException {
-        if (name == null || name.trim().length() == 0) {
+        if (name == null || name.isEmpty()) {
             throw new ValidationException("Name can't be empty.");
         } else {
             return name;

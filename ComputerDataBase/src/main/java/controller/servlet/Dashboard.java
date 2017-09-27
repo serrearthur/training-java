@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import controller.GeneralFields;
 import controller.service.ComputerService;
 import view.dto.DTOComputer;
 import view.Page;
@@ -16,7 +17,7 @@ import view.Page;
  * @author aserre
  */
 @WebServlet("/home")
-public class Dashboard extends HttpServlet {
+public class Dashboard extends HttpServlet implements GeneralFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/home.jsp";
     private static final String ATT_PAGE = "page";
@@ -55,7 +56,6 @@ public class Dashboard extends HttpServlet {
         } else {
             page = ComputerService.getPage(limit);
         }
-        page.setLimit(limit);
         page.moveToPageNumber(pageNb);
 
         request.setAttribute(ATT_PAGE, page);
@@ -78,7 +78,7 @@ public class Dashboard extends HttpServlet {
         String requestedDelete = request.getParameter(ATT_DELETE);
         if (requestedDelete != null) {
             ComputerService.delete(requestedDelete);
-            response.sendRedirect("/ComputerDataBase/home");
+            response.sendRedirect(VIEW_HOME);
         } else {
             doGet(request, response);
         }

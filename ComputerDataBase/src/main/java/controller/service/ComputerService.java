@@ -1,7 +1,7 @@
 package controller.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import controller.validation.ComputerValidator;
 import dao.DAOFactory;
@@ -69,8 +69,8 @@ public class ComputerService {
      * @param companyId companyId of the new computer
      * @return a list of errors that occured during validation
      */
-    public static List<String> addComputer(String name, String introduced, String discontinued, String companyId) {
-        List<String> errors = new ArrayList<String>();
+    public static Map<String, String> addComputer(String name, String introduced, String discontinued, String companyId) {
+        Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
             FACTORY.getComputerDao().create(c);
@@ -87,9 +87,9 @@ public class ComputerService {
      * @param companyId companyId of the computer
      * @return a list of errors that occured during validation
      */
-    public static List<String> editComputer(String id, String name, String introduced, String discontinued,
+    public static Map<String, String> editComputer(String id, String name, String introduced, String discontinued,
             String companyId) {
-        List<String> errors = new ArrayList<String>();
+        Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(id, name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
             FACTORY.getComputerDao().update(c);

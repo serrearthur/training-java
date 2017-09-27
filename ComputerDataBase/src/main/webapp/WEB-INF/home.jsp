@@ -63,33 +63,7 @@
 
 <footer class="navbar-fixed-bottom">
 	<div class="container text-center">
-		<ul class="pagination">
-			<li>
-				<a href="<ex:linker target="/home" pageNb="1"/>" aria-label="First">
-					<span aria-hidden="true">&lt;&lt;</span>
-				</a>
-			</li>
-			<li>
-				<a href="<ex:linker target="/home" pageNb="${page.getPreviousPageNumber()}"/>" aria-label="Previous">
-					<span aria-hidden="true">&lt;</span>
-				</a>
-			</li>
-			<c:forEach var="i" begin="${page.getDisplayMin()}" end="${page.getDisplayMax()}">
-				<li class=${i eq page.currentPageNumber?"active":"" }>
-					<a href="<ex:linker target="/home" pageNb="${i}"/>">${i}</a>
-				</li>
-			</c:forEach>
-			<li>
-				<a href="<ex:linker target="/home" pageNb="${page.getNextPageNumber()}"/>" aria-label="Next">
-					<span aria-hidden="true">&gt;</span>
-				</a>
-			</li>
-			<li>
-				<a href="<ex:linker target="/home" pageNb="${page.totalPage}"/>" aria-label="Last">
-					<span aria-hidden="true">&gt;&gt;</span>
-				</a>
-			</li>
-		</ul>
+		<ex:pagination displayrange="${page.pageBorders}" totalpage="${page.totalPage}" currentpage="${page.currentPageNumber}"/>
 		
 		<div class="btn-group btn-group-sm pull-right" role="group">
 			<a class='btn btn-default ${limit eq 10? "disabled":"" }' href="<ex:linker target="/home" limit="10"/>">10</a>

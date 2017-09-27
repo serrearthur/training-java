@@ -13,7 +13,7 @@ public class Page<T> {
     private int limit;
     private int totalPage;
     private int currentPageNumber;
-    private static final int DISPLAY_PAGE_BORDERS = 4;
+    private int pageBorders;
 
     /**
      * Constructor.
@@ -26,6 +26,7 @@ public class Page<T> {
         this.limit = limit;
         this.currentPageNumber = 1;
         this.totalPage = 1 + this.data.size() / this.limit;
+        this.pageBorders = 4;
     }
 
     /**
@@ -51,32 +52,8 @@ public class Page<T> {
     }
 
     /**
-     * Gives the number of the next page, takes care of overflow.
-     * @return index of the next page
-     */
-    public int getNextPageNumber() {
-        if (this.currentPageNumber < this.totalPage) {
-            return this.currentPageNumber + 1;
-        } else {
-            return this.currentPageNumber;
-        }
-    }
-
-    /**
-     * Gives the previous page number, takes care of underflow.
-     * @return index of the previous page.
-     */
-    public int getPreviousPageNumber() {
-        if (this.currentPageNumber > 1) {
-            return this.currentPageNumber - 1;
-        } else {
-            return this.currentPageNumber;
-        }
-    }
-
-    /**
-     * Sets {@link Page#currentPageNumber} to a specific value.
-     * Checks for overflow and underflow.
+     * Sets {@link Page#currentPageNumber} to a specific value. Checks for overflow
+     * and underflow.
      * @param nb index of the new page
      * @return current page number, after affectation.
      */
@@ -95,30 +72,8 @@ public class Page<T> {
         return this.currentPageNumber;
     }
 
-    /**
-     * Method required to configure pagination.
-     * Returns the minimal index to display in the pagination.
-     * @return Minimal index to display
-     */
-    public int getDisplayMin() {
-        if (this.currentPageNumber + DISPLAY_PAGE_BORDERS > this.totalPage) {
-            return Math.max(this.totalPage - 2 * DISPLAY_PAGE_BORDERS, 1);
-        } else {
-            return Math.max(this.currentPageNumber - DISPLAY_PAGE_BORDERS, 1);
-        }
-    }
-
-    /**
-     * Method required to configure pagination.
-     * Returns the maximal index to display in the pagination.
-     * @return Maximal index to display
-     */
-    public int getDisplayMax() {
-        if (currentPageNumber - DISPLAY_PAGE_BORDERS <= 0) {
-            return Math.min(1 + 2 * DISPLAY_PAGE_BORDERS, this.totalPage);
-        } else {
-            return Math.min(this.currentPageNumber + DISPLAY_PAGE_BORDERS, this.totalPage);
-        }
+    public int getTotalCount() {
+        return data.size();
     }
 
     public int getLimit() {
@@ -126,8 +81,8 @@ public class Page<T> {
     }
 
     /**
-     * Sets the maximum number of item per page,
-     * and  consequently update the value of {@link Page#totalPage} and {@link Page#currentPageNumber}.
+     * Sets the maximum number of item per page, and consequently updates the value
+     * of {@link Page#totalPage} and {@link Page#currentPageNumber}.
      * @param i new maximum number of item per page
      */
     public void setLimit(int i) {
@@ -136,7 +91,11 @@ public class Page<T> {
         this.currentPageNumber = Math.min(this.currentPageNumber, this.totalPage);
     }
 
-    public int getTotalCount() {
-        return data.size();
+    public int getPageBorders() {
+        return this.pageBorders;
+    }
+
+    public void setPageBorders(int pageBorders) {
+        this.pageBorders = pageBorders;
     }
 }
