@@ -1,0 +1,79 @@
+package dao;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import dao.exceptions.DAOConfigurationException;
+
+/**
+ * Class containing the methods to configure a connection to the database.
+ * @author aserre
+ */
+public class ConnectionManager {
+    private static final String CONFIG_FILE = "dao.properties";
+    private static final String PROPERTY_URL = "url";
+    private static final String PROPERTY_DRIVER = "driver";
+    private static final String PROPERTY_USER = "username";
+    private static final String PROPERTY_PASS = "password";
+
+    private String url;
+    private String username;
+    private String password;
+    private String driver;
+
+    private Connection connection;
+
+    /**
+     * Contructor for a new ConnectionManger.
+     * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
+     */
+    public ConnectionManager() throws DAOConfigurationException {
+        loadConfigFile();
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * Load the dao.config file and configure the JDBC driver accordingly.
+     * @throws DAOConfigurationException thrown if the dao.config file can't be found
+     */
+    public void loadConfigFile() throws DAOConfigurationException {
+        Properties properties = new Properties();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream propertyFile = classLoader.getResourceAsStream(CONFIG_FILE);
+
+        if (propertyFile == null) {
+            throw new DAOConfigurationException("The properties file \"" + CONFIG_FILE + "\" does not exist.");
+        }
+        try {
+            properties.load(propertyFile);
+            this.url = properties.getProperty(PROPERTY_URL);
+            this.driver = properties.getProperty(PROPERTY_DRIVER);
+            this.username = properties.getProperty(PROPERTY_USER);
+            this.password = properties.getProperty(PROPERTY_PASS);
+            Class.forName(this.driver);
+        } catch (IOException e) {
+            throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
+        } catch (ClassNotFoundException e) {
+            throw new DAOConfigurationException("Can't find driver in classpath : ", e);
+        }
+    }
+
+    /**
+     * Starts a new connection.
+     * @throws DAOConfigurationException thrown by the JDBC driver
+     */
+    public void startConnection() throws DAOConfigurationException {
+        try {
+            this.connection = DriverManager.getConnection(this.url, this.username, this.password);
+        } catch (SQLException e) {
+            throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
+        }
+    }
+}
