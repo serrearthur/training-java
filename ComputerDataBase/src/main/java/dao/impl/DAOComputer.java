@@ -24,9 +24,11 @@ public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
     private static final String REQUEST_DELETE = "DELETE FROM computer WHERE id=?";
+    private static final String REQUEST_DELETE_COMPANYID = "DELETE FROM computer WHERE company_id=?";
+    private static final String REQUEST_DELETE_COMPANYID_COMPANY = "DELETE FROM company WHERE id=?";
     private static final String REQUEST_SELECT_ID = "SELECT * FROM computer WHERE id = ?";
-    private static final String REQUEST_SELECT_NAME = "SELECT * FROM computer WHERE name LIKE ?";
     private static final String REQUEST_SELECT_COMPANY = "SELECT * FROM computer WHERE company_id = ?";
+    private static final String REQUEST_SELECT_JOIN = "SELECT * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
     private static final String REQUEST_SELECT_ALL = "SELECT * FROM computer";
 
     /**
@@ -73,7 +75,7 @@ public class DAOComputer implements IDAOComputer {
     }
 
     /**
-     * Make an SQL request to select a list of companies from the database.
+     * Make an SQL request to select a list of computers from the database.
      * @param request SQL request to execute
      * @param params parameters needed for the request
      * @return the list of Computers corresponding to the request
@@ -96,7 +98,7 @@ public class DAOComputer implements IDAOComputer {
     }
 
     /**
-     * Make an SQL request to select a list of companies from the database.
+     * Make an SQL request to update a computer in the database.
      * @param request SQL request to execute
      * @param returnGeneratedKeys <code>true</code> if the request needs generated keys,
      * <code>false</code> otherwise
@@ -134,8 +136,40 @@ public class DAOComputer implements IDAOComputer {
     }
 
     @Override
+    public void deleteCompanyId(Computer c) throws DAOException {
+        Connection connection = null;
+        PreparedStatement computerStatement = null;
+        PreparedStatement companyStatement = null;
+        try {
+            System.out.println("inside delete");
+            connection = ConnectionManager.getInstance().getConnection();
+            computerStatement = initPreparedStatement(connection, REQUEST_DELETE_COMPANYID, false, c.getCompanyId());
+            companyStatement = initPreparedStatement(connection, REQUEST_DELETE_COMPANYID_COMPANY, false, c.getCompanyId());
+            connection.setAutoCommit(false);
+            computerStatement.executeUpdate();
+            companyStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                e.printStackTrace();
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } finally {
+            try {
+                connection.close();
+                computerStatement.close();
+                companyStatement.close();
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
+        }
+    }
+
+    @Override
     public List<Computer> getFromName(String name) throws DAOException {
-        return executeQuery(REQUEST_SELECT_NAME, "%" + name + "%");
+        return executeQuery(REQUEST_SELECT_JOIN, "%" + name + "%", "%" + name + "%");
     }
 
     @Override

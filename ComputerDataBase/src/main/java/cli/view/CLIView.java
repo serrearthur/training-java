@@ -28,7 +28,7 @@ public class CLIView {
                 + "\t-`show [-i ID | -n NAME | -c COMPANY_ID]' : Show computer details (the detailed information of only one computer)\n"
                 + "\t-`create NAME' : Create a computer\n"
                 + "\t-`update ID NAME [DATE_INTRODUCED DATE_DISCONTINUED COMPANY_ID]' : Update a computer\n"
-                + "\t-`delete [-i ID | -n NAME]' : Delete a computer\n" + "\t-`exit' : Exit application");
+                + "\t-`delete [-i ID | -n NAME | -c COMPANY_ID]' : Delete a computer\n" + "\t-`exit' : Exit application");
         String command = sc.nextLine();
         return command;
     }
@@ -40,6 +40,7 @@ public class CLIView {
     public static void cliResultView(CLICommand cli) {
         System.out.println("Request : " + cli.getCommand() + "\n------------------------------------");
         String format = "%-5s%-30s%-20s%-20s%-5s%n";
+
         if (!cli.getCompanies().isEmpty()) {
             System.out.printf(format, "ID", "Name", "", "", "");
             System.out.println("------------------------------------");
@@ -85,6 +86,7 @@ public class CLIView {
             }
             System.out.println("<--- press enter to continue --->");
             System.in.read();
+            sc.nextLine();
         }
         sc.close();
         System.out.println("Farewell!");

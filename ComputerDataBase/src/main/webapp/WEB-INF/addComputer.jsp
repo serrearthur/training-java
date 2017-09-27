@@ -8,17 +8,19 @@
 						<div class="form-group ${empty errors['name'] ? '' : 'has-error has-feedback'}">
 							<label for="name">Computer name</label>
 							<span style="font-style: italic; color:red;">${errors['name']}</span>
-							<input type="text" class="form-control" id="name" name="name" placeholder="Computer name">
+							<input type="text" class="form-control" id="name" name="name" placeholder="Computer name" required>
 						</div>
 						<div class="form-group ${empty errors['introduced'] ? '' : 'has-error has-feedback'}">
 							<label for="introduced">Introduced date</label>
 							<span style="font-style: italic; color:red;">${errors['introduced']}</span>
-							<input type="date" class="form-control" id="introduced" name="introduced" placeholder="Introduced date">
+							<input type="date" class="form-control" id="introduced" name="introduced" placeholder="Introduced date"
+							pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$" title="YYYY-MM-DD">
 						</div>
 						<div class="form-group ${empty errors['discontinued'] ? '' : 'has-error has-feedback'}">
 							<label for="discontinued">Discontinued date</label>
 							<span style="font-style: italic; color:red;">${errors['discontinued']}</span>
-							<input type="date" class="form-control" id="discontinued" name="discontinued" placeholder="Discontinued date">
+							<input type="date" class="form-control" id="discontinued" name="discontinued" placeholder="Discontinued date"
+							pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$" title="YYYY-MM-DD">
 						</div>
 						<div class="form-group ${empty errors['companyId'] ? '' : 'has-error has-feedback'}">
 							<label for="companyId">Company</label>

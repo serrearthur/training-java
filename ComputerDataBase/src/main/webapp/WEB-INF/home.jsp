@@ -22,12 +22,11 @@
 	</form>
 
 	<div class="container" style="margin-top: 10px;">
-		<table class="table table-striped table-bordered">
-			<thead>
+		<table class="table table-striped table-bordered" id="sort-table">
+ 			<thead>
 				<tr>
 					<!-- Variable declarations for passing labels as parameters -->
-					<!-- Table header for Computer Name -->
-					<th class="editMode" style="width: 60px; height: 22px;">
+					<th class="editMode" style="width: 60px; height: 22px;" >
 						<input type="checkbox" id="selectall" />
 						<span style="vertical-align: top;"> - 
 							 <a href="#" id="deleteSelected" onclick="$.fn.deleteSelected();" >
@@ -35,16 +34,18 @@
 							</a>
 						</span>
 					</th>
-					<th>Computer name</th>
-					<th>Introduced date</th>
+					<!-- Table header for Computer Name -->
+					<th onclick="sortTable(1)" style="cursor:pointer">Computer name</th>
+					<!-- Table header for Introduced Date -->
+					<th onclick="sortTable(2)" style="cursor:pointer">Introduced date</th>
 					<!-- Table header for Discontinued Date -->
-					<th>Discontinued date</th>
+					<th onclick="sortTable(3)" style="cursor:pointer">Discontinued date</th>
 					<!-- Table header for Company -->
-					<th>Company</th>
+					<th onclick="sortTable(4)" style="cursor:pointer">Company</th>
 				</tr>
-			</thead>
+ 			</thead>
 			<!-- Browse attribute computers -->
-			<tbody id="results">
+ 			<tbody id="results">
 				<c:forEach items="${page.currentPage}" var="c">
 					<tr>
 						<td class="editMode">
@@ -56,7 +57,7 @@
 						<td>${c.company}</td>
 					</tr>
 				</c:forEach>
-			</tbody>
+ 			</tbody>
 		</table>
 	</div>
 </section>

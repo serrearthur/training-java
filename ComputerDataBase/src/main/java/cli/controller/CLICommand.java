@@ -289,6 +289,15 @@ public class CLICommand {
             } else {
                 System.out.println("DELETE -n + EMPTY");
             }
+        } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
+            if (!parsed.get(2).isEmpty()) {
+                System.out.println("DELETE -c " + parsed.get(2));
+                c.setCompanyId(Integer.parseInt(parsed.get(2)));
+                DAOComputer.getInstance().deleteCompanyId(c);
+                ret = true;
+            } else {
+                System.out.println("DELETE -c + EMPTY");
+            }
         } else {
             System.out.println("DELETE + ERROR : " + command);
         }

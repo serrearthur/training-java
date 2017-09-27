@@ -88,7 +88,7 @@ public class DAOCompany implements IDAOCompany {
     }
 
     /**
-     * Make an SQL request to select a list of companies from the database.
+     * Make an SQL request to update a company in the database.
      * @param request SQL request to execute
      * @param returnGeneratedKeys <code>true</code> if the request needs generated keys,
      * <code>false</code> otherwise
