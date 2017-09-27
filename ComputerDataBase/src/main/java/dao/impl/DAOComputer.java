@@ -1,6 +1,5 @@
 package dao.impl;
 
-import static dao.impl.DAOUtility.silentShutdown;
 import static dao.impl.DAOUtility.initPreparedStatement;
 import static dao.impl.DAOUtility.dateTimeToTimestamp;
 import static dao.impl.DAOUtility.timestampToDateTime;
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.DAOFactory;
+import dao.ConnectionManager;
 import dao.IDAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
@@ -30,14 +29,25 @@ public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_SELECT_COMPANY = "SELECT * FROM computer WHERE company_id = ?";
     private static final String REQUEST_SELECT_ALL = "SELECT * FROM computer";
 
-    private final DAOFactory factory;
+    /**
+     * Initialization-on-demand singleton holder for {@link DAOComputer}.
+     */
+    private static class SingletonHolder {
+        private static final DAOComputer INSTANCE = new DAOComputer();
+    }
+
+    /**
+     * Accessor for the instance of the singleton.
+     * @return the instance of {@link DAOComputer}
+     */
+    public static DAOComputer getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
 
     /**
      * Constructor for the DAOComputer.
-     * @param factory singleton holding the DAOFactory
      */
-    public DAOComputer(DAOFactory factory) {
-        this.factory = factory;
+    private DAOComputer() {
     }
 
     /**
@@ -65,129 +75,81 @@ public class DAOComputer implements IDAOComputer {
     /**
      * Make an SQL request to select a list of companies from the database.
      * @param request SQL request to execute
-     * @param param parameters needed for the request
+     * @param params parameters needed for the request
      * @return the list of Computers corresponding to the request
-     * @throws DAOException thrown if the internal {@link Connection}, {@link PreparedStatement} or {@link ResultSet}
-     * throw an error
+     * @throws DAOException thrown if the internal {@link Connection},
+     * {@link PreparedStatement} or {@link ResultSet} throw an error
      */
-    private List<Computer> getComputers(String request, Object... param) throws DAOException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+    private List<Computer> executeQuery(String request, Object... params) throws DAOException {
         List<Computer> computers = new ArrayList<Computer>();
 
-        try {
-            /* Récupération d'une connection depuis la Factory */
-            connection = factory.getConnection();
-            preparedStatement = initPreparedStatement(connection, request, false, param);
-            resultSet = preparedStatement.executeQuery();
-            /* Parcours de la ligne de données de l'éventuel ResulSet retourné */
+        try (Connection connection = ConnectionManager.getInstance().getConnection();
+        PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
+        ResultSet resultSet = preparedStatement.executeQuery();) {
             while (resultSet.next()) {
                 computers.add(map(resultSet));
             }
         } catch (SQLException e) {
             throw new DAOException(e);
-        } finally {
-            silentShutdown(resultSet, preparedStatement, connection);
         }
         return computers;
     }
 
-    @Override
-    public void create(Computer computer) throws DAOException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            /* Récupération d'une connection depuis la Factory */
-            connection = factory.getConnection();
-            preparedStatement = initPreparedStatement(connection, REQUEST_CREATE, true, computer.getName(),
-                    dateTimeToTimestamp(computer.getIntroduced()), dateTimeToTimestamp(computer.getDiscontinued()),
-                    computer.getCompanyId());
-            int statut = preparedStatement.executeUpdate();
-            /* Analyse du statut retourné par la requête d'insertion */
-            if (statut == 0) {
-                throw new DAOException("Unable to create this computer, no row added to the table.");
-            }
-            /* Récupération de l'id auto-généré par la requête d'insertion */
-            resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                /* Puis initialisation de la propriété id du bean Utilisateur avec sa valeur */
-                computer.setId(resultSet.getInt(1));
-            } else {
-                throw new DAOException("Unable to create this computer, no generated key given.");
+    /**
+     * Make an SQL request to select a list of companies from the database.
+     * @param request SQL request to execute
+     * @param returnGeneratedKeys <code>true</code> if the request needs generated keys,
+     * <code>false</code> otherwise
+     * @param params parameters needed for the request
+     * @throws DAOException thrown if the internal {@link Connection},
+     * {@link PreparedStatement} or {@link ResultSet} throw an error
+     */
+    private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
+        try (Connection connection = ConnectionManager.getInstance().getConnection();
+        PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
+            int status = preparedStatement.executeUpdate();
+            if (status == 0) {
+                throw new DAOException("Unable to update this computer, no row added to the table.");
             }
         } catch (SQLException e) {
             throw new DAOException(e);
-        } finally {
-            silentShutdown(resultSet, preparedStatement, connection);
         }
+    }
+
+    @Override
+    public void create(Computer computer) throws DAOException {
+        executeUpdate(REQUEST_CREATE, true, computer.getName(), dateTimeToTimestamp(computer.getIntroduced()),
+                        dateTimeToTimestamp(computer.getDiscontinued()), computer.getCompanyId());
     }
 
     @Override
     public void update(Computer computer) throws DAOException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            /* Récupération d'une connection depuis la Factory */
-            connection = factory.getConnection();
-            preparedStatement = initPreparedStatement(connection, REQUEST_UPDATE, false, computer.getName(),
-                    dateTimeToTimestamp(computer.getIntroduced()), dateTimeToTimestamp(computer.getDiscontinued()),
-                    computer.getCompanyId(), computer.getId());
-            int status = preparedStatement.executeUpdate();
-            /* Analyse du statut retourné par la requête d'insertion */
-            if (status == 0) {
-                throw new DAOException("Unable to update this computer, no row modified in the table.");
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        } finally {
-            silentShutdown(resultSet, preparedStatement, connection);
-        }
+        executeUpdate(REQUEST_UPDATE, false, computer.getName(), dateTimeToTimestamp(computer.getIntroduced()),
+                        dateTimeToTimestamp(computer.getDiscontinued()), computer.getCompanyId(), computer.getId());
     }
 
     @Override
     public void delete(Computer computer) throws DAOException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            /* Récupération d'une connection depuis la Factory */
-            connection = factory.getConnection();
-            preparedStatement = initPreparedStatement(connection, REQUEST_DELETE, false, computer.getId());
-            int status = preparedStatement.executeUpdate();
-            /* Analyse du statut retourné par la requête d'insertion */
-            if (status == 0) {
-                throw new DAOException("Unable to delete this computer, no row removed from the table.");
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        } finally {
-            silentShutdown(resultSet, preparedStatement, connection);
-        }
+        executeUpdate(REQUEST_DELETE, false, computer.getId());
     }
 
     @Override
     public List<Computer> getFromName(String name) throws DAOException {
-        return getComputers(REQUEST_SELECT_NAME, "%" + name + "%");
+        return executeQuery(REQUEST_SELECT_NAME, "%" + name + "%");
     }
 
     @Override
     public List<Computer> getFromId(Integer id) throws DAOException {
-        return getComputers(REQUEST_SELECT_ID, id.toString());
+        return executeQuery(REQUEST_SELECT_ID, id.toString());
     }
 
     @Override
     public List<Computer> getFromCompanyId(Integer id) throws DAOException {
-        return getComputers(REQUEST_SELECT_COMPANY, id.toString());
+        return executeQuery(REQUEST_SELECT_COMPANY, id.toString());
     }
 
     @Override
     public List<Computer> getAll() throws DAOException {
-        return getComputers(REQUEST_SELECT_ALL);
+        return executeQuery(REQUEST_SELECT_ALL);
     }
 }

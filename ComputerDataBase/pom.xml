@@ -1,21 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ComputerDataBase</groupId>
+	<groupId>com.ebiz</groupId>
 	<artifactId>ComputerDataBase</artifactId>
 	<packaging>war</packaging>
 	<version>4.3.4</version>
 	<name>ComputerDataBase</name>
 
 	<properties>
+		<!-- Project properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven-compiler.version>3.6.1</maven-compiler.version>
-		<java-source.version>1.8</java-source.version>
-		<java-target.version>1.8</java-target.version>
+
+		<!-- Dependencies properties -->
 		<jstl.version>1.2</jstl.version>
 		<mysql.version>5.1.44</mysql.version>
+		<hikaricp.version>2.7.1</hikaricp.version>
+		<slf4j.version>1.7.25</slf4j.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
+				
+		<!-- Plugins properties -->
+		<maven.compiler.version>3.7.0</maven.compiler.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -30,6 +37,20 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikaricp.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -49,16 +70,14 @@
 	</dependencies>
 
 	<build>
-		<finalName>ComputerDataBase</finalName>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler.version}</version>
+				<version>${maven.compiler.version}</version>
 				<configuration>
-					<source>${java-source.version}</source>
-					<target>${java-target.version}</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
 		</plugins>

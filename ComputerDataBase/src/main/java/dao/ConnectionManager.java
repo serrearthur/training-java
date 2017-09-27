@@ -1,11 +1,10 @@
 package dao;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import dao.exceptions.DAOConfigurationException;
 
@@ -14,64 +13,59 @@ import dao.exceptions.DAOConfigurationException;
  * @author aserre
  */
 public class ConnectionManager {
-    private static final String CONFIG_FILE = "dao.properties";
-    private static final String PROPERTY_URL = "url";
-    private static final String PROPERTY_DRIVER = "driver";
-    private static final String PROPERTY_USER = "username";
-    private static final String PROPERTY_PASS = "password";
+    private static final String CONFIG_FILE = "/db.properties";
 
-    private String url;
-    private String username;
-    private String password;
-    private String driver;
+    private HikariConfig config;
+    private HikariDataSource datasource;
 
-    private Connection connection;
+    /**
+     * Initialization-on-demand singleton holder  for {@link ConnectionManager}.
+     */
+    private static class SingletonHolder {
+        private static final ConnectionManager INSTANCE = new ConnectionManager();
+    }
+
+    /**
+     * Accessor for the instance of the singleton.
+     * @return the instance of {@link ConnectionManager}
+     */
+    public static ConnectionManager getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
 
     /**
      * Contructor for a new ConnectionManger.
      * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
      */
-    public ConnectionManager() throws DAOConfigurationException {
+    private ConnectionManager() throws DAOConfigurationException {
         loadConfigFile();
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     /**
      * Load the dao.config file and configure the JDBC driver accordingly.
      * @throws DAOConfigurationException thrown if the dao.config file can't be found
      */
-    public void loadConfigFile() throws DAOConfigurationException {
-        Properties properties = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        InputStream propertyFile = classLoader.getResourceAsStream(CONFIG_FILE);
-
-        if (propertyFile == null) {
-            throw new DAOConfigurationException("The properties file \"" + CONFIG_FILE + "\" does not exist.");
+    private void loadConfigFile() throws DAOConfigurationException {
+        try {
+            this.config = new HikariConfig(CONFIG_FILE);
+        } catch (RuntimeException e) {
+            throw new DAOConfigurationException("Unable to load the file \"" + CONFIG_FILE + "\".");
         }
         try {
-            properties.load(propertyFile);
-            this.url = properties.getProperty(PROPERTY_URL);
-            this.driver = properties.getProperty(PROPERTY_DRIVER);
-            this.username = properties.getProperty(PROPERTY_USER);
-            this.password = properties.getProperty(PROPERTY_PASS);
-            Class.forName(this.driver);
-        } catch (IOException e) {
-            throw new DAOConfigurationException("Unable to load file \"" + CONFIG_FILE + "\" : ", e);
-        } catch (ClassNotFoundException e) {
-            throw new DAOConfigurationException("Can't find driver in classpath : ", e);
+            this.datasource = new HikariDataSource(this.config);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw new DAOConfigurationException("Invalid properties.");
         }
     }
 
     /**
-     * Starts a new connection.
-     * @throws DAOConfigurationException thrown by the JDBC driver
+     * Gets a connection from the pool or creates a new one.
+     * @return a connection taken from the pool
+     * @throws DAOConfigurationException thrown if Hikari is unable to connect to the database
      */
-    public void startConnection() throws DAOConfigurationException {
+    public Connection getConnection() throws DAOConfigurationException {
         try {
-            this.connection = DriverManager.getConnection(this.url, this.username, this.password);
+            return this.datasource.getConnection();
         } catch (SQLException e) {
             throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
         }

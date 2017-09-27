@@ -2,7 +2,6 @@ package dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -40,76 +39,22 @@ public final class DAOUtility {
     }
 
     /**
-     * Silent shutdown of a {@link ResultSet}.
-     * @param resultSet {@link ResultSet} to close
-     */
-    public static void silentShutdown(ResultSet resultSet) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                System.out.println("Unable to close ResultSet : " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Silent shutdown of a {@link Statement}.
-     * @param statement {@link Statement} to close
-     */
-    public static void silentShutdown(Statement statement) {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.out.println("Unable to close Statement : " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Silent shutdown of a {@link Connection}.
-     * @param connection {@link Connection} to close
-     */
-    public static void silentShutdown(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.out.println("Unable to close Connection : " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Silent shutdown of a {@link Connection}, {@link Statement} and {@link Connection}.
-     * @param resultSet {@link ResultSet} to close
-     * @param statement {@link Statement} to close
-     * @param connection {@link Connection} to close
-     */
-    public static void silentShutdown(ResultSet resultSet, Statement statement, Connection connection) {
-        silentShutdown(resultSet);
-        silentShutdown(statement);
-        silentShutdown(connection);
-    }
-
-    /**
      * Creates a {@link PreparedStatement} taking in account the {@link Connection}, the request,
      * and formats all the objects passed as arguments.
      * @param connection {@link Connection} to the database
      * @param request request to be executed
      * @param returnGeneratedKeys <code>true</code> if the request needs generated keys,
      * <code>false</code> otherwise
-     * @param objects dynamic range of arguments
+     * @param params dynamic range of arguments
      * @return the resulting {@link PreparedStatement}
      * @throws SQLException thrown during the creation of the {@link PreparedStatement}
      */
     public static PreparedStatement initPreparedStatement(Connection connection, String request,
-            boolean returnGeneratedKeys, Object... objects) throws SQLException {
+            boolean returnGeneratedKeys, Object... params) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(request,
                 returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
-        for (int i = 0; i < objects.length; i++) {
-            preparedStatement.setObject(i + 1, objects[i]);
+        for (int i = 0; i < params.length; i++) {
+            preparedStatement.setObject(i + 1, params[i]);
         }
         return preparedStatement;
     }

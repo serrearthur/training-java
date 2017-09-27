@@ -63,7 +63,8 @@
 
 <footer class="navbar-fixed-bottom">
 	<div class="container text-center">
-		<ex:pagination displayrange="${page.pageBorders}" totalpage="${page.totalPage}" currentpage="${page.currentPageNumber}"/>
+		<ex:pagination displayrange="${page.pageBorders}" totalpage="${page.totalPage}"
+			currentpage="${page.currentPageNumber}" target="/home"/>
 		
 		<div class="btn-group btn-group-sm pull-right" role="group">
 			<a class='btn btn-default ${limit eq 10? "disabled":"" }' href="<ex:linker target="/home" limit="10"/>">10</a>
