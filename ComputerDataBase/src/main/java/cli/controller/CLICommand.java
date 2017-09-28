@@ -1,17 +1,14 @@
 package cli.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dao.impl.DAOCompany;
-import dao.impl.DAOComputer;
-import model.Company;
-import model.Computer;
+import controller.service.ServiceCompany;
+import controller.service.ServiceComputer;
+import view.dto.DTOCompany;
+import view.dto.DTOComputer;
 
 /**
  * Class designed to parse a user input and execute backend actions accordingly.
@@ -22,8 +19,8 @@ import model.Computer;
  */
 public class CLICommand {
     private String command;
-    private List<Computer> result_computers;
-    private List<Company> result_companies;
+    private List<DTOComputer> result_computers;
+    private List<DTOCompany> result_companies;
 
     /**
      * Creates a CLICommand object from a command line input. A CLICommand contains
@@ -34,8 +31,8 @@ public class CLICommand {
      */
     public CLICommand(String command) {
         this.command = command;
-        this.result_companies = new ArrayList<Company>();
-        this.result_computers = new ArrayList<Computer>();
+        this.result_companies = new ArrayList<DTOCompany>();
+        this.result_computers = new ArrayList<DTOComputer>();
     }
 
     /**
@@ -57,7 +54,7 @@ public class CLICommand {
      *
      * @return result of the backend operations on the computers
      */
-    public List<Computer> getComputers() {
+    public List<DTOComputer> getComputers() {
         return result_computers;
     }
 
@@ -67,7 +64,7 @@ public class CLICommand {
      *
      * @return result of the backend operations on the companies
      */
-    public List<Company> getCompanies() {
+    public List<DTOCompany> getCompanies() {
         return result_companies;
     }
 
@@ -82,8 +79,8 @@ public class CLICommand {
     public boolean parse() {
         // we reset the values for the request
         boolean ret = false;
-        this.result_companies = new ArrayList<Company>();
-        this.result_computers = new ArrayList<Computer>();
+        this.result_companies = new ArrayList<DTOCompany>();
+        this.result_computers = new ArrayList<DTOComputer>();
 
         List<String> parsed = new ArrayList<String>();
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(this.command);
@@ -132,12 +129,12 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            this.result_computers.addAll(DAOComputer.getInstance().getAll());
+            this.result_computers.addAll(ServiceComputer.getPage(1000).getCurrentPage());
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
             System.out.println("LIST CPN");
-            this.result_companies.addAll(DAOCompany.getInstance().getAll());
+            this.result_companies.addAll(ServiceCompany.getCompanies());
             ret = true;
         } else {
             System.out.println("LIST + ERROR");
@@ -163,7 +160,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with id X
                 System.out.println("SHOW -i " + parsed.get(2));
-                this.result_computers.addAll(DAOComputer.getInstance().getFromId(Integer.parseInt(parsed.get(2))));
+                this.result_computers.add(ServiceComputer.getComputer(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("SHOW -i + EMPTY : " + command);
@@ -172,17 +169,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with name X
                 System.out.println("SHOW -n " + parsed.get(2));
-                this.result_computers.addAll(DAOComputer.getInstance().getFromName(parsed.get(2)));
-                ret = true;
-            } else {
-                System.out.println("SHOW -n + EMPTY");
-            }
-        } else if (parsed.get(1).equals("-c")) {
-            if (!parsed.get(2).isEmpty()) {
-                // case when we show computer with name X
-                System.out.println("SHOW -c " + parsed.get(2));
-                this.result_computers
-                        .addAll(DAOComputer.getInstance().getFromCompanyId(Integer.parseInt(parsed.get(2))));
+                this.result_computers.addAll(ServiceComputer.getPage(parsed.get(2), 1000).getCurrentPage());
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");
@@ -209,7 +196,7 @@ public class CLICommand {
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
             // case when we create a new computer with name X
             System.out.println("CREATE " + parsed.get(1));
-            DAOComputer.getInstance().create(new Computer(parsed.get(1)));
+            ServiceComputer.addComputer(parsed.get(1), "", "", "");
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -234,21 +221,20 @@ public class CLICommand {
         // we check if each parameter is present, if yes we add it to our computer
         // object
         if (parsed.size() >= 3 && !parsed.get(2).isEmpty()) {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            Computer c = new Computer();
-            c.setId(Integer.parseInt(parsed.get(1)));
+            DTOComputer c = new DTOComputer();
+            c.setId(parsed.get(1));
             c.setName(parsed.get(2));
             if (parsed.size() >= 4 && !parsed.get(3).isEmpty()) {
-                c.setIntroduced(LocalDateTime.of(LocalDate.parse(parsed.get(3), dtf), null));
+                c.setIntroduced(parsed.get(3));
                 if (parsed.size() >= 5 && !parsed.get(4).isEmpty()) {
-                    c.setDiscontinued(LocalDateTime.of(LocalDate.parse(parsed.get(4), dtf), null));
+                    c.setDiscontinued(parsed.get(4));
                     if (parsed.size() >= 6 && !parsed.get(5).isEmpty()) {
-                        c.setCompanyId(Integer.parseInt(parsed.get(5)));
+                        c.setCompanyId(parsed.get(5));
                     }
                 }
             }
             System.out.println("UPDATE : " + command);
-            DAOComputer.getInstance().update(c);
+            ServiceComputer.editComputer(c.getId(), c.getName(), c.getIntroduced(), c.getDiscontinued(), c.getCompanyId());
             ret = true;
         } else {
             System.out.println("UPDATE + NOT_ENOUGH_ARGS : " + command);
@@ -270,30 +256,18 @@ public class CLICommand {
      */
     private boolean parseDelete(List<String> parsed) {
         boolean ret = false;
-        Computer c = new Computer();
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
-                c.setId(Integer.parseInt(parsed.get(2)));
-                DAOComputer.getInstance().delete(c);
+                ServiceComputer.delete(parsed.get(2));
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
             }
-        } else if (parsed.size() >= 3 && parsed.get(1).equals("-n")) {
-            if (!parsed.get(2).isEmpty()) {
-                System.out.println("DELETE -n " + parsed.get(2));
-                c.setName(parsed.get(2));
-                DAOComputer.getInstance().delete(c);
-                ret = true;
-            } else {
-                System.out.println("DELETE -n + EMPTY");
-            }
         } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -c " + parsed.get(2));
-                c.setCompanyId(Integer.parseInt(parsed.get(2)));
-                DAOComputer.getInstance().deleteCompanyId(c);
+                ServiceCompany.deleteCompany(Integer.parseInt(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("DELETE -c + EMPTY");

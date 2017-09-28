@@ -25,7 +25,6 @@ public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
     private static final String REQUEST_DELETE = "DELETE FROM computer WHERE id=?";
     private static final String REQUEST_DELETE_COMPANYID = "DELETE FROM computer WHERE company_id=?";
-    private static final String REQUEST_DELETE_COMPANYID_COMPANY = "DELETE FROM company WHERE id=?";
     private static final String REQUEST_SELECT_ID = "SELECT * FROM computer WHERE id = ?";
     private static final String REQUEST_SELECT_COMPANY = "SELECT * FROM computer WHERE company_id = ?";
     private static final String REQUEST_SELECT_JOIN = "SELECT * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
@@ -86,8 +85,8 @@ public class DAOComputer implements IDAOComputer {
         List<Computer> computers = new ArrayList<Computer>();
 
         try (Connection connection = ConnectionManager.getInstance().getConnection();
-        PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
-        ResultSet resultSet = preparedStatement.executeQuery();) {
+                PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
+                ResultSet resultSet = preparedStatement.executeQuery();) {
             while (resultSet.next()) {
                 computers.add(map(resultSet));
             }
@@ -108,7 +107,7 @@ public class DAOComputer implements IDAOComputer {
      */
     private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
         try (Connection connection = ConnectionManager.getInstance().getConnection();
-        PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
+                PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
             int status = preparedStatement.executeUpdate();
             if (status == 0) {
                 throw new DAOException("Unable to update this computer, no row added to the table.");
@@ -131,40 +130,13 @@ public class DAOComputer implements IDAOComputer {
     }
 
     @Override
-    public void delete(Computer computer) throws DAOException {
-        executeUpdate(REQUEST_DELETE, false, computer.getId());
+    public void delete(Integer id) throws DAOException {
+        executeUpdate(REQUEST_DELETE, false, id);
     }
 
     @Override
-    public void deleteCompanyId(Computer c) throws DAOException {
-        Connection connection = null;
-        PreparedStatement computerStatement = null;
-        PreparedStatement companyStatement = null;
-        try {
-            System.out.println("inside delete");
-            connection = ConnectionManager.getInstance().getConnection();
-            computerStatement = initPreparedStatement(connection, REQUEST_DELETE_COMPANYID, false, c.getCompanyId());
-            companyStatement = initPreparedStatement(connection, REQUEST_DELETE_COMPANYID_COMPANY, false, c.getCompanyId());
-            connection.setAutoCommit(false);
-            computerStatement.executeUpdate();
-            companyStatement.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-                throw new DAOException(e);
-            } catch (SQLException ex) {
-                throw new DAOException(ex);
-            }
-        } finally {
-            try {
-                connection.close();
-                computerStatement.close();
-                companyStatement.close();
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        }
+    public void deleteCompanyId(Integer companyId) throws DAOException {
+        executeUpdate(REQUEST_DELETE_COMPANYID, false, companyId);
     }
 
     @Override

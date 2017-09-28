@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import controller.ComputerFields;
 import controller.GeneralFields;
-import controller.service.CompanyService;
-import controller.service.ComputerService;
+import controller.service.ServiceCompany;
+import controller.service.ServiceComputer;
 
 /**
  * Servlet implementing the mechanics behind the addition of a new computer.
@@ -33,7 +33,7 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute(ATT_COMPANIES, CompanyService.getCompanies());
+        request.setAttribute(ATT_COMPANIES, ServiceCompany.getCompanies());
         this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
     }
 
@@ -52,7 +52,7 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
         String discontinued = request.getParameter(ATT_DISCONTINUED);
         String companyId = request.getParameter(ATT_COMPANYID);
 
-        Map<String, String> errors = ComputerService.addComputer(name, introduced, discontinued, companyId);
+        Map<String, String> errors = ServiceComputer.addComputer(name, introduced, discontinued, companyId);
 
         if (errors.isEmpty()) {
             response.sendRedirect(VIEW_HOME);

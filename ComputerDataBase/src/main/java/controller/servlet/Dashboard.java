@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import controller.GeneralFields;
-import controller.service.ComputerService;
+import controller.service.ServiceComputer;
 import view.dto.DTOComputer;
 import view.Page;
 
@@ -52,9 +52,9 @@ public class Dashboard extends HttpServlet implements GeneralFields {
 
         String requestedSearch = request.getParameter(ATT_SEARCH);
         if (requestedSearch != null) {
-            page = ComputerService.getPage(requestedSearch, limit);
+            page = ServiceComputer.getPage(requestedSearch, limit);
         } else {
-            page = ComputerService.getPage(limit);
+            page = ServiceComputer.getPage(limit);
         }
         page.moveToPageNumber(pageNb);
 
@@ -77,7 +77,7 @@ public class Dashboard extends HttpServlet implements GeneralFields {
             throws ServletException, IOException {
         String requestedDelete = request.getParameter(ATT_DELETE);
         if (requestedDelete != null) {
-            ComputerService.delete(requestedDelete);
+            ServiceComputer.delete(requestedDelete);
             response.sendRedirect(VIEW_HOME);
         } else {
             doGet(request, response);

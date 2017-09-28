@@ -171,7 +171,7 @@ public class ComputerValidator implements ComputerFields {
                 return i;
             }
         } catch (NumberFormatException e) {
-            throw new ValidationException("Invalid identifier");
+            throw new ValidationException("Invalid identifier.");
         }
     }
 }

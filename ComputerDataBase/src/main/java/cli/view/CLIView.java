@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import cli.controller.CLICommand;
-import model.Company;
-import model.Computer;
+import view.dto.DTOCompany;
+import view.dto.DTOComputer;
 
 /**
  * Class designed to display a menu for the user to enter their input,
@@ -25,10 +25,10 @@ public class CLIView {
     public static String homeView() {
         System.out.println("Available command lines :\n" + "\t-`list cpt' : List computers\n"
                 + "\t-`list cpn' : List companies\n"
-                + "\t-`show [-i ID | -n NAME | -c COMPANY_ID]' : Show computer details (the detailed information of only one computer)\n"
+                + "\t-`show [-i ID | -n NAME ]' : Show computer details (the detailed information of only one computer)\n"
                 + "\t-`create NAME' : Create a computer\n"
                 + "\t-`update ID NAME [DATE_INTRODUCED DATE_DISCONTINUED COMPANY_ID]' : Update a computer\n"
-                + "\t-`delete [-i ID | -n NAME | -c COMPANY_ID]' : Delete a computer\n" + "\t-`exit' : Exit application");
+                + "\t-`delete [-i ID | -c COMPANY_ID]' : Delete a computer\n" + "\t-`exit' : Exit application");
         String command = sc.nextLine();
         return command;
     }
@@ -44,14 +44,14 @@ public class CLIView {
         if (!cli.getCompanies().isEmpty()) {
             System.out.printf(format, "ID", "Name", "", "", "");
             System.out.println("------------------------------------");
-            for (Company c : cli.getCompanies()) {
+            for (DTOCompany c : cli.getCompanies()) {
                 System.out.printf(format, c.getId(), c.getName(), "", "", "");
             }
         }
         if (!cli.getComputers().isEmpty()) {
             System.out.printf(format, "ID", "Name", "Introduced", "Discontinued", "Company ID");
             System.out.println("-------------------------------------------------------------------------------------");
-            for (Computer c : cli.getComputers()) {
+            for (DTOComputer c : cli.getComputers()) {
                 System.out.printf(format, c.getId(), c.getName(),
                         c.getIntroduced() == null ? "" : c.getIntroduced().toString(),
                                 c.getDiscontinued() == null ? "" : c.getDiscontinued().toString(),
