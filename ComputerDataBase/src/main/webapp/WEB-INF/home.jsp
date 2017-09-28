@@ -22,7 +22,7 @@
 	</form>
 
 	<div class="container" style="margin-top: 10px;">
-		<table class="table table-striped table-bordered" id="sort-table">
+		<table class="table table-striped table-bordered">
  			<thead>
 				<tr>
 					<!-- Variable declarations for passing labels as parameters -->
@@ -35,13 +35,13 @@
 						</span>
 					</th>
 					<!-- Table header for Computer Name -->
-					<th onclick="sortTable(1)" style="cursor:pointer">Computer name</th>
+					<th class="sortable" style="cursor:pointer" title="Sort this column">Computer name</th>
 					<!-- Table header for Introduced Date -->
-					<th onclick="sortTable(2)" style="cursor:pointer">Introduced date</th>
+					<th class="sortable" style="cursor:pointer" title="Sort this column">Introduced date</th>
 					<!-- Table header for Discontinued Date -->
-					<th onclick="sortTable(3)" style="cursor:pointer">Discontinued date</th>
+					<th class="sortable" style="cursor:pointer" title="Sort this column">Discontinued date</th>
 					<!-- Table header for Company -->
-					<th onclick="sortTable(4)" style="cursor:pointer">Company</th>
+					<th class="sortable" style="cursor:pointer" title="Sort this column">Company</th>
 				</tr>
  			</thead>
 			<!-- Browse attribute computers -->

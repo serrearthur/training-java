@@ -19,12 +19,12 @@ import model.Company;
  * @author aserre
  */
 public class DAOCompany implements IDAOCompany {
-    private final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
-    private final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
-    private final String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
-    private final String REQUEST_SELECT_ID = "SELECT * FROM company WHERE id = ?";
-    private final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
-    private final String REQUEST_SELECT_ALL = "SELECT * FROM company";
+    private static final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
+    private static final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
+    private static final String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
+    private static final String REQUEST_SELECT_ID = "SELECT * FROM company WHERE id = ?";
+    private static final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
+    private static final String REQUEST_SELECT_ALL = "SELECT * FROM company";
 
     /**
      * Initialization-on-demand singleton holder for {@link DAOCompany}.

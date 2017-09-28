@@ -151,8 +151,8 @@ public class DAOComputer implements IDAOComputer {
             connection.commit();
         } catch (SQLException e) {
             try {
-                e.printStackTrace();
                 connection.rollback();
+                throw new DAOException(e);
             } catch (SQLException ex) {
                 throw new DAOException(ex);
             }

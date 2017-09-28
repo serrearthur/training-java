@@ -34,7 +34,7 @@ public interface IDAOComputer {
 
     /**
      * Method to delete a company and all the computers associated with it in the database.
-     * @param c {@link Computer} from the {@link Company} to be deleted
+     * @param c {@link Computer} from the company to be deleted
      * @throws DAOException thrown when a connection problem happens.
      */
     void deleteCompanyId(Computer c) throws DAOException;
