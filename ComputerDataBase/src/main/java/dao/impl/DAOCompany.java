@@ -26,6 +26,8 @@ public class DAOCompany implements IDAOCompany {
     private static final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
     private static final String REQUEST_SELECT_ALL = "SELECT * FROM company";
 
+    private ConnectionManager manager;
+
     /**
      * Initialization-on-demand singleton holder for {@link DAOCompany}.
      */
@@ -45,6 +47,7 @@ public class DAOCompany implements IDAOCompany {
      * Constructor for the DAOCompany.
      */
     private DAOCompany() {
+        this.manager = ConnectionManager.getInstance();
     }
 
     /**
@@ -75,7 +78,7 @@ public class DAOCompany implements IDAOCompany {
      */
     private List<Company> executeQuery(String request, Object... params) throws DAOException {
         List<Company> companies = new ArrayList<Company>();
-        Connection connection = ConnectionManager.getInstance().getConnection();
+        Connection connection = manager.getConnection();
         try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             while (resultSet.next()) {
@@ -84,6 +87,14 @@ public class DAOCompany implements IDAOCompany {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DAOException(e);
+        } finally {
+            try {
+                if (connection.getAutoCommit()) {
+                    manager.closeConnection();
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
         }
         return companies;
     }
@@ -98,7 +109,7 @@ public class DAOCompany implements IDAOCompany {
      * {@link PreparedStatement} or {@link ResultSet} throw an error
      */
     private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
-        Connection connection = ConnectionManager.getInstance().getConnection();
+        Connection connection = manager.getConnection();
         try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
             int status = preparedStatement.executeUpdate();
             if (status == 0) {
@@ -106,6 +117,14 @@ public class DAOCompany implements IDAOCompany {
             }
         } catch (SQLException e) {
             throw new DAOException(e);
+        } finally {
+            try {
+                if (connection.getAutoCommit()) {
+                    manager.closeConnection();
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
         }
     }
 

@@ -18,6 +18,9 @@ import view.dto.DTOComputer;
  * @author aserre
  */
 public class CLICommand {
+    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
+    private static final ServiceCompany SERVICE_COMPANY = ServiceCompany.getInstance();
+
     private String command;
     private List<DTOComputer> result_computers;
     private List<DTOCompany> result_companies;
@@ -129,12 +132,12 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            this.result_computers.addAll(ServiceComputer.getPage(1000).getCurrentPage());
+            this.result_computers.addAll(SERVICE_COMPUTER.getPage(1000).getCurrentPage());
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
             System.out.println("LIST CPN");
-            this.result_companies.addAll(ServiceCompany.getCompanies());
+            this.result_companies.addAll(SERVICE_COMPANY.getCompanies());
             ret = true;
         } else {
             System.out.println("LIST + ERROR");
@@ -160,7 +163,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with id X
                 System.out.println("SHOW -i " + parsed.get(2));
-                this.result_computers.add(ServiceComputer.getComputer(parsed.get(2)));
+                this.result_computers.add(SERVICE_COMPUTER.getComputer(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("SHOW -i + EMPTY : " + command);
@@ -169,7 +172,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with name X
                 System.out.println("SHOW -n " + parsed.get(2));
-                this.result_computers.addAll(ServiceComputer.getPage(parsed.get(2), 1000).getCurrentPage());
+                this.result_computers.addAll(SERVICE_COMPUTER.getPage(parsed.get(2), 1000).getCurrentPage());
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");
@@ -196,7 +199,7 @@ public class CLICommand {
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
             // case when we create a new computer with name X
             System.out.println("CREATE " + parsed.get(1));
-            ServiceComputer.addComputer(parsed.get(1), "", "", "");
+            SERVICE_COMPUTER.addComputer(parsed.get(1), "", "", "");
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -218,8 +221,7 @@ public class CLICommand {
      */
     private boolean parseUpdate(List<String> parsed) {
         boolean ret = false;
-        // we check if each parameter is present, if yes we add it to our computer
-        // object
+        // we check if each parameter is present, if yes we add it to our computer object
         if (parsed.size() >= 3 && !parsed.get(2).isEmpty()) {
             DTOComputer c = new DTOComputer();
             c.setId(parsed.get(1));
@@ -234,7 +236,7 @@ public class CLICommand {
                 }
             }
             System.out.println("UPDATE : " + command);
-            ServiceComputer.editComputer(c.getId(), c.getName(), c.getIntroduced(), c.getDiscontinued(), c.getCompanyId());
+            SERVICE_COMPUTER.editComputer(c.getId(), c.getName(), c.getIntroduced(), c.getDiscontinued(), c.getCompanyId());
             ret = true;
         } else {
             System.out.println("UPDATE + NOT_ENOUGH_ARGS : " + command);
@@ -259,7 +261,7 @@ public class CLICommand {
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
-                ServiceComputer.delete(parsed.get(2));
+                SERVICE_COMPUTER.delete(parsed.get(2));
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
@@ -267,7 +269,7 @@ public class CLICommand {
         } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -c " + parsed.get(2));
-                ServiceCompany.deleteCompany(Integer.parseInt(parsed.get(2)));
+                SERVICE_COMPANY.deleteCompany(Integer.parseInt(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("DELETE -c + EMPTY");

@@ -14,6 +14,7 @@ public class Page<T> {
     private int totalPage;
     private int currentPageNumber;
     private int pageBorders;
+    private String search;
 
     /**
      * Constructor.
@@ -97,5 +98,13 @@ public class Page<T> {
 
     public void setPageBorders(int pageBorders) {
         this.pageBorders = pageBorders;
+    }
+
+    public String getSearch() {
+        return this.search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
     }
 }

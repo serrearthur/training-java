@@ -12,8 +12,8 @@
 			<c:set var="output" value="${output}pageNb=${pagenb}&" />
 		</c:when>
 		<c:otherwise>
-			<c:if test="${not empty requestScope['pageNb']}">
-				<c:set var="output" value="${output}pageNb=${requestScope['pageNb']}&" />
+			<c:if test="${not empty requestScope['page'].currentPageNumber}">
+				<c:set var="output" value="${output}pageNb=${requestScope['page'].currentPageNumber}&" />
 			</c:if>
 		</c:otherwise>
 	</c:choose>
@@ -23,8 +23,8 @@
 			<c:set var="output" value="${output}limit=${limit}&" />
 		</c:when>
 		<c:otherwise>
-			<c:if test="${not empty requestScope['limit']}">
-				<c:set var="output" value="${output}limit=${requestScope['limit']}&" />
+			<c:if test="${not empty requestScope['page'].limit}">
+				<c:set var="output" value="${output}limit=${requestScope['page'].limit}&" />
 			</c:if>
 		</c:otherwise>
 	</c:choose>
@@ -34,8 +34,8 @@
 			<c:set var="output" value="${output}search=${search}&" />
 		</c:when>
 		<c:otherwise>
-			<c:if test="${not empty requestScope['search']}">
-				<c:set var="output" value="${output}search=${requestScope['search']}&" />
+			<c:if test="${not empty requestScope['page'].search}">
+				<c:set var="output" value="${output}search=${requestScope['page'].search}&" />
 			</c:if>
 		</c:otherwise>
 	</c:choose>

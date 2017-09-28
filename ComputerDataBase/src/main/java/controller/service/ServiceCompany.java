@@ -1,11 +1,8 @@
 package controller.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import dao.ConnectionManager;
-import dao.exceptions.DAOConfigurationException;
 import dao.exceptions.DAOException;
 import dao.impl.DAOCompany;
 import dao.impl.DAOComputer;
@@ -18,17 +15,42 @@ import view.mapper.MapperCompany;
  * @author aserre
  */
 public class ServiceCompany {
+    private DAOCompany dao;
+    private ConnectionManager manager;
+
+    /**
+     * Initialization-on-demand singleton holder  for {@link ServiceCompany}.
+     */
+    private static class SingletonHolder {
+        private static final ServiceCompany INSTANCE = new ServiceCompany();
+    }
+
+    /**
+     * Accessor for the instance of the singleton.
+     * @return the instance of {@link ServiceCompany}
+     */
+    public static ServiceCompany getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * Contructor for a new ServiceCompany.
+     */
+    private ServiceCompany() {
+        this.dao = DAOCompany.getInstance();
+        this.manager = ConnectionManager.getInstance();
+    }
+
     /**
      * Returns a list of all the companies inside the database.
      * @return a list of companies in {@link DTOCompany} format
      */
-    public static List<DTOCompany> getCompanies() {
+    public List<DTOCompany> getCompanies() {
         List<DTOCompany> ret = null;
         try {
-            List<Company> l = DAOCompany.getInstance().getAll();
+            List<Company> l = dao.getAll();
             ret = MapperCompany.toDTOCompany(l);
-            ConnectionManager.getInstance().closeConnection();
-        } catch (DAOConfigurationException e) {
+        } catch (DAOException e) {
             e.printStackTrace();
         }
         return ret;
@@ -38,25 +60,20 @@ public class ServiceCompany {
      * Delete a {@link Company} and all the computer it contains.
      * @param companyId company to be deleted
      */
-    public static void deleteCompany(Integer companyId) {
-        Connection connection = ConnectionManager.getInstance().getConnection();
+    public void deleteCompany(Integer companyId) {
         try {
-            connection.setAutoCommit(false);
-            DAOCompany.getInstance().delete(companyId);
+            manager.setAutoCommit(false);
             DAOComputer.getInstance().deleteCompanyId(companyId);
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-                throw new DAOException(e);
-            } catch (SQLException ex) {
-                throw new DAOException(ex);
-            }
+            dao.delete(companyId);
+            manager.commit();
+        } catch (DAOException e) {
+            e.printStackTrace();
+            manager.rollback();
         } finally {
             try {
-                ConnectionManager.getInstance().closeConnection();
-            } catch (DAOConfigurationException e) {
-                throw new DAOException(e);
+                manager.closeConnection();
+            } catch (DAOException e) {
+                e.printStackTrace();
             }
         }
     }

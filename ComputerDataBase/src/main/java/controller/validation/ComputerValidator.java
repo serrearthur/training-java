@@ -3,8 +3,9 @@ package controller.validation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import controller.ComputerFields;
 import model.Computer;
@@ -27,11 +28,7 @@ public class ComputerValidator implements ComputerFields {
     public static Computer validate(String id, String name, String introduced, String discontinued, String companyId,
             Map<String, String> errors) {
         Computer c = validate(name, introduced, discontinued, companyId, errors);
-        try {
-            c.setId(validationId(id));
-        } catch (ValidationException e) {
-            errors.put(ATT_COMPUTERID, e.getMessage());
-        }
+        c.setId(validationId(id, errors));
         return c;
     }
 
@@ -47,70 +44,53 @@ public class ComputerValidator implements ComputerFields {
     public static Computer validate(String name, String introduced, String discontinued, String companyId,
             Map<String, String> errors) {
         Computer c = new Computer();
-        try {
-            c.setName(validationName(name));
-        } catch (ValidationException e) {
-            errors.put(ATT_NAME, e.getMessage());
+        c.setName(validationName(name, errors));
+        c.setIntroduced(validationIntroduced(introduced, errors));
+        c.setDiscontinued(validationDiscontinued(discontinued, errors));
+        if (!(c.getIntroduced() == null || c.getDiscontinued() == null
+                || c.getDiscontinued().isEqual(c.getIntroduced())
+                || c.getDiscontinued().isAfter(c.getIntroduced()))) {
+            errors.put(ATT_DISCONTINUED, "Discontinued date must be later than Introduced date.");
+            c.setDiscontinued(null);
         }
-
-        try {
-            c.setIntroduced(validationIntroduced(introduced));
-        } catch (ValidationException e) {
-            errors.put(ATT_INTRODUCED, e.getMessage());
-        }
-
-        try {
-            c.setDiscontinued(validationDiscontinued(discontinued));
-            if (!(c.getIntroduced() == null || c.getDiscontinued() == null
-                    || c.getDiscontinued().isEqual(c.getIntroduced())
-                    || c.getDiscontinued().isAfter(c.getIntroduced()))) {
-                throw new ValidationException("Discontinued date must be later than Introduced date.");
-            }
-        } catch (ValidationException e) {
-            errors.put(ATT_DISCONTINUED, e.getMessage());
-        }
-
-        try {
-            c.setCompanyId(validationCompanyId(companyId));
-        } catch (ValidationException e) {
-            errors.put(ATT_COMPANYID, e.getMessage());
-        }
+        c.setCompanyId(validationCompanyId(companyId, errors));
         return c;
     }
 
     /**
      * Return an id in the {@link Integer} format if the input is valid,
-     * throws a ValidationException otherwise.
+     * returns null otherwise.
      * @param id ID to validate
+     * @param errors map of error messages
      * @return parsed id
-     * @throws ValidationException thrown when the id is empty
      */
-    private static Integer validationId(String id) throws ValidationException {
+    private static Integer validationId(String id, Map<String, String> errors) {
         if (id == null || id.isEmpty()) {
-            throw new ValidationException("Id can't be empty.");
-        }
-        try {
-            int i = Integer.parseInt(id);
-            if (i == 0) {
-                throw new NumberFormatException();
+            errors.put(ATT_COMPUTERID, "Id can't be empty.");
+            return null;
+        } else {
+            Pattern p = Pattern.compile("^[1-9][0-9]*$");
+            Matcher m = p.matcher(id);
+            if (m.find()) {
+                return Integer.parseInt(id);
             } else {
-                return i;
+                errors.put(ATT_COMPANYID, "Unable to parse Id.");
+                return null;
             }
-        } catch (NumberFormatException e) {
-            throw new ValidationException("Unable to parse Id.");
         }
     }
 
     /**
      * Return a name as a String if the input is valid,
-     * throws a ValidationException otherwise.
+     * returns null otherwise.
      * @param name name to validate
+     * @param errors map of error messages
      * @return valid name
-     * @throws ValidationException thrown when the name is empty
      */
-    private static String validationName(String name) throws ValidationException {
+    private static String validationName(String name, Map<String, String> errors) {
         if (name == null || name.isEmpty()) {
-            throw new ValidationException("Name can't be empty.");
+            errors.put(ATT_NAME, "Name can't be empty.");
+            return null;
         } else {
             return name;
         }
@@ -118,60 +98,71 @@ public class ComputerValidator implements ComputerFields {
 
     /**
      * Return an introduced date in the {@link LocalDateTime} format if the input is valid,
-     * throws a ValidationException otherwise.
+     * returns null otherwise.
      * @param introduced introduced date to validate
+     * @param errors map of error messages
      * @return valid introduced date
-     * @throws ValidationException thrown when the introduced date is invalid
      */
-    private static LocalDateTime validationIntroduced(String introduced) throws ValidationException {
-        if (introduced == null || introduced.isEmpty()) {
+    private static LocalDateTime validationIntroduced(String introduced, Map<String, String> errors) {
+        if (introduced == null | introduced.isEmpty()) {
             return null;
-        }
-        try {
-            return LocalDateTime.of(LocalDate.parse(introduced), LocalTime.of(0, 0));
-        } catch (DateTimeParseException e) {
-            throw new ValidationException("Invalid date format.");
+        } else {
+            Pattern p = Pattern.compile("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
+            Matcher m = p.matcher(introduced);
+            if (m.find()) {
+                return LocalDateTime.of(LocalDate.parse(introduced), LocalTime.of(0, 0));
+            } else {
+                errors.put(ATT_INTRODUCED, "Invalid date format.");
+                return null;
+            }
         }
     }
 
     /**
      * Return an introduced date in the {@link LocalDateTime} format if the input is valid,
-     * throws a ValidationException otherwise.
+     * returns null otherwise.
      * @param discontinued discontinued date to validate
+     * @param errors map of error messages
      * @return valid discontinued date
-     * @throws ValidationException thrown when the discontinued date is invalid
      */
-    private static LocalDateTime validationDiscontinued(String discontinued) throws ValidationException {
-        if (discontinued == null || discontinued.isEmpty()) {
+    private static LocalDateTime validationDiscontinued(String discontinued, Map<String, String> errors) {
+        if (discontinued == null | discontinued.isEmpty()) {
             return null;
-        }
-        try {
-            return LocalDateTime.of(LocalDate.parse(discontinued), LocalTime.of(0, 0));
-        } catch (DateTimeParseException e) {
-            throw new ValidationException("Invalid date format.");
+        } else {
+            Pattern p = Pattern.compile("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
+            Matcher m = p.matcher(discontinued);
+            if (m.find()) {
+                return LocalDateTime.of(LocalDate.parse(discontinued), LocalTime.of(0, 0));
+            } else {
+                errors.put(ATT_DISCONTINUED, "Invalid date format.");
+                return null;
+            }
         }
     }
 
     /**
      * Return a companyId in the {@link Integer} format if the input is valid,
-     * throws a ValidationException otherwise.
+     * returns null otherwise.
      * @param companyId companyId to validate
+     * @param errors map of error messages
      * @return valid companyId
-     * @throws ValidationException thrown when the companyId is invalid
      */
-    private static Integer validationCompanyId(String companyId) throws ValidationException {
-        if (companyId == null || companyId.isEmpty()) {
+    private static Integer validationCompanyId(String companyId, Map<String, String> errors) {
+        if (companyId == null | companyId.isEmpty()) {
             return null;
-        }
-        try {
-            int i = Integer.parseInt(companyId);
-            if (i == 0) {
-                return null;
+        } else {
+            Pattern p = Pattern.compile("^[0-9]+$");
+            Matcher m = p.matcher(companyId);
+            if (m.find()) {
+                Integer ret = Integer.parseInt(companyId);
+                if (ret == 0) {
+                    ret = null;
+                }
+                return ret;
             } else {
-                return i;
+                errors.put(ATT_COMPANYID, "Invalid company identifier.");
+                return null;
             }
-        } catch (NumberFormatException e) {
-            throw new ValidationException("Invalid identifier.");
         }
     }
 }

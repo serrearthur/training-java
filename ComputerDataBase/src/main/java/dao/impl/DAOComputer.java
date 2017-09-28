@@ -30,6 +30,8 @@ public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_SELECT_JOIN = "SELECT * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
     private static final String REQUEST_SELECT_ALL = "SELECT * FROM computer";
 
+    private ConnectionManager manager;
+
     /**
      * Initialization-on-demand singleton holder for {@link DAOComputer}.
      */
@@ -49,6 +51,7 @@ public class DAOComputer implements IDAOComputer {
      * Constructor for the DAOComputer.
      */
     private DAOComputer() {
+        this.manager = ConnectionManager.getInstance();
     }
 
     /**
@@ -83,15 +86,22 @@ public class DAOComputer implements IDAOComputer {
      */
     private List<Computer> executeQuery(String request, Object... params) throws DAOException {
         List<Computer> computers = new ArrayList<Computer>();
-
-        try (Connection connection = ConnectionManager.getInstance().getConnection();
-                PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
+        Connection connection = manager.getConnection();
+        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             while (resultSet.next()) {
                 computers.add(map(resultSet));
             }
         } catch (SQLException e) {
             throw new DAOException(e);
+        } finally {
+            try {
+                if (connection.getAutoCommit()) {
+                    manager.closeConnection();
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
         }
         return computers;
     }
@@ -106,14 +116,22 @@ public class DAOComputer implements IDAOComputer {
      * {@link PreparedStatement} or {@link ResultSet} throw an error
      */
     private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
-        try (Connection connection = ConnectionManager.getInstance().getConnection();
-                PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
+        Connection connection = manager.getConnection();
+        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
             int status = preparedStatement.executeUpdate();
             if (status == 0) {
                 throw new DAOException("Unable to update this computer, no row added to the table.");
             }
         } catch (SQLException e) {
             throw new DAOException(e);
+        } finally {
+            try {
+                if (connection.getAutoCommit()) {
+                    manager.closeConnection();
+                }
+            } catch (SQLException e) {
+                throw new DAOException(e);
+            }
         }
     }
 

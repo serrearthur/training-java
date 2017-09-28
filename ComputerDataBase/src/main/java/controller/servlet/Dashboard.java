@@ -25,6 +25,7 @@ public class Dashboard extends HttpServlet implements GeneralFields {
     private static final String ATT_PAGENUMBER = "pageNb";
     private static final String ATT_SEARCH = "search";
     private static final String ATT_DELETE = "selection";
+    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
 
     /**
      * @param request HTTP request
@@ -36,6 +37,37 @@ public class Dashboard extends HttpServlet implements GeneralFields {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Page<DTOComputer> page = requestParser(request);
+
+        request.setAttribute(ATT_PAGE, page);
+        this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
+    }
+
+    /**
+     * @param request HTTP request
+     * @param response HTTP response to the request
+     * @throws ServletException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
+     * @throws IOException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String requestedDelete = request.getParameter(ATT_DELETE);
+        if (requestedDelete != null) {
+            SERVICE_COMPUTER.delete(requestedDelete);
+            response.sendRedirect(VIEW_HOME);
+        } else {
+            throw new ServletException("Invalid operation : POST.");
+        }
+    }
+
+    /**
+     * Method in charge of parsing the request and create the adequate {@link Page} object.
+     * @param request the {@link HttpServletRequest} to parse
+     * @return the {@link Page} object corresponding to the request
+     */
+    private Page<DTOComputer> requestParser(HttpServletRequest request) {
         Page<DTOComputer> page = null;
         int limit = 10;
         int pageNb = 1;
@@ -52,35 +84,12 @@ public class Dashboard extends HttpServlet implements GeneralFields {
 
         String requestedSearch = request.getParameter(ATT_SEARCH);
         if (requestedSearch != null) {
-            page = ServiceComputer.getPage(requestedSearch, limit);
+            page = SERVICE_COMPUTER.getPage(requestedSearch, limit);
         } else {
-            page = ServiceComputer.getPage(limit);
+            page = SERVICE_COMPUTER.getPage(limit);
         }
         page.moveToPageNumber(pageNb);
 
-        request.setAttribute(ATT_PAGE, page);
-        request.setAttribute(ATT_SEARCH, requestedSearch);
-        request.setAttribute(ATT_PAGELIMIT, page.getLimit());
-        request.setAttribute(ATT_PAGENUMBER, page.getCurrentPageNumber());
-        this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
-    }
-
-    /**
-     * @param request HTTP request
-     * @param response HTTP response to the request
-     * @throws ServletException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
-     * @throws IOException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
-     */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String requestedDelete = request.getParameter(ATT_DELETE);
-        if (requestedDelete != null) {
-            ServiceComputer.delete(requestedDelete);
-            response.sendRedirect(VIEW_HOME);
-        } else {
-            doGet(request, response);
-        }
+        return page;
     }
 }

@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import controller.validation.ComputerValidator;
-import dao.ConnectionManager;
-import dao.exceptions.DAOConfigurationException;
+import dao.exceptions.DAOException;
 import dao.impl.DAOComputer;
 import model.Computer;
 import view.Page;
@@ -18,18 +17,40 @@ import view.mapper.MapperComputer;
  * @author aserre
  */
 public class ServiceComputer {
+    private DAOComputer dao;
+    /**
+     * Initialization-on-demand singleton holder  for {@link ServiceComputer}.
+     */
+    private static class SingletonHolder {
+        private static final ServiceComputer INSTANCE = new ServiceComputer();
+    }
+
+    /**
+     * Accessor for the instance of the singleton.
+     * @return the instance of {@link ServiceComputer}
+     */
+    public static ServiceComputer getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * Contructor for a new ServiceComputer.
+     */
+    private ServiceComputer() {
+        this.dao = DAOComputer.getInstance();
+    }
+
     /**
      * Gets the current page from the database.
      * @param limit The maximum number of Computer per page
      * @return a list of computers in {@link DTOComputer} format
      */
-    public static Page<DTOComputer> getPage(int limit) {
+    public Page<DTOComputer> getPage(int limit) {
         Page<DTOComputer> ret = null;
         try {
-            List<Computer> l = DAOComputer.getInstance().getAll();
+            List<Computer> l = dao.getAll();
             ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), limit);
-            ConnectionManager.getInstance().closeConnection();
-        } catch (DAOConfigurationException e) {
+        } catch (DAOException e) {
             e.printStackTrace();
         }
         return ret;
@@ -41,13 +62,13 @@ public class ServiceComputer {
      * @param limit The maximum number of Computer per page
      * @return a list of computers in {@link DTOComputer} format
      */
-    public static Page<DTOComputer> getPage(String search, int limit) {
+    public Page<DTOComputer> getPage(String search, int limit) {
         Page<DTOComputer> ret = null;
         try {
-            List<Computer> l = DAOComputer.getInstance().getFromName(search);
+            List<Computer> l = dao.getFromName(search);
             ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), limit);
-            ConnectionManager.getInstance().closeConnection();
-        } catch (DAOConfigurationException e) {
+            ret.setSearch(search);
+        } catch (DAOException e) {
             e.printStackTrace();
         }
         return ret;
@@ -57,14 +78,13 @@ public class ServiceComputer {
      * Delete the requested computers from the database.
      * @param requestedDelete ID of the computers to delete, spearated by a comma
      */
-    public static void delete(String requestedDelete) {
+    public void delete(String requestedDelete) {
         for (String s : requestedDelete.split(",")) {
-            DAOComputer.getInstance().delete(Integer.parseInt(s));
-        }
-        try {
-            ConnectionManager.getInstance().closeConnection();
-        } catch (DAOConfigurationException e) {
-            e.printStackTrace();
+            try {
+                dao.delete(Integer.parseInt(s));
+            } catch (DAOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -73,16 +93,14 @@ public class ServiceComputer {
      * @param computerID ID of the computer we want to access
      * @return a computers in {@link DTOComputer} format
      */
-    public static DTOComputer getComputer(String computerID) {
+    public DTOComputer getComputer(String computerID) {
         DTOComputer c = new DTOComputer();
         try {
-            Computer comp = DAOComputer.getInstance().getFromId(Integer.parseInt(computerID)).get(0);
-            ConnectionManager.getInstance().closeConnection();
+            Computer comp = dao.getFromId(Integer.parseInt(computerID)).get(0);
             c = MapperComputer.toDTOComputer(comp);
-            ConnectionManager.getInstance().closeConnection();
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             System.out.println("Computer \"" + computerID + "\" not found : " + e.getMessage());
-        } catch (DAOConfigurationException e) {
+        } catch (DAOException e) {
             e.printStackTrace();
         }
         return c;
@@ -96,14 +114,13 @@ public class ServiceComputer {
      * @param companyId companyId of the new computer
      * @return a list of errors that occured during validation
      */
-    public static Map<String, String> addComputer(String name, String introduced, String discontinued, String companyId) {
+    public Map<String, String> addComputer(String name, String introduced, String discontinued, String companyId) {
         Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
-            DAOComputer.getInstance().create(c);
             try {
-                ConnectionManager.getInstance().closeConnection();
-            } catch (DAOConfigurationException e) {
+                dao.create(c);
+            } catch (DAOException e) {
                 e.printStackTrace();
             }
         }
@@ -119,15 +136,14 @@ public class ServiceComputer {
      * @param companyId companyId of the computer
      * @return a list of errors that occured during validation
      */
-    public static Map<String, String> editComputer(String id, String name, String introduced, String discontinued,
+    public Map<String, String> editComputer(String id, String name, String introduced, String discontinued,
             String companyId) {
         Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(id, name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
-            DAOComputer.getInstance().update(c);
             try {
-                ConnectionManager.getInstance().closeConnection();
-            } catch (DAOConfigurationException e) {
+                dao.update(c);
+            } catch (DAOException e) {
                 e.printStackTrace();
             }
         }

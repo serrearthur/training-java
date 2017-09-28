@@ -68,9 +68,9 @@
 			currentpage="${page.currentPageNumber}" target="/home"/>
 		
 		<div class="btn-group btn-group-sm pull-right" role="group">
-			<a class='btn btn-default ${limit eq 10? "disabled":"" }' href="<ex:linker target="/home" limit="10"/>">10</a>
-			<a class='btn btn-default ${limit eq 50? "disabled":"" }' href="<ex:linker target="/home" limit="50"/>">50</a>
-			<a class='btn btn-default ${limit eq 100? "disabled":"" }' href="<ex:linker target="/home" limit="100"/>">100</a>
+			<a class='btn btn-default ${page.limit eq 10? "disabled":"" }' href="<ex:linker target="/home" limit="10"/>">10</a>
+			<a class='btn btn-default ${page.limit eq 50? "disabled":"" }' href="<ex:linker target="/home" limit="50"/>">50</a>
+			<a class='btn btn-default ${page.limit eq 100? "disabled":"" }' href="<ex:linker target="/home" limit="100"/>">100</a>
 		</div>
 	</div>
 </footer>
