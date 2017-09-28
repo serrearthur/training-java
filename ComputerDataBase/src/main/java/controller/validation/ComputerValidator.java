@@ -3,6 +3,7 @@ package controller.validation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,18 +105,15 @@ public class ComputerValidator implements ComputerFields {
      * @return valid introduced date
      */
     private static LocalDateTime validationIntroduced(String introduced, Map<String, String> errors) {
-        if (introduced == null | introduced.isEmpty()) {
-            return null;
-        } else {
-            Pattern p = Pattern.compile("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
-            Matcher m = p.matcher(introduced);
-            if (m.find()) {
-                return LocalDateTime.of(LocalDate.parse(introduced), LocalTime.of(0, 0));
-            } else {
+        LocalDateTime ret = null;
+        if (introduced != null && !introduced.isEmpty()) {
+            try {
+                ret = LocalDateTime.of(LocalDate.parse(introduced), LocalTime.of(0, 0));
+            } catch (DateTimeParseException e) {
                 errors.put(ATT_INTRODUCED, "Invalid date format.");
-                return null;
             }
         }
+        return ret;
     }
 
     /**
@@ -126,18 +124,15 @@ public class ComputerValidator implements ComputerFields {
      * @return valid discontinued date
      */
     private static LocalDateTime validationDiscontinued(String discontinued, Map<String, String> errors) {
-        if (discontinued == null | discontinued.isEmpty()) {
-            return null;
-        } else {
-            Pattern p = Pattern.compile("^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$");
-            Matcher m = p.matcher(discontinued);
-            if (m.find()) {
-                return LocalDateTime.of(LocalDate.parse(discontinued), LocalTime.of(0, 0));
-            } else {
+        LocalDateTime ret = null;
+        if (discontinued != null && !discontinued.isEmpty()) {
+            try {
+                ret = LocalDateTime.of(LocalDate.parse(discontinued), LocalTime.of(0, 0));
+            } catch (DateTimeParseException e) {
                 errors.put(ATT_DISCONTINUED, "Invalid date format.");
-                return null;
             }
         }
+        return ret;
     }
 
     /**
