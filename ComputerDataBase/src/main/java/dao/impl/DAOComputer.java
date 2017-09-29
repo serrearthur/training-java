@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import dao.ConnectionManager;
 import dao.IDAOComputer;
@@ -23,12 +24,11 @@ import model.Computer;
 public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
-    private static final String REQUEST_DELETE = "DELETE FROM computer WHERE id=?";
-    private static final String REQUEST_DELETE_COMPANYID = "DELETE FROM computer WHERE company_id=?";
+    private static final String REQUEST_DELETE = "DELETE FROM computer WHERE LOCATE(CONCAT(',',id,','), ?) >0";
+    private static final String REQUEST_DELETE_COMPANYID = "DELETE FROM computer WHERE LOCATE(CONCAT(',',company_id,','), ?) >0";
     private static final String REQUEST_SELECT_ID = "SELECT * FROM computer WHERE id = ?";
-    private static final String REQUEST_SELECT_COMPANY = "SELECT * FROM computer WHERE company_id = ?";
-    private static final String REQUEST_SELECT_JOIN = "SELECT * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
-    private static final String REQUEST_SELECT_ALL = "SELECT * FROM computer";
+    private static final String REQUEST_SELECT_JOIN = "SELECT SQL_CALC_FOUND_ROWS * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
+    private static final String REQUEST_SELECT_GET_COUNT = "SELECT FOUND_ROWS()";
 
     private ConnectionManager manager;
 
@@ -77,36 +77,6 @@ public class DAOComputer implements IDAOComputer {
     }
 
     /**
-     * Make an SQL request to select a list of computers from the database.
-     * @param request SQL request to execute
-     * @param params parameters needed for the request
-     * @return the list of Computers corresponding to the request
-     * @throws DAOException thrown if the internal {@link Connection},
-     * {@link PreparedStatement} or {@link ResultSet} throw an error
-     */
-    private List<Computer> executeQuery(String request, Object... params) throws DAOException {
-        List<Computer> computers = new ArrayList<Computer>();
-        Connection connection = manager.getConnection();
-        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
-                ResultSet resultSet = preparedStatement.executeQuery();) {
-            while (resultSet.next()) {
-                computers.add(map(resultSet));
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        } finally {
-            try {
-                if (connection.getAutoCommit()) {
-                    manager.closeConnection();
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e);
-            }
-        }
-        return computers;
-    }
-
-    /**
      * Make an SQL request to update a computer in the database.
      * @param request SQL request to execute
      * @param returnGeneratedKeys <code>true</code> if the request needs generated keys,
@@ -116,8 +86,7 @@ public class DAOComputer implements IDAOComputer {
      * {@link PreparedStatement} or {@link ResultSet} throw an error
      */
     private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
-        Connection connection = manager.getConnection();
-        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, returnGeneratedKeys, params);) {
             int status = preparedStatement.executeUpdate();
             if (status == 0) {
                 throw new DAOException("Unable to update this computer, no row added to the table.");
@@ -125,14 +94,67 @@ public class DAOComputer implements IDAOComputer {
         } catch (SQLException e) {
             throw new DAOException(e);
         } finally {
-            try {
-                if (connection.getAutoCommit()) {
-                    manager.closeConnection();
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e);
+            if (manager.getAutoCommit()) {
+                manager.closeConnection();
             }
         }
+    }
+
+    /**
+     * Make an SQL request to select a list of computers from the database.
+     * @param request SQL request to execute
+     * @param count variable used to store the row count
+     * @param params parameters needed for the request
+     * @return the list of Computers corresponding to the request
+     * @throws DAOException thrown if the internal {@link Connection},
+     * {@link PreparedStatement} or {@link ResultSet} throw an error
+     */
+    private List<Computer> executeQuery(String request, AtomicInteger count, Object... params) throws DAOException {
+        List<Computer> computers = new ArrayList<Computer>();
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, false, params);
+                ResultSet resultSet = preparedStatement.executeQuery();) {
+            count.set(this.getCount(manager.getConnection()));
+            while (resultSet.next()) {
+                computers.add(map(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            if (manager.getAutoCommit()) {
+                manager.closeConnection();
+            }
+        }
+        return computers;
+    }
+
+    /**
+     * Returns the row count of the previous request. Must be executed right after the request.
+     * @param c connection used to make the request
+     * @return the row count of the previous request
+     * @throws SQLException thrown when a connection problem happens.
+     */
+    private int getCount(Connection c) throws SQLException {
+        int count = 0;
+        try (PreparedStatement preparedStatement = initPreparedStatement(c, REQUEST_SELECT_GET_COUNT, false);
+                ResultSet resultSet = preparedStatement.executeQuery();) {
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Appends the ORDER BY and LIMIT commands to the SQL request.
+     * @param request request to modify
+     * @param sortCol column to sort by
+     * @param asc <code>true</code> for ascending order, <code>false</code> for descending order
+     * @param start starting index
+     * @param limit limit for the page size
+     * @return a new SQL request string
+     */
+    private String setOrderLimit(String request, String sortCol, boolean asc, Integer start, Integer limit) {
+        return request + " ORDER BY " + sortCol + (asc ? " ASC" : " DESC") + " LIMIT " + start + "," + limit;
     }
 
     @Override
@@ -148,32 +170,27 @@ public class DAOComputer implements IDAOComputer {
     }
 
     @Override
-    public void delete(Integer id) throws DAOException {
-        executeUpdate(REQUEST_DELETE, false, id);
+    public void delete(String idList) throws DAOException {
+        executeUpdate(REQUEST_DELETE, false, "," + idList + ",");
     }
 
     @Override
-    public void deleteCompanyId(Integer companyId) throws DAOException {
-        executeUpdate(REQUEST_DELETE_COMPANYID, false, companyId);
-    }
-
-    @Override
-    public List<Computer> getFromName(String name) throws DAOException {
-        return executeQuery(REQUEST_SELECT_JOIN, "%" + name + "%", "%" + name + "%");
+    public void deleteCompanyId(String idList) throws DAOException {
+        executeUpdate(REQUEST_DELETE_COMPANYID, false, "," + idList + ",");
     }
 
     @Override
     public List<Computer> getFromId(Integer id) throws DAOException {
-        return executeQuery(REQUEST_SELECT_ID, id.toString());
+        return executeQuery(REQUEST_SELECT_ID, new AtomicInteger(), id.toString());
     }
 
     @Override
-    public List<Computer> getFromCompanyId(Integer id) throws DAOException {
-        return executeQuery(REQUEST_SELECT_COMPANY, id.toString());
-    }
-
-    @Override
-    public List<Computer> getAll() throws DAOException {
-        return executeQuery(REQUEST_SELECT_ALL);
+    public List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col) throws DAOException {
+        boolean asc = true;
+        if (col.charAt(0) == '!') {
+            asc = false;
+            col = col.substring(1, col.length());
+        }
+        return executeQuery(setOrderLimit(REQUEST_SELECT_JOIN, col, asc, start, limit), count, "%" + name + "%", "%" + name + "%");
     }
 }

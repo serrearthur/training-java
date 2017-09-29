@@ -3,6 +3,7 @@ package controller.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import controller.validation.ComputerValidator;
 import dao.exceptions.DAOException;
@@ -41,32 +42,19 @@ public class ServiceComputer {
     }
 
     /**
-     * Gets the current page from the database.
-     * @param limit The maximum number of Computer per page
-     * @return a list of computers in {@link DTOComputer} format
-     */
-    public Page<DTOComputer> getPage(int limit) {
-        Page<DTOComputer> ret = null;
-        try {
-            List<Computer> l = dao.getAll();
-            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), limit);
-        } catch (DAOException e) {
-            e.printStackTrace();
-        }
-        return ret;
-    }
-
-    /**
      * Creates a page of computers from the result of the search request.
-     * @param search The search criterias
+     * @param search The search criteria
+     * @param pageNb the page number to get
      * @param limit The maximum number of Computer per page
+     * @param col column to order by
      * @return a list of computers in {@link DTOComputer} format
      */
-    public Page<DTOComputer> getPage(String search, int limit) {
+    public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col) {
         Page<DTOComputer> ret = null;
         try {
-            List<Computer> l = dao.getFromName(search);
-            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), limit);
+            AtomicInteger count = new AtomicInteger();
+            List<Computer> l = dao.getFromName((pageNb - 1) * limit, limit, count, search, col);
+            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col);
             ret.setSearch(search);
         } catch (DAOException e) {
             e.printStackTrace();
@@ -79,12 +67,10 @@ public class ServiceComputer {
      * @param requestedDelete ID of the computers to delete, spearated by a comma
      */
     public void delete(String requestedDelete) {
-        for (String s : requestedDelete.split(",")) {
-            try {
-                dao.delete(Integer.parseInt(s));
-            } catch (DAOException e) {
-                e.printStackTrace();
-            }
+        try {
+            dao.delete(requestedDelete);
+        } catch (DAOException e) {
+            e.printStackTrace();
         }
     }
 

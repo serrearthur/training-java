@@ -132,7 +132,7 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            this.result_computers.addAll(SERVICE_COMPUTER.getPage(1000).getCurrentPage());
+            this.result_computers.addAll(SERVICE_COMPUTER.getPage("", 1, 1000, "cpt.id").getData());
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
@@ -172,7 +172,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with name X
                 System.out.println("SHOW -n " + parsed.get(2));
-                this.result_computers.addAll(SERVICE_COMPUTER.getPage(parsed.get(2), 1000).getCurrentPage());
+                this.result_computers.addAll(SERVICE_COMPUTER.getPage(parsed.get(2), 1, 1000, "cpt.id").getData());
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");

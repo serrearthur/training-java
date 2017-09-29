@@ -78,8 +78,7 @@ public class DAOCompany implements IDAOCompany {
      */
     private List<Company> executeQuery(String request, Object... params) throws DAOException {
         List<Company> companies = new ArrayList<Company>();
-        Connection connection = manager.getConnection();
-        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             while (resultSet.next()) {
                 companies.add(map(resultSet));
@@ -88,12 +87,8 @@ public class DAOCompany implements IDAOCompany {
             e.printStackTrace();
             throw new DAOException(e);
         } finally {
-            try {
-                if (connection.getAutoCommit()) {
-                    manager.closeConnection();
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e);
+            if (manager.getAutoCommit()) {
+                manager.closeConnection();
             }
         }
         return companies;
@@ -118,12 +113,8 @@ public class DAOCompany implements IDAOCompany {
         } catch (SQLException e) {
             throw new DAOException(e);
         } finally {
-            try {
-                if (connection.getAutoCommit()) {
-                    manager.closeConnection();
-                }
-            } catch (SQLException e) {
-                throw new DAOException(e);
+            if (manager.getAutoCommit()) {
+                manager.closeConnection();
             }
         }
     }

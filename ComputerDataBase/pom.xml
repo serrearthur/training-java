@@ -4,7 +4,7 @@
 	<groupId>com.ebiz</groupId>
 	<artifactId>ComputerDataBase</artifactId>
 	<packaging>war</packaging>
-	<version>4.3.8</version>
+	<version>4.3.10</version>
 	<name>ComputerDataBase</name>
 
 	<properties>

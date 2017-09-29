@@ -1,6 +1,7 @@
 package dao;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import dao.exceptions.DAOException;
 import dao.impl.DAOComputer;
@@ -27,17 +28,17 @@ public interface IDAOComputer {
 
     /**
      * Method to delete a computer in the database.
-     * @param id id of the {@link Computer} to be deleted
+     * @param idList list of id of the {@link Computer} to be deleted
      * @throws DAOException thrown when a connection problem happens.
      */
-    void delete(Integer id) throws DAOException;
+    void delete(String idList) throws DAOException;
 
     /**
      * Method to delete all computers with a specific companyId.
-     * @param companyId companyId of the {@link Computer} from the company to be deleted
+     * @param idList list of companyId from the companyies to be deleted
      * @throws DAOException thrown when a connection problem happens.
      */
-    void deleteCompanyId(Integer companyId) throws DAOException;
+    void deleteCompanyId(String idList) throws DAOException;
 
     /**
      * Get a list of computers that have a specified id.
@@ -49,24 +50,13 @@ public interface IDAOComputer {
 
     /**
      * Get a list of computers that have a specified name.
+     * @param start starting index
+     * @param limit limit for the page size
+     * @param count variable used to store the row count
      * @param name name of the computers
+     * @param col column to order by
      * @return a list of the corresponding computers
      * @throws DAOException thrown when a connection problem happens.
      */
-    List<Computer> getFromName(String name) throws DAOException;
-
-    /**
-     * Get a list of computers that have a specified computerId.
-     * @param id id of the company
-     * @return a list of the corresponding computers
-     * @throws DAOException thrown when a connection problem happens.
-     */
-    List<Computer> getFromCompanyId(Integer id) throws DAOException;
-
-    /**
-     * Get a list of all the computers.
-     * @return a list of the corresponding computers
-     * @throws DAOException thrown when a connection problem happens.
-     */
-    List<Computer> getAll() throws DAOException;
+    List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col) throws DAOException;
 }

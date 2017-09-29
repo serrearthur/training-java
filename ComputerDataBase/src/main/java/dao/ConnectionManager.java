@@ -138,4 +138,17 @@ public class ConnectionManager {
             throw new DAOException("Error while updating the autocommit : " + e.getMessage());
         }
     }
+
+    /**
+     * Gets value for autocommit.
+     * @return the value of the autocommit flag
+     * @throws DAOException thrown when an error is encountered during the operation
+     */
+    public boolean getAutoCommit() throws DAOException {
+        try {
+            return THREAD_CONNECTION.get().getAutoCommit();
+        } catch (SQLException | NullPointerException e) {
+            throw new DAOException("Error while getting the autocommit value : " + e.getMessage());
+        }
+    }
 }

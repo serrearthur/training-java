@@ -63,7 +63,7 @@ public class ServiceCompany {
     public void deleteCompany(Integer companyId) {
         try {
             manager.setAutoCommit(false);
-            DAOComputer.getInstance().deleteCompanyId(companyId);
+            DAOComputer.getInstance().deleteCompanyId(companyId.toString());
             dao.delete(companyId);
             manager.commit();
         } catch (DAOException e) {
