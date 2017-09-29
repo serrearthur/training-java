@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import controller.ComputerFields;
 import controller.GeneralFields;
-import controller.service.CompanyService;
-import controller.service.ComputerService;
+import controller.service.ServiceCompany;
+import controller.service.ServiceComputer;
 
 /**
  * Servlet implementing the mechanics behind the addition of a new computer.
@@ -22,6 +22,8 @@ import controller.service.ComputerService;
 public class AddComputer extends HttpServlet implements ComputerFields, GeneralFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/addComputer.jsp";
+    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
+    private static final ServiceCompany SERVICE_COMPANY = ServiceCompany.getInstance();
 
     /**
      * @param request HTTP request
@@ -33,7 +35,7 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute(ATT_COMPANIES, CompanyService.getCompanies());
+        request.setAttribute(ATT_COMPANIES, SERVICE_COMPANY.getCompanies());
         this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
     }
 
@@ -52,7 +54,7 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
         String discontinued = request.getParameter(ATT_DISCONTINUED);
         String companyId = request.getParameter(ATT_COMPANYID);
 
-        Map<String, String> errors = ComputerService.addComputer(name, introduced, discontinued, companyId);
+        Map<String, String> errors = SERVICE_COMPUTER.addComputer(name, introduced, discontinued, companyId);
 
         if (errors.isEmpty()) {
             response.sendRedirect(VIEW_HOME);

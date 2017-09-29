@@ -7,6 +7,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import dao.exceptions.DAOConfigurationException;
+import dao.exceptions.DAOException;
 
 /**
  * Class containing the methods to configure a connection to the database.
@@ -14,8 +15,13 @@ import dao.exceptions.DAOConfigurationException;
  */
 public class ConnectionManager {
     private static final String CONFIG_FILE = "/db.properties";
+    private static final ThreadLocal<Connection> THREAD_CONNECTION =
+            new ThreadLocal<Connection>() {
+        @Override public Connection initialValue() {
+            return null;
+        }
+    };
 
-    private HikariConfig config;
     private HikariDataSource datasource;
 
     /**
@@ -46,13 +52,14 @@ public class ConnectionManager {
      * @throws DAOConfigurationException thrown if the dao.config file can't be found
      */
     private void loadConfigFile() throws DAOConfigurationException {
+        HikariConfig config;
         try {
-            this.config = new HikariConfig(CONFIG_FILE);
+            config = new HikariConfig(CONFIG_FILE);
         } catch (RuntimeException e) {
             throw new DAOConfigurationException("Unable to load the file \"" + CONFIG_FILE + "\".");
         }
         try {
-            this.datasource = new HikariDataSource(this.config);
+            this.datasource = new HikariDataSource(config);
         } catch (IllegalArgumentException | IllegalStateException e) {
             throw new DAOConfigurationException("Invalid properties.");
         }
@@ -61,13 +68,87 @@ public class ConnectionManager {
     /**
      * Gets a connection from the pool or creates a new one.
      * @return a connection taken from the pool
-     * @throws DAOConfigurationException thrown if Hikari is unable to connect to the database
+     * @throws DAOException thrown if Hikari is unable to connect to the database
      */
-    public Connection getConnection() throws DAOConfigurationException {
+    public Connection getConnection() throws DAOException {
         try {
-            return this.datasource.getConnection();
+            if (THREAD_CONNECTION.get() == null) {
+                THREAD_CONNECTION.set(this.datasource.getConnection());
+            }
+            return THREAD_CONNECTION.get();
         } catch (SQLException e) {
-            throw new DAOConfigurationException("Unable to connect to database : " + e.getMessage());
+            throw new DAOException("Unable to connect to database : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Closes the current connection.
+     * @throws DAOException thrown when an error is encountered when closing the connection
+     */
+    public void closeConnection() throws DAOException {
+        try {
+            if (THREAD_CONNECTION.get() != null) {
+                THREAD_CONNECTION.get().close();
+                THREAD_CONNECTION.remove();
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error while closing the connection : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Commits the current transaction.
+     * @throws DAOException thrown when an error is encountered when commiting
+     */
+    public void commit() throws DAOException {
+        try {
+            if (THREAD_CONNECTION.get() != null) {
+                THREAD_CONNECTION.get().commit();
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error while commiting the transaction : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Commits the current transaction.
+     * @throws DAOException thrown when an error is encountered during the rollback
+     */
+    public void rollback() throws DAOException {
+        try {
+            if (THREAD_CONNECTION.get() != null) {
+                THREAD_CONNECTION.get().rollback();
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error while rolling back the transaction : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Change the value for autocommit.
+     * @param flag new value for autocommit
+     * @throws DAOException thrown when an error is encountered during the operation
+     */
+    public void setAutoCommit(boolean flag) throws DAOException {
+        try {
+            if (THREAD_CONNECTION.get() != null) {
+                THREAD_CONNECTION.get().setAutoCommit(flag);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error while updating the autocommit : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets value for autocommit.
+     * @return the value of the autocommit flag
+     * @throws DAOException thrown when an error is encountered during the operation
+     */
+    public boolean getAutoCommit() throws DAOException {
+        try {
+            return THREAD_CONNECTION.get().getAutoCommit();
+        } catch (SQLException | NullPointerException e) {
+            throw new DAOException("Error while getting the autocommit value : " + e.getMessage());
         }
     }
 }

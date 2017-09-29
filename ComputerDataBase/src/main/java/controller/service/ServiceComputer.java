@@ -1,9 +1,12 @@
 package controller.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import controller.validation.ComputerValidator;
+import dao.exceptions.DAOException;
 import dao.impl.DAOComputer;
 import model.Computer;
 import view.Page;
@@ -14,33 +17,60 @@ import view.mapper.MapperComputer;
  * Service providing an interface between the servlet and the Computer DAO.
  * @author aserre
  */
-public class ComputerService {
+public class ServiceComputer {
+    private DAOComputer dao;
     /**
-     * Gets the current page from the database.
-     * @param limit The maximum number of Computer per page
-     * @return a list of computers in {@link DTOComputer} format
+     * Initialization-on-demand singleton holder  for {@link ServiceComputer}.
      */
-    public static Page<DTOComputer> getPage(int limit) {
-        return new Page<DTOComputer>(MapperComputer.toDTOComputer(DAOComputer.getInstance().getAll()), limit);
+    private static class SingletonHolder {
+        private static final ServiceComputer INSTANCE = new ServiceComputer();
+    }
+
+    /**
+     * Accessor for the instance of the singleton.
+     * @return the instance of {@link ServiceComputer}
+     */
+    public static ServiceComputer getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    /**
+     * Contructor for a new ServiceComputer.
+     */
+    private ServiceComputer() {
+        this.dao = DAOComputer.getInstance();
     }
 
     /**
      * Creates a page of computers from the result of the search request.
-     * @param search The search criterias
+     * @param search The search criteria
+     * @param pageNb the page number to get
      * @param limit The maximum number of Computer per page
+     * @param col column to order by
      * @return a list of computers in {@link DTOComputer} format
      */
-    public static Page<DTOComputer> getPage(String search, int limit) {
-        return new Page<DTOComputer>(MapperComputer.toDTOComputer(DAOComputer.getInstance().getFromName(search)), limit);
+    public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col) {
+        Page<DTOComputer> ret = null;
+        try {
+            AtomicInteger count = new AtomicInteger();
+            List<Computer> l = dao.getFromName((pageNb - 1) * limit, limit, count, search, col);
+            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col);
+            ret.setSearch(search);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     /**
      * Delete the requested computers from the database.
      * @param requestedDelete ID of the computers to delete, spearated by a comma
      */
-    public static void delete(String requestedDelete) {
-        for (String s : requestedDelete.split(",")) {
-            DAOComputer.getInstance().delete(new Computer(Integer.parseInt(s), ""));
+    public void delete(String requestedDelete) {
+        try {
+            dao.delete(requestedDelete);
+        } catch (DAOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -49,12 +79,15 @@ public class ComputerService {
      * @param computerID ID of the computer we want to access
      * @return a computers in {@link DTOComputer} format
      */
-    public static DTOComputer getComputer(String computerID) {
+    public DTOComputer getComputer(String computerID) {
         DTOComputer c = new DTOComputer();
         try {
-            c = MapperComputer.toDTOComputer(DAOComputer.getInstance().getFromId(Integer.parseInt(computerID))).get(0);
+            Computer comp = dao.getFromId(Integer.parseInt(computerID)).get(0);
+            c = MapperComputer.toDTOComputer(comp);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             System.out.println("Computer \"" + computerID + "\" not found : " + e.getMessage());
+        } catch (DAOException e) {
+            e.printStackTrace();
         }
         return c;
     }
@@ -67,11 +100,15 @@ public class ComputerService {
      * @param companyId companyId of the new computer
      * @return a list of errors that occured during validation
      */
-    public static Map<String, String> addComputer(String name, String introduced, String discontinued, String companyId) {
+    public Map<String, String> addComputer(String name, String introduced, String discontinued, String companyId) {
         Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
-            DAOComputer.getInstance().create(c);
+            try {
+                dao.create(c);
+            } catch (DAOException e) {
+                e.printStackTrace();
+            }
         }
         return errors;
     }
@@ -85,12 +122,16 @@ public class ComputerService {
      * @param companyId companyId of the computer
      * @return a list of errors that occured during validation
      */
-    public static Map<String, String> editComputer(String id, String name, String introduced, String discontinued,
+    public Map<String, String> editComputer(String id, String name, String introduced, String discontinued,
             String companyId) {
         Map<String, String> errors = new HashMap<String, String>();
         Computer c = ComputerValidator.validate(id, name, introduced, discontinued, companyId, errors);
         if (errors.isEmpty()) {
-            DAOComputer.getInstance().update(c);
+            try {
+                dao.update(c);
+            } catch (DAOException e) {
+                e.printStackTrace();
+            }
         }
         return errors;
     }

@@ -19,12 +19,14 @@ import model.Company;
  * @author aserre
  */
 public class DAOCompany implements IDAOCompany {
-    private final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
-    private final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
-    private final String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
-    private final String REQUEST_SELECT_ID = "SELECT * FROM company WHERE id = ?";
-    private final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
-    private final String REQUEST_SELECT_ALL = "SELECT * FROM company";
+    private static final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
+    private static final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
+    private static final String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
+    private static final String REQUEST_SELECT_ID = "SELECT * FROM company WHERE id = ?";
+    private static final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
+    private static final String REQUEST_SELECT_ALL = "SELECT * FROM company";
+
+    private ConnectionManager manager;
 
     /**
      * Initialization-on-demand singleton holder for {@link DAOCompany}.
@@ -45,6 +47,7 @@ public class DAOCompany implements IDAOCompany {
      * Constructor for the DAOCompany.
      */
     private DAOCompany() {
+        this.manager = ConnectionManager.getInstance();
     }
 
     /**
@@ -71,18 +74,22 @@ public class DAOCompany implements IDAOCompany {
      * @return the list of Companies corresponding to the request
      * @throws DAOException thrown if the internal {@link Connection},
      * {@link PreparedStatement} or {@link ResultSet} throw an error
+     * @throws SQLException a
      */
     private List<Company> executeQuery(String request, Object... params) throws DAOException {
         List<Company> companies = new ArrayList<Company>();
-
-        try (Connection connection = ConnectionManager.getInstance().getConnection();
-                PreparedStatement preparedStatement = initPreparedStatement(connection, request, false, params);
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             while (resultSet.next()) {
                 companies.add(map(resultSet));
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new DAOException(e);
+        } finally {
+            if (manager.getAutoCommit()) {
+                manager.closeConnection();
+            }
         }
         return companies;
     }
@@ -97,14 +104,18 @@ public class DAOCompany implements IDAOCompany {
      * {@link PreparedStatement} or {@link ResultSet} throw an error
      */
     private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
-        try (Connection connection = ConnectionManager.getInstance().getConnection();
-        PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
+        Connection connection = manager.getConnection();
+        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
             int status = preparedStatement.executeUpdate();
             if (status == 0) {
                 throw new DAOException("Unable to update this company, no row added to the table.");
             }
         } catch (SQLException e) {
             throw new DAOException(e);
+        } finally {
+            if (manager.getAutoCommit()) {
+                manager.closeConnection();
+            }
         }
     }
 
@@ -119,8 +130,8 @@ public class DAOCompany implements IDAOCompany {
     }
 
     @Override
-    public void delete(Company company) throws DAOException {
-        executeUpdate(REQUEST_DELETE, false, company.getId());
+    public void delete(Integer id) throws DAOException {
+        executeUpdate(REQUEST_DELETE, false, id);
     }
 
     @Override

@@ -27,10 +27,10 @@ public interface IDAOCompany {
 
     /**
      * Method to delete a company in the database.
-     * @param company {@link Company} to be deleted
+     * @param id id of the {@link Company} to be deleted
      * @throws DAOException thrown when a connection problem happens.
      */
-    void delete(Company company) throws DAOException;
+    void delete(Integer id) throws DAOException;
 
     /**
      * Get a list of companies that have a specified id.

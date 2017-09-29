@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import controller.ComputerFields;
 import controller.GeneralFields;
-import controller.service.CompanyService;
-import controller.service.ComputerService;
+import controller.service.ServiceCompany;
+import controller.service.ServiceComputer;
 import view.dto.DTOComputer;
 
 /**
@@ -24,6 +24,8 @@ public class EditComputer extends HttpServlet implements ComputerFields, General
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/editComputer.jsp";
     private static final String ATT_COMPUTER = "computer";
+    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
+    private static final ServiceCompany SERVICE_COMPANY = ServiceCompany.getInstance();
 
     /**
      * @param request HTTP request
@@ -38,11 +40,11 @@ public class EditComputer extends HttpServlet implements ComputerFields, General
         DTOComputer currentComputer = null;
         String computerID = request.getParameter(ATT_COMPUTERID);
         if (computerID != null) {
-            currentComputer = ComputerService.getComputer(computerID);
+            currentComputer = SERVICE_COMPUTER.getComputer(computerID);
         }
 
         request.setAttribute(ATT_COMPUTER, currentComputer);
-        request.setAttribute(ATT_COMPANIES, CompanyService.getCompanies());
+        request.setAttribute(ATT_COMPANIES, SERVICE_COMPANY.getCompanies());
         this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
     }
 
@@ -62,7 +64,7 @@ public class EditComputer extends HttpServlet implements ComputerFields, General
         String discontinued = request.getParameter(ATT_DISCONTINUED);
         String companyId = request.getParameter(ATT_COMPANYID);
 
-        Map<String, String> errors = ComputerService.editComputer(id, name, introduced, discontinued, companyId);
+        Map<String, String> errors = SERVICE_COMPUTER.editComputer(id, name, introduced, discontinued, companyId);
 
         if (errors.isEmpty()) {
             response.sendRedirect(VIEW_HOME);

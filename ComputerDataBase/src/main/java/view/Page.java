@@ -9,71 +9,86 @@ import java.util.List;
  * @param <T> generic type
  */
 public class Page<T> {
+    private static final int DEFAULT_BORDER_SIZE = 4;
+
     private List<T> data;
     private int limit;
     private int totalPage;
-    private int currentPageNumber;
-    private int pageBorders;
+    private int pageNb;
+    private int paginationBorders;
+    private int totalCount;
+    private String col;
+    private String search;
 
     /**
      * Constructor.
-     * @param data data to be represented as a page
+     * @param data data representing a page of the request
+     * @param pageNb the current page
+     * @param totalCount total size of the request
+     * @param col column to order by
      * @param limit number of entries per page
      */
-    public Page(List<T> data, int limit) {
-        this.data = new ArrayList<T>();
-        this.data.addAll(data);
+    public Page(List<T> data, int pageNb, int limit, int totalCount, String col) {
+        this.data = new ArrayList<T>(data);
         this.limit = limit;
-        this.currentPageNumber = 1;
-        this.totalPage = 1 + this.data.size() / this.limit;
-        this.pageBorders = 4;
+        this.pageNb = pageNb;
+        this.totalCount = totalCount;
+        this.col = col;
+        this.totalPage = 1 + totalCount / this.limit;
+        this.paginationBorders = DEFAULT_BORDER_SIZE;
     }
 
     /**
-     * Selects only the part of the data corresponding to a specific page.
-     * @param nb Page number to select
-     * @return selected data
+     * Configure the input stream to invert the sorting order.
+     * <p>
+     * If the input is different from the stored column, return the input.
+     * Otherwise, return the inversion of the stored value.
+     * @param o New column to sort by
+     * @return the exact value format for the sort
      */
-    public List<T> getByPageNumber(int nb) {
-        List<T> ret = new ArrayList<T>();
-        if (nb > 0 && nb <= this.totalPage) {
-            for (int i = (nb - 1) * this.limit; i < nb * this.limit; i++) {
-                if (i >= this.data.size()) {
-                    break;
-                }
-                ret.add(this.data.get(i));
+    public String invertOrder(String o) {
+        String base = this.col;
+        if (this.col.charAt(0) == '!') {
+            base = base.substring(1, base.length());
+        }
+        if (base.equals(o)) {
+            if (this.col.charAt(0) == '!') {
+                return base;
+            } else {
+                return "!" + base;
             }
+        } else {
+            return o;
         }
-        return ret;
     }
 
-    public List<T> getCurrentPage() {
-        return getByPageNumber(this.currentPageNumber);
-    }
-
-    /**
-     * Sets {@link Page#currentPageNumber} to a specific value. Checks for overflow
-     * and underflow.
-     * @param nb index of the new page
-     * @return current page number, after affectation.
-     */
-    public int moveToPageNumber(int nb) {
-        if (nb > 0 && nb <= this.totalPage) {
-            this.currentPageNumber = nb;
-        }
-        return this.currentPageNumber;
+    public List<T> getData() {
+        return this.data;
     }
 
     public int getTotalPage() {
         return this.totalPage;
     }
 
-    public int getCurrentPageNumber() {
-        return this.currentPageNumber;
+    public int getPageNb() {
+        return this.pageNb;
+    }
+
+    /**
+     * Sets {@link Page#pageNb} to a specific value. Checks for overflow
+     * and underflow.
+     * @param nb index of the new page
+     * @return current page number, after affectation.
+     */
+    public int setPageNb(int nb) {
+        if (nb > 0 && nb <= this.totalPage) {
+            this.pageNb = nb;
+        }
+        return this.pageNb;
     }
 
     public int getTotalCount() {
-        return data.size();
+        return this.totalCount;
     }
 
     public int getLimit() {
@@ -82,20 +97,36 @@ public class Page<T> {
 
     /**
      * Sets the maximum number of item per page, and consequently updates the value
-     * of {@link Page#totalPage} and {@link Page#currentPageNumber}.
+     * of {@link Page#totalPage} and {@link Page#pageNb}.
      * @param i new maximum number of item per page
      */
     public void setLimit(int i) {
         this.limit = i;
-        this.totalPage = 1 + this.data.size() / this.limit;
-        this.currentPageNumber = Math.min(this.currentPageNumber, this.totalPage);
+        this.totalPage = 1 + this.totalCount / this.limit;
+        this.pageNb = Math.min(this.pageNb, this.totalPage);
     }
 
-    public int getPageBorders() {
-        return this.pageBorders;
+    public int getPaginationBorders() {
+        return this.paginationBorders;
     }
 
-    public void setPageBorders(int pageBorders) {
-        this.pageBorders = pageBorders;
+    public void setPaginationBorders(int paginationBorders) {
+        this.paginationBorders = paginationBorders;
+    }
+
+    public String getSearch() {
+        return this.search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
+    public String getCol() {
+        return this.col;
+    }
+
+    public void setCol(String col) {
+        this.col = col;
     }
 }

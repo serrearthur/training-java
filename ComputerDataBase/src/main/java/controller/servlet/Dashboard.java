@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import controller.GeneralFields;
-import controller.service.ComputerService;
+import controller.service.ServiceComputer;
 import view.dto.DTOComputer;
 import view.Page;
 
@@ -25,6 +25,8 @@ public class Dashboard extends HttpServlet implements GeneralFields {
     private static final String ATT_PAGENUMBER = "pageNb";
     private static final String ATT_SEARCH = "search";
     private static final String ATT_DELETE = "selection";
+    private static final String ATT_ORDER = "order";
+    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
 
     /**
      * @param request HTTP request
@@ -36,32 +38,9 @@ public class Dashboard extends HttpServlet implements GeneralFields {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Page<DTOComputer> page = null;
-        int limit = 10;
-        int pageNb = 1;
-
-        String requestedPage = request.getParameter(ATT_PAGENUMBER);
-        if (requestedPage != null) {
-            pageNb = Integer.parseInt(requestedPage);
-        }
-
-        String requestedLimit = request.getParameter(ATT_PAGELIMIT);
-        if (requestedLimit != null) {
-            limit = Integer.parseInt(requestedLimit);
-        }
-
-        String requestedSearch = request.getParameter(ATT_SEARCH);
-        if (requestedSearch != null) {
-            page = ComputerService.getPage(requestedSearch, limit);
-        } else {
-            page = ComputerService.getPage(limit);
-        }
-        page.moveToPageNumber(pageNb);
+        Page<DTOComputer> page = requestParser(request);
 
         request.setAttribute(ATT_PAGE, page);
-        request.setAttribute(ATT_SEARCH, requestedSearch);
-        request.setAttribute(ATT_PAGELIMIT, page.getLimit());
-        request.setAttribute(ATT_PAGENUMBER, page.getCurrentPageNumber());
         this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
     }
 
@@ -77,10 +56,43 @@ public class Dashboard extends HttpServlet implements GeneralFields {
             throws ServletException, IOException {
         String requestedDelete = request.getParameter(ATT_DELETE);
         if (requestedDelete != null) {
-            ComputerService.delete(requestedDelete);
+            SERVICE_COMPUTER.delete(requestedDelete);
             response.sendRedirect(VIEW_HOME);
         } else {
-            doGet(request, response);
+            throw new ServletException("Invalid operation : POST.");
         }
+    }
+
+    /**
+     * Method in charge of parsing the request and create the adequate {@link Page} object.
+     * @param request the {@link HttpServletRequest} to parse
+     * @return the {@link Page} object corresponding to the request
+     */
+    private Page<DTOComputer> requestParser(HttpServletRequest request) {
+        Page<DTOComputer> page = null;
+        int limit = 10;
+        int pageNb = 1;
+
+        String requestedPage = request.getParameter(ATT_PAGENUMBER);
+        if (requestedPage != null) {
+            pageNb = Integer.parseInt(requestedPage);
+        }
+
+        String requestedLimit = request.getParameter(ATT_PAGELIMIT);
+        if (requestedLimit != null) {
+            limit = Integer.parseInt(requestedLimit);
+        }
+
+        String requestedSearch = request.getParameter(ATT_SEARCH);
+        if (requestedSearch == null) {
+            requestedSearch = "";
+        }
+
+        String requestedOrder = request.getParameter(ATT_ORDER);
+        if (requestedOrder == null) {
+            requestedOrder = "cpt.id";
+        }
+        page = SERVICE_COMPUTER.getPage(requestedSearch, pageNb, limit, requestedOrder);
+        return page;
     }
 }
