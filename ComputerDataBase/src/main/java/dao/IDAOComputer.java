@@ -55,8 +55,9 @@ public interface IDAOComputer {
      * @param count variable used to store the row count
      * @param name name of the computers
      * @param col column to order by
+     * @param order "ASC" or "DESC"
      * @return a list of the corresponding computers
      * @throws DAOException thrown when a connection problem happens.
      */
-    List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col) throws DAOException;
+    List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col, String order) throws DAOException;
 }

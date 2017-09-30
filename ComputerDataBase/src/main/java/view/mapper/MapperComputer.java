@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.ConnectionManager;
+import dao.exceptions.DAOException;
 import dao.impl.DAOCompany;
 import model.Computer;
 import view.dto.DTOComputer;
@@ -16,6 +17,7 @@ import view.dto.DTOComputer;
  * @author aserre
  */
 public class MapperComputer {
+    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapperComputer.class);
     /**
      * Function converting a {@link Computer} into a {@link DTOComputer}.
      * @param c original {@link Computer}
@@ -40,6 +42,8 @@ public class MapperComputer {
             ConnectionManager.getInstance().closeConnection();
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
         }
         try {
             ret.setCompanyId(c.getCompanyId().toString());

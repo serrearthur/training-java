@@ -5,6 +5,7 @@
 <%@ attribute name="limit" required="false" %>
 <%@ attribute name="search" required="false" %>
 <%@ attribute name="col" required="false" %>
+<%@ attribute name="order" required="false" %>
 
 <c:if test="${not empty target}">
 	<c:set var="output" value="${target}?" />
@@ -41,13 +42,17 @@
 		</c:otherwise>
 	</c:choose>
 	
-		<c:choose>
+	<c:choose>
 		<c:when test="${not empty col}">
-			<c:set var="output" value="${output}order=${requestScope['page'].invertOrder(col)}&" />
+			<c:set var="output" value="${output}col=${col}&" />
+			<c:set var="output" value="${output}order=${requestScope['page'].getNewOrder(col)}&" />
 		</c:when>
 		<c:otherwise>
 			<c:if test="${not empty requestScope['page'].col}">
-				<c:set var="output" value="${output}order=${requestScope['page'].col}&" />
+				<c:set var="output" value="${output}col=${requestScope['page'].col}&" />
+				<c:if test="${not empty requestScope['page'].order}">
+					<c:set var="output" value="${output}order=${requestScope['page'].order}&" />
+				</c:if>
 			</c:if>
 		</c:otherwise>
 	</c:choose>

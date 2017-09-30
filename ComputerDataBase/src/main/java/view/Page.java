@@ -18,22 +18,25 @@ public class Page<T> {
     private int paginationBorders;
     private int totalCount;
     private String col;
+    private String order;
     private String search;
 
     /**
      * Constructor.
-     * @param data data representing a page of the request
+     * @param data data representing a page of a request
      * @param pageNb the current page
-     * @param totalCount total size of the request
+     * @param totalCount total size of a request
      * @param col column to order by
+     * @param order "ASC" or "DESC"
      * @param limit number of entries per page
      */
-    public Page(List<T> data, int pageNb, int limit, int totalCount, String col) {
+    public Page(List<T> data, int pageNb, int limit, int totalCount, String col, String order) {
         this.data = new ArrayList<T>(data);
         this.limit = limit;
         this.pageNb = pageNb;
         this.totalCount = totalCount;
         this.col = col;
+        this.order = order;
         this.totalPage = 1 + totalCount / this.limit;
         this.paginationBorders = DEFAULT_BORDER_SIZE;
     }
@@ -43,22 +46,18 @@ public class Page<T> {
      * <p>
      * If the input is different from the stored column, return the input.
      * Otherwise, return the inversion of the stored value.
-     * @param o New column to sort by
+     * @param col New column to sort by
      * @return the exact value format for the sort
      */
-    public String invertOrder(String o) {
-        String base = this.col;
-        if (this.col.charAt(0) == '!') {
-            base = base.substring(1, base.length());
-        }
-        if (base.equals(o)) {
-            if (this.col.charAt(0) == '!') {
-                return base;
+    public String getNewOrder(String col) {
+        if (this.col.equals(col)) {
+            if (this.order.equals("ASC")) {
+                return "DESC";
             } else {
-                return "!" + base;
+                return "ASC";
             }
         } else {
-            return o;
+            return "ASC";
         }
     }
 
@@ -128,5 +127,13 @@ public class Page<T> {
 
     public void setCol(String col) {
         this.col = col;
+    }
+
+    public String getOrder() {
+        return this.order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
     }
 }

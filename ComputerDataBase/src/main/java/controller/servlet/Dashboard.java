@@ -25,6 +25,7 @@ public class Dashboard extends HttpServlet implements GeneralFields {
     private static final String ATT_PAGENUMBER = "pageNb";
     private static final String ATT_SEARCH = "search";
     private static final String ATT_DELETE = "selection";
+    private static final String ATT_COL = "col";
     private static final String ATT_ORDER = "order";
     private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
 
@@ -69,9 +70,11 @@ public class Dashboard extends HttpServlet implements GeneralFields {
      * @return the {@link Page} object corresponding to the request
      */
     private Page<DTOComputer> requestParser(HttpServletRequest request) {
-        Page<DTOComputer> page = null;
         int limit = 10;
         int pageNb = 1;
+        String search = "";
+        String col = "cpt.id";
+        String order = "ASC";
 
         String requestedPage = request.getParameter(ATT_PAGENUMBER);
         if (requestedPage != null) {
@@ -84,15 +87,20 @@ public class Dashboard extends HttpServlet implements GeneralFields {
         }
 
         String requestedSearch = request.getParameter(ATT_SEARCH);
-        if (requestedSearch == null) {
-            requestedSearch = "";
+        if (requestedSearch != null) {
+            search = requestedSearch;
+        }
+
+        String requestedCol = request.getParameter(ATT_COL);
+        if (requestedCol != null) {
+            col = requestedCol;
         }
 
         String requestedOrder = request.getParameter(ATT_ORDER);
-        if (requestedOrder == null) {
-            requestedOrder = "cpt.id";
+        if (requestedOrder != null) {
+            order = requestedOrder;
         }
-        page = SERVICE_COMPUTER.getPage(requestedSearch, pageNb, limit, requestedOrder);
-        return page;
+
+        return SERVICE_COMPUTER.getPage(search, pageNb, limit, col, order);
     }
 }

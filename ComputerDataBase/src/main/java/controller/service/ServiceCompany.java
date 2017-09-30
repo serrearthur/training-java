@@ -15,6 +15,7 @@ import view.mapper.MapperCompany;
  * @author aserre
  */
 public class ServiceCompany {
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
     private DAOCompany dao;
     private ConnectionManager manager;
 
@@ -51,7 +52,7 @@ public class ServiceCompany {
             List<Company> l = dao.getAll();
             ret = MapperCompany.toDTOCompany(l);
         } catch (DAOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return ret;
     }
@@ -67,13 +68,13 @@ public class ServiceCompany {
             dao.delete(companyId);
             manager.commit();
         } catch (DAOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage() + " : rolling back.");
             manager.rollback();
         } finally {
             try {
                 manager.closeConnection();
             } catch (DAOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage() + " : failed to roll back.");
             }
         }
     }

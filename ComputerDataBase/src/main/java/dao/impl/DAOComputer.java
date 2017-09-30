@@ -147,14 +147,14 @@ public class DAOComputer implements IDAOComputer {
     /**
      * Appends the ORDER BY and LIMIT commands to the SQL request.
      * @param request request to modify
-     * @param sortCol column to sort by
-     * @param asc <code>true</code> for ascending order, <code>false</code> for descending order
+     * @param col column to sort by
+     * @param order "ASC" or "DESC
      * @param start starting index
      * @param limit limit for the page size
      * @return a new SQL request string
      */
-    private String setOrderLimit(String request, String sortCol, boolean asc, Integer start, Integer limit) {
-        return request + " ORDER BY " + sortCol + (asc ? " ASC" : " DESC") + " LIMIT " + start + "," + limit;
+    private String setOrderLimit(String request, String col, String order, Integer start, Integer limit) {
+        return request + " ORDER BY " + col + " " + order + " LIMIT " + start + "," + limit;
     }
 
     @Override
@@ -185,12 +185,7 @@ public class DAOComputer implements IDAOComputer {
     }
 
     @Override
-    public List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col) throws DAOException {
-        boolean asc = true;
-        if (col.charAt(0) == '!') {
-            asc = false;
-            col = col.substring(1, col.length());
-        }
-        return executeQuery(setOrderLimit(REQUEST_SELECT_JOIN, col, asc, start, limit), count, "%" + name + "%", "%" + name + "%");
+    public List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col, String order) throws DAOException {
+        return executeQuery(setOrderLimit(REQUEST_SELECT_JOIN, col, order, start, limit), count, "%" + name + "%", "%" + name + "%");
     }
 }

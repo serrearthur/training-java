@@ -18,6 +18,7 @@ import view.mapper.MapperComputer;
  * @author aserre
  */
 public class ServiceComputer {
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
     private DAOComputer dao;
     /**
      * Initialization-on-demand singleton holder  for {@link ServiceComputer}.
@@ -47,17 +48,18 @@ public class ServiceComputer {
      * @param pageNb the page number to get
      * @param limit The maximum number of Computer per page
      * @param col column to order by
+     * @param order "ASC" or "DESC"
      * @return a list of computers in {@link DTOComputer} format
      */
-    public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col) {
+    public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col, String order) {
         Page<DTOComputer> ret = null;
         try {
             AtomicInteger count = new AtomicInteger();
-            List<Computer> l = dao.getFromName((pageNb - 1) * limit, limit, count, search, col);
-            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col);
+            List<Computer> l = dao.getFromName((pageNb - 1) * limit, limit, count, search, col, order);
+            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col, order);
             ret.setSearch(search);
         } catch (DAOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return ret;
     }
@@ -70,7 +72,7 @@ public class ServiceComputer {
         try {
             dao.delete(requestedDelete);
         } catch (DAOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
@@ -85,9 +87,9 @@ public class ServiceComputer {
             Computer comp = dao.getFromId(Integer.parseInt(computerID)).get(0);
             c = MapperComputer.toDTOComputer(comp);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            System.out.println("Computer \"" + computerID + "\" not found : " + e.getMessage());
+            logger.error(e.getMessage() + " : Computer \"" + computerID + "\" not found : ");
         } catch (DAOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return c;
     }
@@ -107,7 +109,7 @@ public class ServiceComputer {
             try {
                 dao.create(c);
             } catch (DAOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
         return errors;
@@ -130,7 +132,7 @@ public class ServiceComputer {
             try {
                 dao.update(c);
             } catch (DAOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
         return errors;

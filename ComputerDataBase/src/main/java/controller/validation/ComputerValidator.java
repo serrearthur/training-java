@@ -66,8 +66,8 @@ public class ComputerValidator implements ComputerFields {
      * @return parsed id
      */
     private static Integer validationId(String id, Map<String, String> errors) {
-        if (id == null || id.isEmpty()) {
-            errors.put(ATT_COMPUTERID, "Id can't be empty.");
+        if (id == null || id.isEmpty() || id.equals("0")) {
+            errors.put(ATT_COMPUTERID, "Id can't be empty or equal to 0.");
             return null;
         } else {
             Pattern p = Pattern.compile("^[1-9][0-9]*$");
