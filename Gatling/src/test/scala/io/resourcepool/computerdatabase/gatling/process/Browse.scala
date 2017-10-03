@@ -33,6 +33,6 @@ object Browse {
           .queryParam(config.getString("application.urls.param.column").toString(), "${column}")
           .queryParam(config.getString("application.urls.param.order").toString(), "${order}")
           .check(status.is(200))
-      }.pause(1, 10)
+      }.pause(3, 10)
     }
 }

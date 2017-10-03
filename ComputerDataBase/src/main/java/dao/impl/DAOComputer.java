@@ -27,8 +27,10 @@ public class DAOComputer implements IDAOComputer {
     private static final String REQUEST_DELETE = "DELETE FROM computer WHERE LOCATE(CONCAT(',',id,','), ?) >0";
     private static final String REQUEST_DELETE_COMPANYID = "DELETE FROM computer WHERE LOCATE(CONCAT(',',company_id,','), ?) >0";
     private static final String REQUEST_SELECT_ID = "SELECT * FROM computer WHERE id = ?";
-    private static final String REQUEST_SELECT_JOIN = "SELECT SQL_CALC_FOUND_ROWS * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
-    private static final String REQUEST_SELECT_GET_COUNT = "SELECT FOUND_ROWS()";
+
+    private static final String FROM = "FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
+    private static final String REQUEST_SELECT_JOIN = "SELECT * " + FROM;
+    private static final String REQUEST_SELECT_GET_COUNT = "SELECT COUNT(*) " + FROM;
 
     private ConnectionManager manager;
 
@@ -113,7 +115,7 @@ public class DAOComputer implements IDAOComputer {
         List<Computer> computers = new ArrayList<Computer>();
         try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
-            count.set(this.getCount(manager.getConnection()));
+            count.set(this.getCount(manager.getConnection(), params[0], params[1]));
             while (resultSet.next()) {
                 computers.add(map(resultSet));
             }
@@ -130,12 +132,13 @@ public class DAOComputer implements IDAOComputer {
     /**
      * Returns the row count of the previous request. Must be executed right after the request.
      * @param c connection used to make the request
+     * @param params search string
      * @return the row count of the previous request
      * @throws SQLException thrown when a connection problem happens.
      */
-    private int getCount(Connection c) throws SQLException {
+    private int getCount(Connection c, Object... params) throws SQLException {
         int count = 0;
-        try (PreparedStatement preparedStatement = initPreparedStatement(c, REQUEST_SELECT_GET_COUNT, false);
+        try (PreparedStatement preparedStatement = initPreparedStatement(c, REQUEST_SELECT_GET_COUNT, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
