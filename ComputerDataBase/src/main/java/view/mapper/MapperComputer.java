@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.ConnectionManager;
 import dao.exceptions.DAOException;
 import dao.impl.DAOCompany;
 import model.Computer;
@@ -39,7 +38,6 @@ public class MapperComputer {
         }
         try {
             ret.setCompany(DAOCompany.getInstance().getFromId(c.getCompanyId()).get(0).getName());
-            ConnectionManager.getInstance().closeConnection();
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
         } catch (DAOException e) {

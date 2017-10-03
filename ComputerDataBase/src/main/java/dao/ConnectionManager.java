@@ -41,7 +41,7 @@ public class ConnectionManager {
     }
 
     /**
-     * Contructor for a new ConnectionManger.
+     * Contructor for a new ConnectionManager.
      * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
      */
     private ConnectionManager() throws DAOConfigurationException {
