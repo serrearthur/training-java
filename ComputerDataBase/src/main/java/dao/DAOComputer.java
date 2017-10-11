@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dao.exceptions.DAOException;
-import dao.impl.DAOComputer;
+import dao.impl.DAOComputerImpl;
 import model.Computer;
 
 /**
- * Interface representing the method used by a {@link DAOComputer}.
+ * Interface representing the method used by a {@link DAOComputerImpl}.
  * @author aserre
  */
-public interface IDAOComputer {
+public interface DAOComputer {
     /**
      * Method to create a computer in the database.
      * @param computer {@link Computer} to be created
@@ -55,8 +55,9 @@ public interface IDAOComputer {
      * @param count variable used to store the row count
      * @param name name of the computers
      * @param col column to order by
+     * @param order "ASC" or "DESC"
      * @return a list of the corresponding computers
      * @throws DAOException thrown when a connection problem happens.
      */
-    List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col) throws DAOException;
+    List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col, String order) throws DAOException;
 }

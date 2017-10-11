@@ -30,7 +30,7 @@ public class Computer {
     /**
      * Constructor.
      * @param id id of the computer
-     * @param name name of the constructor
+     * @param name name of the computer
      */
     public Computer(int id, String name) {
         this.id = id;

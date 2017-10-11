@@ -14,12 +14,12 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 
-import dao.impl.DAOCompany;
+import dao.impl.DAOCompanyImpl;
 import junit.framework.TestCase;
 import model.Company;
 
 /**
- * Test class for {@link DAOCompany}.
+ * Test class for {@link DAOCompanyImpl}.
  * @author aserre
  */
 @RunWith(Parameterized.class)
@@ -54,7 +54,7 @@ public class DAOCompanyTest extends TestCase {
     public String name;
 
     /**
-     * Test of the {@link DAOCompany#map(ResultSet)} method.
+     * Test of the {@link DAOCompanyImpl#map(ResultSet)} method.
      * @throws SQLException thrown by the {@link ResultSet}
      */
     @Test
@@ -65,7 +65,7 @@ public class DAOCompanyTest extends TestCase {
         }
         Mockito.doReturn(name).when(resultSet).getString("name");
 
-        Company company = DAOCompany.map(resultSet);
+        Company company = DAOCompanyImpl.map(resultSet);
         assertEquals(company.getId(), id);
         assertEquals(company.getName(), name);
     }

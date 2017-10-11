@@ -14,6 +14,7 @@ import dao.exceptions.DAOException;
  * @author aserre
  */
 public class ConnectionManager {
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnectionManager.class);
     private static final String CONFIG_FILE = "/db.properties";
     private static final ThreadLocal<Connection> THREAD_CONNECTION =
             new ThreadLocal<Connection>() {
@@ -40,7 +41,7 @@ public class ConnectionManager {
     }
 
     /**
-     * Contructor for a new ConnectionManger.
+     * Contructor for a new ConnectionManager.
      * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
      */
     private ConnectionManager() throws DAOConfigurationException {
@@ -56,12 +57,16 @@ public class ConnectionManager {
         try {
             config = new HikariConfig(CONFIG_FILE);
         } catch (RuntimeException e) {
-            throw new DAOConfigurationException("Unable to load the file \"" + CONFIG_FILE + "\".");
+            String message = "Unable to load the file \"" + CONFIG_FILE + "\".";
+            logger.error(message);
+            throw new DAOConfigurationException(message);
         }
         try {
             this.datasource = new HikariDataSource(config);
         } catch (IllegalArgumentException | IllegalStateException e) {
-            throw new DAOConfigurationException("Invalid properties.");
+            String message = "Invalid properties";
+            logger.error(message);
+            throw new DAOConfigurationException(message);
         }
     }
 

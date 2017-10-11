@@ -70,7 +70,7 @@
 					<tr>
 						<td class="editMode">
 							<input type="checkbox" name="cb" class="cb" value="${c.id}"></td>
-						<td><a href="<c:url value="/EditComputer?id=${c.id}"/>" >${c.name}</a></td>
+						<td><a href="<c:url value="EditComputer?id=${c.id}"/>" >${c.name}</a></td>
 						<td>${c.introduced}</td>
 						<td>${c.discontinued}</td>
 						<td>${c.company}</td>

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dao.ConnectionManager;
-import dao.IDAOComputer;
+import dao.DAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
 
@@ -21,7 +21,7 @@ import model.Computer;
  * Class maping the request made to the database and the {@link Computer}.
  * @author aserre
  */
-public class DAOComputer implements IDAOComputer {
+public class DAOComputerImpl implements DAOComputer {
     private static final String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
     private static final String REQUEST_DELETE = "DELETE FROM computer WHERE LOCATE(CONCAT(',',id,','), ?) >0";
@@ -33,15 +33,15 @@ public class DAOComputer implements IDAOComputer {
     private ConnectionManager manager;
 
     /**
-     * Initialization-on-demand singleton holder for {@link DAOComputer}.
+     * Initialization-on-demand singleton holder for {@link DAOComputerImpl}.
      */
     private static class SingletonHolder {
-        private static final DAOComputer INSTANCE = new DAOComputer();
+        private static final DAOComputerImpl INSTANCE = new DAOComputerImpl();
     }
 
     /**
      * Accessor for the instance of the singleton.
-     * @return the instance of {@link DAOComputer}
+     * @return the instance of {@link DAOComputerImpl}
      */
     public static DAOComputer getInstance() {
         return SingletonHolder.INSTANCE;
@@ -50,7 +50,7 @@ public class DAOComputer implements IDAOComputer {
     /**
      * Constructor for the DAOComputer.
      */
-    private DAOComputer() {
+    private DAOComputerImpl() {
         this.manager = ConnectionManager.getInstance();
     }
 
@@ -113,7 +113,7 @@ public class DAOComputer implements IDAOComputer {
         List<Computer> computers = new ArrayList<Computer>();
         try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
-            count.set(this.getCount(manager.getConnection()));
+            count.set(this.getCount());
             while (resultSet.next()) {
                 computers.add(map(resultSet));
             }
@@ -129,13 +129,12 @@ public class DAOComputer implements IDAOComputer {
 
     /**
      * Returns the row count of the previous request. Must be executed right after the request.
-     * @param c connection used to make the request
      * @return the row count of the previous request
      * @throws SQLException thrown when a connection problem happens.
      */
-    private int getCount(Connection c) throws SQLException {
+    private int getCount() throws SQLException {
         int count = 0;
-        try (PreparedStatement preparedStatement = initPreparedStatement(c, REQUEST_SELECT_GET_COUNT, false);
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), REQUEST_SELECT_GET_COUNT, false);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
@@ -147,14 +146,14 @@ public class DAOComputer implements IDAOComputer {
     /**
      * Appends the ORDER BY and LIMIT commands to the SQL request.
      * @param request request to modify
-     * @param sortCol column to sort by
-     * @param asc <code>true</code> for ascending order, <code>false</code> for descending order
+     * @param col column to sort by
+     * @param order "ASC" or "DESC
      * @param start starting index
      * @param limit limit for the page size
      * @return a new SQL request string
      */
-    private String setOrderLimit(String request, String sortCol, boolean asc, Integer start, Integer limit) {
-        return request + " ORDER BY " + sortCol + (asc ? " ASC" : " DESC") + " LIMIT " + start + "," + limit;
+    private String setOrderLimit(String request, String col, String order, Integer start, Integer limit) {
+        return request + " ORDER BY " + col + " " + order + " LIMIT " + start + "," + limit;
     }
 
     @Override
@@ -185,12 +184,7 @@ public class DAOComputer implements IDAOComputer {
     }
 
     @Override
-    public List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col) throws DAOException {
-        boolean asc = true;
-        if (col.charAt(0) == '!') {
-            asc = false;
-            col = col.substring(1, col.length());
-        }
-        return executeQuery(setOrderLimit(REQUEST_SELECT_JOIN, col, asc, start, limit), count, "%" + name + "%", "%" + name + "%");
+    public List<Computer> getFromName(Integer start, Integer limit, AtomicInteger count, String name, String col, String order) throws DAOException {
+        return executeQuery(setOrderLimit(REQUEST_SELECT_JOIN, col, order, start, limit), count, "%" + name + "%", "%" + name + "%");
     }
 }

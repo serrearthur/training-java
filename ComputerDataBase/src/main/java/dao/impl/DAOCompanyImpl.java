@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.ConnectionManager;
-import dao.IDAOCompany;
+import dao.DAOCompany;
 import dao.exceptions.DAOException;
 import model.Company;
 
@@ -18,7 +18,7 @@ import model.Company;
  * Class maping the request made to the database and the {@link Company}.
  * @author aserre
  */
-public class DAOCompany implements IDAOCompany {
+public class DAOCompanyImpl implements DAOCompany {
     private static final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
     private static final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
     private static final String REQUEST_DELETE = "DELETE FROM company WHERE id=?";
@@ -29,15 +29,15 @@ public class DAOCompany implements IDAOCompany {
     private ConnectionManager manager;
 
     /**
-     * Initialization-on-demand singleton holder for {@link DAOCompany}.
+     * Initialization-on-demand singleton holder for {@link DAOCompanyImpl}.
      */
     private static class SingletonHolder {
-        private static final DAOCompany INSTANCE = new DAOCompany();
+        private static final DAOCompanyImpl INSTANCE = new DAOCompanyImpl();
     }
 
     /**
      * Accessor for the instance of the singleton.
-     * @return the instance of {@link DAOCompany}
+     * @return the instance of {@link DAOCompanyImpl}
      */
     public static DAOCompany getInstance() {
         return SingletonHolder.INSTANCE;
@@ -46,7 +46,7 @@ public class DAOCompany implements IDAOCompany {
     /**
      * Constructor for the DAOCompany.
      */
-    private DAOCompany() {
+    private DAOCompanyImpl() {
         this.manager = ConnectionManager.getInstance();
     }
 
@@ -74,7 +74,6 @@ public class DAOCompany implements IDAOCompany {
      * @return the list of Companies corresponding to the request
      * @throws DAOException thrown if the internal {@link Connection},
      * {@link PreparedStatement} or {@link ResultSet} throw an error
-     * @throws SQLException a
      */
     private List<Company> executeQuery(String request, Object... params) throws DAOException {
         List<Company> companies = new ArrayList<Company>();
@@ -84,7 +83,6 @@ public class DAOCompany implements IDAOCompany {
                 companies.add(map(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DAOException(e);
         } finally {
             if (manager.getAutoCommit()) {
@@ -104,8 +102,7 @@ public class DAOCompany implements IDAOCompany {
      * {@link PreparedStatement} or {@link ResultSet} throw an error
      */
     private void executeUpdate(String request, boolean returnGeneratedKeys, Object... params) throws DAOException {
-        Connection connection = manager.getConnection();
-        try (PreparedStatement preparedStatement = initPreparedStatement(connection, request, returnGeneratedKeys, params);) {
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, returnGeneratedKeys, params);) {
             int status = preparedStatement.executeUpdate();
             if (status == 0) {
                 throw new DAOException("Unable to update this company, no row added to the table.");

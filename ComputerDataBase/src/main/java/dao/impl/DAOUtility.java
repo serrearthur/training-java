@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Utility functions used in both {@link DAOCompany} and @{link {@link DAOComputer}.
+ * Utility functions used in both {@link DAOCompanyImpl} and @{link {@link DAOComputerImpl}.
  * @author aserre
  */
 public final class DAOUtility {
