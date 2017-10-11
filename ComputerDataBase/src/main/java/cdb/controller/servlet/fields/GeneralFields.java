@@ -1,4 +1,4 @@
-package cdb.controller;
+package cdb.controller.servlet.fields;
 
 public interface GeneralFields {
     String ATT_ERRORS = "errors";

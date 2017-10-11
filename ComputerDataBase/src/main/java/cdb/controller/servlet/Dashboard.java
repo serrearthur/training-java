@@ -7,8 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cdb.controller.GeneralFields;
 import cdb.controller.service.ServiceComputer;
+import cdb.controller.servlet.fields.GeneralFields;
+import cdb.controller.servlet.fields.PageFields;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 
@@ -17,17 +18,10 @@ import cdb.view.dto.DTOComputer;
  * @author aserre
  */
 @WebServlet("/home")
-public class Dashboard extends HttpServlet implements GeneralFields {
+public class Dashboard extends HttpServlet implements GeneralFields, PageFields {
     private static final long serialVersionUID = 1L;
     private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
     private static final String VIEW = "/WEB-INF/home.jsp";
-    private static final String ATT_PAGE = "page";
-    private static final String ATT_PAGELIMIT = "limit";
-    private static final String ATT_PAGENUMBER = "pageNb";
-    private static final String ATT_SEARCH = "search";
-    private static final String ATT_DELETE = "selection";
-    private static final String ATT_COL = "col";
-    private static final String ATT_ORDER = "order";
 
     /**
      * @param request HTTP request

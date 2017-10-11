@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cdb.controller.ComputerFields;
-import cdb.controller.GeneralFields;
 import cdb.controller.service.ServiceCompany;
 import cdb.controller.service.ServiceComputer;
+import cdb.controller.servlet.fields.ComputerFields;
+import cdb.controller.servlet.fields.GeneralFields;
 import cdb.view.dto.DTOComputer;
 
 /**
@@ -23,7 +23,6 @@ import cdb.view.dto.DTOComputer;
 public class EditComputer extends HttpServlet implements ComputerFields, GeneralFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/editComputer.jsp";
-    private static final String ATT_COMPUTER = "computer";
     private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
     private static final ServiceCompany SERVICE_COMPANY = ServiceCompany.getInstance();
 

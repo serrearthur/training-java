@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cdb.controller.ComputerFields;
-import cdb.controller.GeneralFields;
 import cdb.controller.service.ServiceCompany;
 import cdb.controller.service.ServiceComputer;
+import cdb.controller.servlet.fields.ComputerFields;
+import cdb.controller.servlet.fields.GeneralFields;
 
 /**
  * Servlet implementing the mechanics behind the addition of a new computer.
