@@ -3,14 +3,14 @@ package dao;
 import java.util.List;
 
 import dao.exceptions.DAOException;
-import dao.impl.DAOCompany;
+import dao.impl.DAOCompanyImpl;
 import model.Company;
 
 /**
- * Interface representing the methods used by a {@link DAOCompany}.
+ * Interface representing the methods used by a {@link DAOCompanyImpl}.
  * @author aserre
  */
-public interface IDAOCompany {
+public interface DAOCompany {
     /**
      * Method to create a company in the database.
      * @param company {@link Company} to be created

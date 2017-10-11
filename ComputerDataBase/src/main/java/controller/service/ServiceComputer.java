@@ -6,8 +6,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import controller.validation.ComputerValidator;
+import dao.DAOComputer;
 import dao.exceptions.DAOException;
-import dao.impl.DAOComputer;
+import dao.impl.DAOComputerImpl;
 import model.Computer;
 import view.Page;
 import view.dto.DTOComputer;
@@ -39,7 +40,7 @@ public class ServiceComputer {
      * Contructor for a new ServiceComputer.
      */
     private ServiceComputer() {
-        this.dao = DAOComputer.getInstance();
+        this.dao = DAOComputerImpl.getInstance();
     }
 
     /**

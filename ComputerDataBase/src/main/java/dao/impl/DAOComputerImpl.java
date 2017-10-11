@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dao.ConnectionManager;
-import dao.IDAOComputer;
+import dao.DAOComputer;
 import dao.exceptions.DAOException;
 import model.Computer;
 
@@ -21,7 +21,7 @@ import model.Computer;
  * Class maping the request made to the database and the {@link Computer}.
  * @author aserre
  */
-public class DAOComputer implements IDAOComputer {
+public class DAOComputerImpl implements DAOComputer {
     private static final String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
     private static final String REQUEST_DELETE = "DELETE FROM computer WHERE LOCATE(CONCAT(',',id,','), ?) >0";
@@ -33,15 +33,15 @@ public class DAOComputer implements IDAOComputer {
     private ConnectionManager manager;
 
     /**
-     * Initialization-on-demand singleton holder for {@link DAOComputer}.
+     * Initialization-on-demand singleton holder for {@link DAOComputerImpl}.
      */
     private static class SingletonHolder {
-        private static final DAOComputer INSTANCE = new DAOComputer();
+        private static final DAOComputerImpl INSTANCE = new DAOComputerImpl();
     }
 
     /**
      * Accessor for the instance of the singleton.
-     * @return the instance of {@link DAOComputer}
+     * @return the instance of {@link DAOComputerImpl}
      */
     public static DAOComputer getInstance() {
         return SingletonHolder.INSTANCE;
@@ -50,7 +50,7 @@ public class DAOComputer implements IDAOComputer {
     /**
      * Constructor for the DAOComputer.
      */
-    private DAOComputer() {
+    private DAOComputerImpl() {
         this.manager = ConnectionManager.getInstance();
     }
 
@@ -113,7 +113,7 @@ public class DAOComputer implements IDAOComputer {
         List<Computer> computers = new ArrayList<Computer>();
         try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), request, false, params);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
-            count.set(this.getCount(manager.getConnection()));
+            count.set(this.getCount());
             while (resultSet.next()) {
                 computers.add(map(resultSet));
             }
@@ -129,13 +129,12 @@ public class DAOComputer implements IDAOComputer {
 
     /**
      * Returns the row count of the previous request. Must be executed right after the request.
-     * @param c connection used to make the request
      * @return the row count of the previous request
      * @throws SQLException thrown when a connection problem happens.
      */
-    private int getCount(Connection c) throws SQLException {
+    private int getCount() throws SQLException {
         int count = 0;
-        try (PreparedStatement preparedStatement = initPreparedStatement(c, REQUEST_SELECT_GET_COUNT, false);
+        try (PreparedStatement preparedStatement = initPreparedStatement(manager.getConnection(), REQUEST_SELECT_GET_COUNT, false);
                 ResultSet resultSet = preparedStatement.executeQuery();) {
             if (resultSet.next()) {
                 count = resultSet.getInt(1);

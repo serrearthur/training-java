@@ -15,12 +15,12 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 
-import dao.impl.DAOComputer;
+import dao.impl.DAOComputerImpl;
 import junit.framework.TestCase;
 import model.Computer;
 
 /**
- * Test class for {@link DAOComputer}.
+ * Test class for {@link DAOComputerImpl}.
  * @author aserre
  */
 @RunWith(Parameterized.class)
@@ -65,7 +65,7 @@ public class DAOComputerTest extends TestCase {
     public String discontinued;
 
     /**
-     * Test of the {@link DAOComputer#map(ResultSet)} method.
+     * Test of the {@link DAOComputerImpl#map(ResultSet)} method.
      * @throws SQLException thrown by the {@link ResultSet}
      */
     @Test
@@ -84,7 +84,7 @@ public class DAOComputerTest extends TestCase {
             Mockito.doReturn(true).when(resultSet).wasNull();
         }
 
-        Computer computer = DAOComputer.map(resultSet);
+        Computer computer = DAOComputerImpl.map(resultSet);
         assertEquals(computer.getId(), id);
         assertEquals(computer.getName(), name);
         assertEquals(computer.getIntroduced() == null ? null : Timestamp.valueOf(computer.getIntroduced()),

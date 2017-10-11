@@ -19,6 +19,7 @@ import view.Page;
 @WebServlet("/home")
 public class Dashboard extends HttpServlet implements GeneralFields {
     private static final long serialVersionUID = 1L;
+    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
     private static final String VIEW = "/WEB-INF/home.jsp";
     private static final String ATT_PAGE = "page";
     private static final String ATT_PAGELIMIT = "limit";
@@ -27,7 +28,6 @@ public class Dashboard extends HttpServlet implements GeneralFields {
     private static final String ATT_DELETE = "selection";
     private static final String ATT_COL = "col";
     private static final String ATT_ORDER = "order";
-    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
 
     /**
      * @param request HTTP request

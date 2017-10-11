@@ -3,9 +3,10 @@ package controller.service;
 import java.util.List;
 
 import dao.ConnectionManager;
+import dao.DAOCompany;
 import dao.exceptions.DAOException;
-import dao.impl.DAOCompany;
-import dao.impl.DAOComputer;
+import dao.impl.DAOCompanyImpl;
+import dao.impl.DAOComputerImpl;
 import model.Company;
 import view.dto.DTOCompany;
 import view.mapper.MapperCompany;
@@ -38,7 +39,7 @@ public class ServiceCompany {
      * Contructor for a new ServiceCompany.
      */
     private ServiceCompany() {
-        this.dao = DAOCompany.getInstance();
+        this.dao = DAOCompanyImpl.getInstance();
         this.manager = ConnectionManager.getInstance();
     }
 
@@ -64,7 +65,7 @@ public class ServiceCompany {
     public void deleteCompany(Integer companyId) {
         try {
             manager.setAutoCommit(false);
-            DAOComputer.getInstance().deleteCompanyId(companyId.toString());
+            DAOComputerImpl.getInstance().deleteCompanyId(companyId.toString());
             dao.delete(companyId);
             manager.commit();
         } catch (DAOException e) {
@@ -74,7 +75,7 @@ public class ServiceCompany {
             try {
                 manager.closeConnection();
             } catch (DAOException e) {
-                logger.error(e.getMessage() + " : failed to roll back.");
+                logger.error(e.getMessage());
             }
         }
     }

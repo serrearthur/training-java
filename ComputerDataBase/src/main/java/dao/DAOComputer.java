@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dao.exceptions.DAOException;
-import dao.impl.DAOComputer;
+import dao.impl.DAOComputerImpl;
 import model.Computer;
 
 /**
- * Interface representing the method used by a {@link DAOComputer}.
+ * Interface representing the method used by a {@link DAOComputerImpl}.
  * @author aserre
  */
-public interface IDAOComputer {
+public interface DAOComputer {
     /**
      * Method to create a computer in the database.
      * @param computer {@link Computer} to be created
