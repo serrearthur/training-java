@@ -29,25 +29,18 @@ public class DAOCompanyImpl implements DAOCompany {
     private ConnectionManager manager;
 
     /**
-     * Initialization-on-demand singleton holder for {@link DAOCompanyImpl}.
-     */
-    private static class SingletonHolder {
-        private static final DAOCompanyImpl INSTANCE = new DAOCompanyImpl();
-    }
-
-    /**
-     * Accessor for the instance of the singleton.
-     * @return the instance of {@link DAOCompanyImpl}
-     */
-    public static DAOCompany getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
-
-    /**
      * Constructor for the DAOCompany.
      */
-    private DAOCompanyImpl() {
-        this.manager = ConnectionManager.getInstance();
+    public DAOCompanyImpl() {
+    }
+
+    public ConnectionManager getManager() {
+        return this.manager;
+    }
+
+
+    public void setManager(ConnectionManager manager) {
+        this.manager = manager;
     }
 
     /**

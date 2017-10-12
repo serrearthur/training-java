@@ -3,12 +3,14 @@ package cdb.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import cdb.controller.servlet.fields.AllFields;
+
 /**
  * List of data represented as a page in order to be displayed.
  * @author aserre
  * @param <T> generic type
  */
-public class Page<T> {
+public class Page<T> implements AllFields {
     private static final int DEFAULT_BORDER_SIZE = 4;
 
     private List<T> data;

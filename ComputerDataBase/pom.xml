@@ -12,6 +12,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Dependencies properties -->
+		<spring-framework.version>2.5.6.SEC03</spring-framework.version>
 		<javax.servlet.version>4.0.0</javax.servlet.version>
 		<jstl.version>1.2</jstl.version>
 		<mysql.version>5.1.44</mysql.version>
@@ -27,6 +28,12 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>

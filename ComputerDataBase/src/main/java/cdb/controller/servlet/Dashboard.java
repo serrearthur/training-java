@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import cdb.controller.service.ServiceComputer;
 import cdb.controller.servlet.fields.GeneralFields;
 import cdb.controller.servlet.fields.PageFields;
@@ -20,8 +23,9 @@ import cdb.view.dto.DTOComputer;
 @WebServlet("/home")
 public class Dashboard extends HttpServlet implements GeneralFields, PageFields {
     private static final long serialVersionUID = 1L;
-    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
-    private static final String VIEW = "/WEB-INF/home.jsp";
+    private static final String VIEW = "/WEB-INF/jsp/home.jsp";
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
 
     /**
      * @param request HTTP request
@@ -59,7 +63,7 @@ public class Dashboard extends HttpServlet implements GeneralFields, PageFields 
     }
 
     /**
-     * Method in charge of parsing the request and create the adequate {@link Page} object.
+     * Method in charge of parsing the request and creating the adequate {@link Page} object.
      * @param request the {@link HttpServletRequest} to parse
      * @return the {@link Page} object corresponding to the request
      */

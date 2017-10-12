@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import cdb.controller.service.ServiceCompany;
 import cdb.controller.service.ServiceComputer;
 import cdb.view.dto.DTOCompany;
@@ -18,8 +21,9 @@ import cdb.view.dto.DTOComputer;
  * @author aserre
  */
 public class CLICommand {
-    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
-    private static final ServiceCompany SERVICE_COMPANY = ServiceCompany.getInstance();
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
+    private static final ServiceCompany SERVICE_COMPANY = (ServiceCompany) ctx.getBean("serviceCompany");
 
     private String command;
     private List<DTOComputer> result_computers;

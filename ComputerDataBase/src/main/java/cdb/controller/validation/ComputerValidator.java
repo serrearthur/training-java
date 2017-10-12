@@ -143,7 +143,7 @@ public class ComputerValidator implements ComputerFields {
      * @return valid companyId
      */
     private static Integer validationCompanyId(String companyId, Map<String, String> errors) {
-        if (companyId == null | companyId.isEmpty()) {
+        if (companyId == null || companyId.isEmpty()) {
             return null;
         } else {
             Pattern p = Pattern.compile("^[0-9]+$");

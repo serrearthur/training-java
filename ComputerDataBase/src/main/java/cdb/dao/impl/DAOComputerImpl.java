@@ -33,25 +33,18 @@ public class DAOComputerImpl implements DAOComputer {
     private ConnectionManager manager;
 
     /**
-     * Initialization-on-demand singleton holder for {@link DAOComputerImpl}.
-     */
-    private static class SingletonHolder {
-        private static final DAOComputerImpl INSTANCE = new DAOComputerImpl();
-    }
-
-    /**
-     * Accessor for the instance of the singleton.
-     * @return the instance of {@link DAOComputerImpl}
-     */
-    public static DAOComputer getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
-
-    /**
      * Constructor for the DAOComputer.
      */
     private DAOComputerImpl() {
-        this.manager = ConnectionManager.getInstance();
+    }
+
+    public ConnectionManager getManager() {
+        return this.manager;
+    }
+
+
+    public void setManager(ConnectionManager manager) {
+        this.manager = manager;
     }
 
     /**

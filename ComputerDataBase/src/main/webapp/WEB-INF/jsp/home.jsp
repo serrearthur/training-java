@@ -6,7 +6,7 @@
 		<div id="actions" class="form-horizontal">
 			<div class="pull-left">
 				<form id="searchForm" action="#" method="GET" class="form-inline">
-					<input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" />
+					<input type="search" id="searchbox" name="${page.getAttSearch()}" class="form-control" placeholder="Search name" />
 					<input type="submit" id="searchsubmit" value="Filter by name" class="btn btn-primary" />
 				</form>
 			</div>
@@ -16,9 +16,9 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<form id="deleteForm" action="#" method="POST">
-		<input type="hidden" name="selection" >
+		<input type="hidden" name="${page.getAttDelete()}" >
 	</form>
 
 	<div class="container" style="margin-top: 10px;">

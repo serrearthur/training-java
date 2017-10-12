@@ -30,7 +30,7 @@
 						<div class="form-group ${empty errors['companyId'] ? '' : 'has-error has-feedback'}">
 							<label for="companyId">Company</label>
 							<span style="font-style: italic; color:red;">${errors['companyId']}</span>
-							<select	class="form-control" id="companyId" name="companyId">
+							<select	class="form-control" id="companyId" name="companyid">
 								<option value="0">--</option>
 								<c:forEach items="${companies}" var="c">
 									<option value="${c.id}" ${c.id eq computer.companyId? "selected":"" }>${c.name}</option>

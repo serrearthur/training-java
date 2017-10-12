@@ -12,7 +12,18 @@
 			<include-coda>/footer.jsp</include-coda>
 		</jsp-property-group>
 	</jsp-config>
-	
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/applicationContext*.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
 	<error-page>
 		<error-code>500</error-code>
 		<location>/WEB-INF/errors/error500.jsp</location>

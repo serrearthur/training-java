@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//import org.springframework.context.ApplicationContext;
+//import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import cdb.controller.validation.ComputerValidator;
 import cdb.dao.DAOComputer;
 import cdb.dao.exceptions.DAOException;
-import cdb.dao.impl.DAOComputerImpl;
 import cdb.model.Computer;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
@@ -21,26 +23,19 @@ import cdb.view.mapper.MapperComputer;
 public class ServiceComputer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
     private DAOComputer dao;
-    /**
-     * Initialization-on-demand singleton holder  for {@link ServiceComputer}.
-     */
-    private static class SingletonHolder {
-        private static final ServiceComputer INSTANCE = new ServiceComputer();
-    }
 
     /**
-     * Accessor for the instance of the singleton.
-     * @return the instance of {@link ServiceComputer}
+     * ServiceComputer constructor.
      */
-    public static ServiceComputer getInstance() {
-        return SingletonHolder.INSTANCE;
+    public ServiceComputer() {
     }
 
-    /**
-     * Contructor for a new ServiceComputer.
-     */
-    private ServiceComputer() {
-        this.dao = DAOComputerImpl.getInstance();
+    public DAOComputer getDao() {
+        return this.dao;
+    }
+
+    public void setDao(DAOComputer dao) {
+        this.dao = dao;
     }
 
     /**

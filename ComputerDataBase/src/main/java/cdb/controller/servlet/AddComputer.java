@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import cdb.controller.service.ServiceCompany;
 import cdb.controller.service.ServiceComputer;
 import cdb.controller.servlet.fields.ComputerFields;
@@ -21,9 +24,11 @@ import cdb.controller.servlet.fields.GeneralFields;
 @WebServlet("/AddComputer")
 public class AddComputer extends HttpServlet implements ComputerFields, GeneralFields {
     private static final long serialVersionUID = 1L;
-    private static final String VIEW = "/WEB-INF/addComputer.jsp";
-    private static final ServiceComputer SERVICE_COMPUTER = ServiceComputer.getInstance();
-    private static final ServiceCompany SERVICE_COMPANY = ServiceCompany.getInstance();
+    private static final String VIEW = "/WEB-INF/jsp/addComputer.jsp";
+
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
+    private static final ServiceCompany SERVICE_COMPANY = (ServiceCompany) ctx.getBean("serviceCompany");
 
     /**
      * @param request HTTP request

@@ -2,10 +2,12 @@ package cdb.controller.service;
 
 import java.util.List;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import cdb.dao.ConnectionManager;
 import cdb.dao.DAOCompany;
 import cdb.dao.exceptions.DAOException;
-import cdb.dao.impl.DAOCompanyImpl;
 import cdb.dao.impl.DAOComputerImpl;
 import cdb.model.Company;
 import cdb.view.dto.DTOCompany;
@@ -17,31 +19,35 @@ import cdb.view.mapper.MapperCompany;
  */
 public class ServiceCompany {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-dao.xml");
     private DAOCompany dao;
     private ConnectionManager manager;
-
-    /**
-     * Initialization-on-demand singleton holder  for {@link ServiceCompany}.
-     */
-    private static class SingletonHolder {
-        private static final ServiceCompany INSTANCE = new ServiceCompany();
-    }
-
-    /**
-     * Accessor for the instance of the singleton.
-     * @return the instance of {@link ServiceCompany}
-     */
-    public static ServiceCompany getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
 
     /**
      * Contructor for a new ServiceCompany.
      */
     private ServiceCompany() {
-        this.dao = DAOCompanyImpl.getInstance();
-        this.manager = ConnectionManager.getInstance();
     }
+
+    public DAOCompany getDao() {
+        return this.dao;
+    }
+
+
+    public void setDao(DAOCompany dao) {
+        this.dao = dao;
+    }
+
+
+    public ConnectionManager getManager() {
+        return this.manager;
+    }
+
+
+    public void setManager(ConnectionManager manager) {
+        this.manager = manager;
+    }
+
 
     /**
      * Returns a list of all the companies inside the database.
@@ -65,7 +71,7 @@ public class ServiceCompany {
     public void deleteCompany(Integer companyId) {
         try {
             manager.setAutoCommit(false);
-            DAOComputerImpl.getInstance().deleteCompanyId(companyId.toString());
+            ((DAOComputerImpl) ctx.getBean("daoComputer")).deleteCompanyId(companyId.toString());
             dao.delete(companyId);
             manager.commit();
         } catch (DAOException e) {

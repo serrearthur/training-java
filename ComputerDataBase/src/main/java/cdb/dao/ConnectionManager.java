@@ -15,7 +15,7 @@ import cdb.dao.exceptions.DAOException;
  */
 public class ConnectionManager {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnectionManager.class);
-    private static final String CONFIG_FILE = "/db.properties";
+    //private static final String CONFIG_FILE = "/db.properties";
     private static final ThreadLocal<Connection> THREAD_CONNECTION =
             new ThreadLocal<Connection>() {
         @Override public Connection initialValue() {
@@ -23,51 +23,42 @@ public class ConnectionManager {
         }
     };
 
-    private HikariDataSource datasource;
-
-    /**
-     * Initialization-on-demand singleton holder  for {@link ConnectionManager}.
-     */
-    private static class SingletonHolder {
-        private static final ConnectionManager INSTANCE = new ConnectionManager();
-    }
-
-    /**
-     * Accessor for the instance of the singleton.
-     * @return the instance of {@link ConnectionManager}
-     */
-    public static ConnectionManager getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
+    //private DataSource datasource;
+    private HikariDataSource dataSource;
 
     /**
      * Contructor for a new ConnectionManager.
      * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
      */
-    private ConnectionManager() throws DAOConfigurationException {
-        loadConfigFile();
+    public ConnectionManager() throws DAOConfigurationException {
+        //loadConfigFile(CONFIG_FILE);
     }
 
     /**
-     * Load the cdb.dao.config file and configure the JDBC driver accordingly.
+     * Load the config file and configure the JDBC driver accordingly.
+     * @param configFile path to the config file
      * @throws DAOConfigurationException thrown if the cdb.dao.config file can't be found
      */
-    private void loadConfigFile() throws DAOConfigurationException {
+    public void setDataSource(String configFile) throws DAOConfigurationException {
         HikariConfig config;
         try {
-            config = new HikariConfig(CONFIG_FILE);
+            config = new HikariConfig(configFile);
         } catch (RuntimeException e) {
-            String message = "Unable to load the file \"" + CONFIG_FILE + "\".";
+            String message = "Unable to load the file \"" + configFile + "\".";
             logger.error(message);
             throw new DAOConfigurationException(message);
         }
         try {
-            this.datasource = new HikariDataSource(config);
+            this.dataSource = new HikariDataSource(config);
         } catch (IllegalArgumentException | IllegalStateException e) {
             String message = "Invalid properties";
             logger.error(message);
             throw new DAOConfigurationException(message);
         }
+    }
+
+    public HikariDataSource getDataSource() {
+        return this.dataSource;
     }
 
     /**
@@ -78,7 +69,7 @@ public class ConnectionManager {
     public Connection getConnection() throws DAOException {
         try {
             if (THREAD_CONNECTION.get() == null) {
-                THREAD_CONNECTION.set(this.datasource.getConnection());
+                THREAD_CONNECTION.set(this.dataSource.getConnection());
             }
             return THREAD_CONNECTION.get();
         } catch (SQLException e) {
