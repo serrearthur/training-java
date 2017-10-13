@@ -21,7 +21,7 @@ import cdb.view.dto.DTOComputer;
  * @author aserre
  */
 public class CLICommand {
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
     private static final ServiceCompany SERVICE_COMPANY = (ServiceCompany) ctx.getBean("serviceCompany");
 

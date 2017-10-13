@@ -24,7 +24,7 @@ import cdb.view.dto.DTOComputer;
 public class Dashboard extends HttpServlet implements GeneralFields, PageFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/jsp/home.jsp";
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:/applicationContext.xml");
     private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
 
     /**

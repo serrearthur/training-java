@@ -7,7 +7,7 @@ package cdb.controller.servlet.fields;
 public interface GeneralFields {
     String ATT_ERRORS = "errors";
     String ATT_COMPANIES = "companies";
-    String VIEW_HOME = "/ComputerDataBase/home";
+    String VIEW_HOME = "/cdb/home";
 
     default String getAttErrors() {
         return ATT_ERRORS;

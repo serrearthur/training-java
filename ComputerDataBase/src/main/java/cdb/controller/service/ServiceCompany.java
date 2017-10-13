@@ -19,7 +19,7 @@ import cdb.view.mapper.MapperCompany;
  */
 public class ServiceCompany {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-dao.xml");
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:/applicationContext.xml");
     private DAOCompany dao;
     private ConnectionManager manager;
 

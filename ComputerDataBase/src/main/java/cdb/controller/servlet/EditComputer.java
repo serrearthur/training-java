@@ -26,7 +26,7 @@ import cdb.view.dto.DTOComputer;
 public class EditComputer extends HttpServlet implements ComputerFields, GeneralFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/jsp/editComputer.jsp";
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:/applicationContext.xml");
     private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
     private static final ServiceCompany SERVICE_COMPANY = (ServiceCompany) ctx.getBean("serviceCompany");
 

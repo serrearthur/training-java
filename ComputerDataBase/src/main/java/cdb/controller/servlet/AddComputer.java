@@ -26,7 +26,7 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/jsp/addComputer.jsp";
 
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-service.xml");
+    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:/applicationContext.xml");
     private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
     private static final ServiceCompany SERVICE_COMPANY = (ServiceCompany) ctx.getBean("serviceCompany");
 

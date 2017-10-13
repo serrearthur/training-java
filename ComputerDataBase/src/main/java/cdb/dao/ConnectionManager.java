@@ -3,8 +3,10 @@ package cdb.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+//import com.zaxxer.hikari.HikariDataSource;
 
 import cdb.dao.exceptions.DAOConfigurationException;
 import cdb.dao.exceptions.DAOException;
@@ -23,8 +25,8 @@ public class ConnectionManager {
         }
     };
 
-    //private DataSource datasource;
-    private HikariDataSource dataSource;
+    private DataSource dataSource;
+    //private HikariDataSource dataSource;
 
     /**
      * Contructor for a new ConnectionManager.
@@ -39,7 +41,7 @@ public class ConnectionManager {
      * @param configFile path to the config file
      * @throws DAOConfigurationException thrown if the cdb.dao.config file can't be found
      */
-    public void setDataSource(String configFile) throws DAOConfigurationException {
+    public void loadConfigFile(String configFile) throws DAOConfigurationException {
         HikariConfig config;
         try {
             config = new HikariConfig(configFile);
@@ -49,7 +51,8 @@ public class ConnectionManager {
             throw new DAOConfigurationException(message);
         }
         try {
-            this.dataSource = new HikariDataSource(config);
+            config.equals(null);
+            //this.dataSource = new HikariDataSource(config);
         } catch (IllegalArgumentException | IllegalStateException e) {
             String message = "Invalid properties";
             logger.error(message);
@@ -57,7 +60,11 @@ public class ConnectionManager {
         }
     }
 
-    public HikariDataSource getDataSource() {
+    public void setDataSource(DataSource ds) {
+        this.dataSource = ds;
+    }
+
+    public DataSource getDataSource() {
         return this.dataSource;
     }
 
