@@ -8,11 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import cdb.controller.service.ServiceComputer;
 import cdb.controller.servlet.fields.GeneralFields;
 import cdb.controller.servlet.fields.PageFields;
+import cdb.dao.DAOConfig;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 
@@ -24,8 +25,8 @@ import cdb.view.dto.DTOComputer;
 public class Dashboard extends HttpServlet implements GeneralFields, PageFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/jsp/home.jsp";
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:/applicationContext.xml");
-    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
+    private static ApplicationContext ctx = new AnnotationConfigApplicationContext(DAOConfig.class);
+    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean(ServiceComputer.class);
 
     /**
      * @param request HTTP request

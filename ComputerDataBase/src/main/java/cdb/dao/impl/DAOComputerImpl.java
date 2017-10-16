@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import cdb.dao.ConnectionManager;
 import cdb.dao.DAOComputer;
 import cdb.dao.exceptions.DAOException;
@@ -21,6 +24,7 @@ import cdb.model.Computer;
  * Class maping the request made to the database and the {@link Computer}.
  * @author aserre
  */
+@Component
 public class DAOComputerImpl implements DAOComputer {
     private static final String REQUEST_CREATE = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (NULL, ?, ?, ?, ?)";
     private static final String REQUEST_UPDATE = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?";
@@ -30,19 +34,20 @@ public class DAOComputerImpl implements DAOComputer {
     private static final String REQUEST_SELECT_JOIN = "SELECT SQL_CALC_FOUND_ROWS * FROM computer cpt LEFT JOIN company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE ? OR cpn.name LIKE ?";
     private static final String REQUEST_SELECT_GET_COUNT = "SELECT FOUND_ROWS()";
 
+    @Autowired
     private ConnectionManager manager;
 
     /**
      * Constructor for the DAOComputer.
      */
-    private DAOComputerImpl() {
+    public DAOComputerImpl() {
     }
 
     public ConnectionManager getManager() {
         return this.manager;
     }
 
-
+    @Autowired
     public void setManager(ConnectionManager manager) {
         this.manager = manager;
     }

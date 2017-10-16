@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.zaxxer.hikari.HikariConfig;
-//import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import cdb.dao.exceptions.DAOConfigurationException;
 import cdb.dao.exceptions.DAOException;
@@ -15,9 +15,8 @@ import cdb.dao.exceptions.DAOException;
  * Class containing the methods to configure a connection to the database.
  * @author aserre
  */
+@Component
 public class ConnectionManager {
-    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnectionManager.class);
-    //private static final String CONFIG_FILE = "/db.properties";
     private static final ThreadLocal<Connection> THREAD_CONNECTION =
             new ThreadLocal<Connection>() {
         @Override public Connection initialValue() {
@@ -25,39 +24,14 @@ public class ConnectionManager {
         }
     };
 
+    @Autowired
     private DataSource dataSource;
-    //private HikariDataSource dataSource;
 
     /**
      * Contructor for a new ConnectionManager.
      * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
      */
     public ConnectionManager() throws DAOConfigurationException {
-        //loadConfigFile(CONFIG_FILE);
-    }
-
-    /**
-     * Load the config file and configure the JDBC driver accordingly.
-     * @param configFile path to the config file
-     * @throws DAOConfigurationException thrown if the cdb.dao.config file can't be found
-     */
-    public void loadConfigFile(String configFile) throws DAOConfigurationException {
-        HikariConfig config;
-        try {
-            config = new HikariConfig(configFile);
-        } catch (RuntimeException e) {
-            String message = "Unable to load the file \"" + configFile + "\".";
-            logger.error(message);
-            throw new DAOConfigurationException(message);
-        }
-        try {
-            config.equals(null);
-            //this.dataSource = new HikariDataSource(config);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            String message = "Invalid properties";
-            logger.error(message);
-            throw new DAOConfigurationException(message);
-        }
     }
 
     public void setDataSource(DataSource ds) {

@@ -93,3 +93,4 @@
 		</div>
 	</div>
 </footer>
+<script src="${pageContext.request.contextPath}/js/dashboard.js"></script>

@@ -13,12 +13,7 @@
 		</jsp-property-group>
 	</jsp-config>
 
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/classes/applicationContext.xml</param-value>
-	</context-param>
-
-	<listener>
+ 	<listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
 		</listener-class>
@@ -28,10 +23,12 @@
 		<error-code>500</error-code>
 		<location>/WEB-INF/errors/error500.jsp</location>
 	</error-page>
+
 	<error-page>
 		<error-code>403</error-code>
 		<location>/WEB-INF/errors/error403.jsp</location>
 	</error-page>
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/WEB-INF/errors/error404.jsp</location>

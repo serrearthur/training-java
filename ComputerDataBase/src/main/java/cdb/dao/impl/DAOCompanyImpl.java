@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import cdb.dao.ConnectionManager;
 import cdb.dao.DAOCompany;
 import cdb.dao.exceptions.DAOException;
@@ -18,6 +21,7 @@ import cdb.model.Company;
  * Class maping the request made to the database and the {@link Company}.
  * @author aserre
  */
+@Component
 public class DAOCompanyImpl implements DAOCompany {
     private static final String REQUEST_CREATE = "INSERT INTO company (id, name) VALUES (NULL, ?)";
     private static final String REQUEST_UPDATE = "UPDATE company SET name=? WHERE id=?";
@@ -26,6 +30,7 @@ public class DAOCompanyImpl implements DAOCompany {
     private static final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
     private static final String REQUEST_SELECT_ALL = "SELECT * FROM company";
 
+    @Autowired
     private ConnectionManager manager;
 
     /**
@@ -37,7 +42,6 @@ public class DAOCompanyImpl implements DAOCompany {
     public ConnectionManager getManager() {
         return this.manager;
     }
-
 
     public void setManager(ConnectionManager manager) {
         this.manager = manager;

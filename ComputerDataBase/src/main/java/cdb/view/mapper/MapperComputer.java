@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import cdb.dao.exceptions.DAOException;
 import cdb.dao.DAOCompany;
+import cdb.dao.DAOConfig;
 import cdb.model.Computer;
 import cdb.view.dto.DTOComputer;
 
@@ -20,7 +21,7 @@ import cdb.view.dto.DTOComputer;
  */
 public class MapperComputer {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapperComputer.class);
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    private static ApplicationContext ctx = new AnnotationConfigApplicationContext(DAOConfig.class);
     /**
      * Function converting a {@link Computer} into a {@link DTOComputer}.
      * @param c original {@link Computer}
@@ -41,7 +42,7 @@ public class MapperComputer {
             ret.setDiscontinued(null);
         }
         try {
-            ret.setCompany(((DAOCompany) ctx.getBean("daoCompany")).getFromId(c.getCompanyId()).get(0).getName());
+            ret.setCompany(((DAOCompany) ctx.getBean(DAOCompany.class)).getFromId(c.getCompanyId()).get(0).getName());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
         } catch (DAOException e) {

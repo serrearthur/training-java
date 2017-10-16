@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 //import org.springframework.context.ApplicationContext;
 //import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -20,8 +23,11 @@ import cdb.view.mapper.MapperComputer;
  * Service providing an interface between the servlet and the Computer DAO.
  * @author aserre
  */
+@Component
 public class ServiceComputer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
+
+    @Autowired
     private DAOComputer dao;
 
     /**
