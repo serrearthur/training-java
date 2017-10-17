@@ -1,34 +1,26 @@
 package cdb.dao;
 
-import java.io.IOException;
 
-import javax.sql.DataSource;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-@Configuration
-public class DAOConfig {
+//@Configuration
+//public class DAOConfig {
 //    private static final String CONFIG_FILE = "db.properties";
-
-    /**
-     * .
-     * @return a
-     * @throws IOException a
-     */
-    @Bean
-    public DataSource driverManagerDataSource() throws IOException {
+//
+//    /**
+//     * .
+//     * @return a
+//     * @throws IOException a
+//     */
+//    @Bean
+//    public DataSource driverManagerDataSource() throws IOException {
 //        Properties p = new Properties();
 //        InputStream in = getClass().getResourceAsStream(CONFIG_FILE);
 //        p.load(in);
 //        in.close();
 //        return new DriverManagerDataSource(p.getProperty("url"), p.getProperty("username"), p.getProperty("password"));
-        return new DriverManagerDataSource("jdbc:mysql://localhost:3306/computer-database-db?autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull",
-                "admincdb", "qwerty1234");
-    }
-
+//        return new DriverManagerDataSource("jdbc:mysql://localhost:3306/computer-database-db?autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull",
+//                "admincdb", "qwerty1234");
+//    }
+//
 //    /**
 //     * .
 //     * @return a
@@ -73,4 +65,4 @@ public class DAOConfig {
 //    public ServiceComputer serviceComputer() {
 //        return new ServiceComputer();
 //    }
-}
+//}

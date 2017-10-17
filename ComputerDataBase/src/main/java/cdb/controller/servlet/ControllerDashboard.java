@@ -1,19 +1,21 @@
 package cdb.controller.servlet;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import cdb.controller.service.ServiceComputer;
 import cdb.controller.servlet.fields.GeneralFields;
 import cdb.controller.servlet.fields.PageFields;
-import cdb.dao.DAOConfig;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 
@@ -21,27 +23,23 @@ import cdb.view.dto.DTOComputer;
  * Servlet implementing the mechanics behind the home page.
  * @author aserre
  */
-@WebServlet("/home")
-public class Dashboard extends HttpServlet implements GeneralFields, PageFields {
+@Controller
+public class ControllerDashboard implements GeneralFields, PageFields {
     private static final long serialVersionUID = 1L;
-    private static final String VIEW = "/WEB-INF/jsp/home.jsp";
+    private static final String VIEW = "home";
     private static ApplicationContext ctx = new AnnotationConfigApplicationContext(DAOConfig.class);
     private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean(ServiceComputer.class);
 
     /**
      * @param request HTTP request
      * @param response HTTP response to the request
-     * @throws ServletException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
-     * @throws IOException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @RequestMapping("/home")
+    public ModelAndView doGet(HttpServletRequest request, HttpServletResponse response) {
         Page<DTOComputer> page = requestParser(request);
 
         request.setAttribute(ATT_PAGE, page);
-        this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
+        return new ModelAndView(VIEW, ATT_PAGE, page);
     }
 
     /**
@@ -52,8 +50,8 @@ public class Dashboard extends HttpServlet implements GeneralFields, PageFields 
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @RequestMapping(value = "/home", method = RequestMethod.POST)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         String requestedDelete = request.getParameter(ATT_DELETE);
         if (requestedDelete != null) {
             SERVICE_COMPUTER.delete(requestedDelete);
