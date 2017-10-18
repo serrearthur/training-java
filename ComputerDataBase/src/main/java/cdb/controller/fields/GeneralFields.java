@@ -1,4 +1,4 @@
-package cdb.controller.servlet.fields;
+package cdb.controller.fields;
 
 /**
  * Interface containing the general names of the fields used in the jsp.

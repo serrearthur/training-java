@@ -1,21 +1,17 @@
-package cdb.controller.servlet;
-
-import java.io.IOException;
+package cdb.controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import cdb.controller.service.ServiceComputer;
-import cdb.controller.servlet.fields.GeneralFields;
-import cdb.controller.servlet.fields.PageFields;
+import cdb.controller.fields.GeneralFields;
+import cdb.controller.fields.PageFields;
+import cdb.service.ServiceComputer;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 
@@ -24,36 +20,34 @@ import cdb.view.dto.DTOComputer;
  * @author aserre
  */
 @Controller
-public class ControllerDashboard implements GeneralFields, PageFields {
-    private static final long serialVersionUID = 1L;
+@RequestMapping("/home")
+public class Dashboard implements GeneralFields, PageFields {
     private static final String VIEW = "home";
-    private static ApplicationContext ctx = new AnnotationConfigApplicationContext(DAOConfig.class);
-    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean(ServiceComputer.class);
+    private ServiceComputer serviceComputer;
 
-    /**
-     * @param request HTTP request
-     * @param response HTTP response to the request
-     */
-    @RequestMapping("/home")
-    public ModelAndView doGet(HttpServletRequest request, HttpServletResponse response) {
-        Page<DTOComputer> page = requestParser(request);
-        return new ModelAndView(VIEW, ATT_PAGE, page);
+    @Autowired
+    public void setServiceComputer(ServiceComputer serviceComputer) {
+        this.serviceComputer = serviceComputer;
     }
 
     /**
-     * @param request HTTP request
-     * @param response HTTP response to the request
-     * @throws ServletException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
-     * @throws IOException thrown by {@link  javax.servlet.RequestDispatcher#forward(ServletRequest arg0, ServletResponse arg1) }
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
+     * Behaviour when we execute a GET request on home.
      */
-    @RequestMapping(value = "/home", method = RequestMethod.POST)
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        String requestedDelete = request.getParameter(ATT_DELETE);
+    @RequestMapping(method = RequestMethod.GET)
+    public String doGet(HttpServletRequest request) {
+        Page<DTOComputer> page = requestParser(request);
+        request.setAttribute(ATT_PAGE, page);
+        return VIEW;
+    }
+
+    /**
+     * Behaviour when we execute a POST request on home.
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    public String doPost(@RequestParam(value = "selection", required = true) String requestedDelete) throws ServletException {
         if (requestedDelete != null) {
-            SERVICE_COMPUTER.delete(requestedDelete);
-            response.sendRedirect(VIEW_HOME);
+            serviceComputer.delete(requestedDelete);
+            return "redirect:/" + VIEW_HOME;
         } else {
             throw new ServletException("Invalid operation : POST.");
         }
@@ -96,6 +90,6 @@ public class ControllerDashboard implements GeneralFields, PageFields {
             order = requestedOrder;
         }
 
-        return SERVICE_COMPUTER.getPage(search, pageNb, limit, col, order);
+        return serviceComputer.getPage(search, pageNb, limit, col, order);
     }
 }

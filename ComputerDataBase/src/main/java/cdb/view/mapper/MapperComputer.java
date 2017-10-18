@@ -6,12 +6,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import cdb.dao.exceptions.DAOException;
 import cdb.dao.DAOCompany;
-import cdb.dao.DAOConfig;
 import cdb.model.Computer;
 import cdb.view.dto.DTOComputer;
 
@@ -19,9 +18,16 @@ import cdb.view.dto.DTOComputer;
  * Mapper allowing to map {@link DTOComputer} and {@link Computer}.
  * @author aserre
  */
+@Component
 public class MapperComputer {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapperComputer.class);
-    private static ApplicationContext ctx = new AnnotationConfigApplicationContext(DAOConfig.class);
+    private static DAOCompany dao;
+
+    @Autowired
+    public void setDao(DAOCompany dao) {
+        MapperComputer.dao = dao;
+    }
+
     /**
      * Function converting a {@link Computer} into a {@link DTOComputer}.
      * @param c original {@link Computer}
@@ -42,7 +48,7 @@ public class MapperComputer {
             ret.setDiscontinued(null);
         }
         try {
-            ret.setCompany(((DAOCompany) ctx.getBean(DAOCompany.class)).getFromId(c.getCompanyId()).get(0).getName());
+            ret.setCompany(dao.getFromId(c.getCompanyId()).get(0).getName());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
         } catch (DAOException e) {

@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import cdb.controller.service.ServiceCompany;
-import cdb.controller.service.ServiceComputer;
+import cdb.service.ServiceCompany;
+import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOCompany;
 import cdb.view.dto.DTOComputer;
 

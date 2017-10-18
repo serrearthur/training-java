@@ -1,9 +1,9 @@
-package cdb.controller.service;
+package cdb.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import cdb.dao.ConnectionManager;
 import cdb.dao.DAOCompany;
@@ -17,46 +17,27 @@ import cdb.view.mapper.MapperCompany;
  * Service providing an interface between the servlet and the Company DAO.
  * @author aserre
  */
-@Component
+@Service
 public class ServiceCompany {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
-    @Autowired
     private DAOComputer daoComputer;
-    @Autowired
     private DAOCompany daoCompany;
-    @Autowired
     private ConnectionManager manager;
 
-    /**
-     * Contructor for a new ServiceCompany.
-     */
-    public ServiceCompany() {
-    }
-
-    public DAOComputer getDaoComputer() {
-        return this.daoComputer;
-    }
-
+    @Autowired
     public void setDaoComputer(DAOComputer daoComputer) {
         this.daoComputer = daoComputer;
     }
 
-    public DAOCompany getDaoCompany() {
-        return this.daoCompany;
-    }
-
+    @Autowired
     public void setDaoCompany(DAOCompany daoCompany) {
         this.daoCompany = daoCompany;
     }
 
-    public ConnectionManager getManager() {
-        return this.manager;
-    }
-
+    @Autowired
     public void setManager(ConnectionManager manager) {
         this.manager = manager;
     }
-
 
     /**
      * Returns a list of all the companies inside the database.

@@ -1,4 +1,4 @@
-package cdb.controller.service;
+package cdb.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,15 +6,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-//import org.springframework.context.ApplicationContext;
-//import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import cdb.controller.validation.ComputerValidator;
 import cdb.dao.DAOComputer;
 import cdb.dao.exceptions.DAOException;
 import cdb.model.Computer;
+import cdb.service.validation.ComputerValidator;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 import cdb.view.mapper.MapperComputer;
@@ -23,23 +20,12 @@ import cdb.view.mapper.MapperComputer;
  * Service providing an interface between the servlet and the Computer DAO.
  * @author aserre
  */
-@Component
+@Service
 public class ServiceComputer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
-
-    @Autowired
     private DAOComputer dao;
 
-    /**
-     * ServiceComputer constructor.
-     */
-    public ServiceComputer() {
-    }
-
-    public DAOComputer getDao() {
-        return this.dao;
-    }
-
+    @Autowired
     public void setDao(DAOComputer dao) {
         this.dao = dao;
     }
