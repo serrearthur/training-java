@@ -37,8 +37,6 @@ public class ControllerDashboard implements GeneralFields, PageFields {
     @RequestMapping("/home")
     public ModelAndView doGet(HttpServletRequest request, HttpServletResponse response) {
         Page<DTOComputer> page = requestParser(request);
-
-        request.setAttribute(ATT_PAGE, page);
         return new ModelAndView(VIEW, ATT_PAGE, page);
     }
 

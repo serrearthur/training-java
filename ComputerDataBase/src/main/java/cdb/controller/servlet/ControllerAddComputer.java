@@ -4,13 +4,15 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import cdb.controller.service.ServiceCompany;
 import cdb.controller.service.ServiceComputer;
@@ -22,8 +24,8 @@ import cdb.dao.DAOConfig;
  * Servlet implementing the mechanics behind the addition of a new computer.
  * @author aserre
  */
-@WebServlet("/AddComputer")
-public class AddComputer extends HttpServlet implements ComputerFields, GeneralFields {
+@Controller
+public class ControllerAddComputer implements ComputerFields, GeneralFields {
     private static final long serialVersionUID = 1L;
     private static final String VIEW = "/WEB-INF/jsp/addComputer.jsp";
 
@@ -39,10 +41,9 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setAttribute(ATT_COMPANIES, SERVICE_COMPANY.getCompanies());
-        this.getServletContext().getRequestDispatcher(VIEW).forward(request, response);
+    @RequestMapping("/AddComputer")
+    public ModelAndView doGet(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(VIEW, ATT_COMPANIES, SERVICE_COMPANY.getCompanies());
     }
 
     /**
@@ -53,8 +54,7 @@ public class AddComputer extends HttpServlet implements ComputerFields, GeneralF
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter(ATT_NAME);
         String introduced = request.getParameter(ATT_INTRODUCED);
         String discontinued = request.getParameter(ATT_DISCONTINUED);
