@@ -1,4 +1,4 @@
-<%@ taglib tagdir="/WEB-INF/tags/" prefix="ex"%>
+<%@ taglib tagdir="/WEB-INF/tags/" prefix="t"%>
 
 <section id="main">
 	<div class="container">
@@ -11,7 +11,7 @@
 				</form>
 			</div>
 			<div class="pull-right">
-				<a class="btn btn-success" id="addComputer" href="<c:url value="/AddComputer"/>">Add Computer</a>
+				<a class="btn btn-success" id="addComputer" href="<c:url value="add_computer"/>">Add Computer</a>
 				<a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
 			</div>
 		</div>
@@ -37,28 +37,28 @@
 					<!-- Table header for Computer Name -->
 					<th>
 						<a style="color:black;text-decoration: none;cursor:pointer;" title="Sort this column"
-						href="<ex:linker target="/home" col="cpt.name"/>">
+						href="<t:linker target="${page.getViewHome()}" col="cpt.name"/>">
 							Computer name
 						</a>
 					</th>
 					<!-- Table header for Introduced Date -->
 					<th>
 						<a style="color:black;text-decoration: none;cursor:pointer;" title="Sort this column"
-							href="<ex:linker target="/home" col="cpt.introduced"/>">
+							href="<t:linker target="${page.getViewHome()}" col="cpt.introduced"/>">
 							Introduced date
 						</a>
 					</th>
 					<!-- Table header for Discontinued Date -->
 					<th>
 						<a style="color:black;text-decoration: none;cursor:pointer;" title="Sort this column"
-							href="<ex:linker target="/home" col="cpt.discontinued"/>">
+							href="<t:linker target="${page.getViewHome()}" col="cpt.discontinued"/>">
 							Discontinued date
 						</a>
 					</th>
 					<!-- Table header for Company -->
 					<th>
 						<a style="color:black;text-decoration: none;cursor:pointer;" title="Sort this column"
-							href="<ex:linker target="/home" col="cpn.name"/>">
+							href="<t:linker target="${page.getViewHome()}" col="cpn.name"/>">
 							Company
 						</a>
 					</th>
@@ -70,7 +70,7 @@
 					<tr>
 						<td class="editMode">
 							<input type="checkbox" name="cb" class="cb" value="${c.id}"></td>
-						<td><a href="<c:url value="EditComputer?id=${c.id}"/>" >${c.name}</a></td>
+						<td><a href="<c:url value="edit_computer?id=${c.id}"/>" >${c.name}</a></td>
 						<td>${c.introduced}</td>
 						<td>${c.discontinued}</td>
 						<td>${c.company}</td>
@@ -83,14 +83,13 @@
 
 <footer class="navbar-fixed-bottom">
 	<div class="container text-center">
-		<ex:pagination displayrange="${page.paginationBorders}" totalpage="${page.totalPage}"
-			currentpage="${page.pageNb}" target="/home"/>
+		<t:pagination displayrange="${page.paginationBorders}" totalpage="${page.totalPage}"
+			currentpage="${page.pageNb}" target="${page.getViewHome()}"/>
 		
 		<div class="btn-group btn-group-sm pull-right" role="group">
-			<a class='btn btn-default ${page.limit eq 10? "disabled":"" }' href="<ex:linker target="/home" pagenb="1" limit="10"/>">10</a>
-			<a class='btn btn-default ${page.limit eq 50? "disabled":"" }' href="<ex:linker target="/home" pagenb="1" limit="50"/>">50</a>
-			<a class='btn btn-default ${page.limit eq 100? "disabled":"" }' href="<ex:linker target="/home" pagenb="1" limit="100"/>">100</a>
+			<a class='btn btn-default ${page.limit eq 10? "disabled" : "" }' href="<t:linker target="${page.getViewHome()}" pagenb="1" limit="10"/>">10</a>
+			<a class='btn btn-default ${page.limit eq 50? "disabled" : "" }' href="<t:linker target="${page.getViewHome()}" pagenb="1" limit="50"/>">50</a>
+			<a class='btn btn-default ${page.limit eq 100? "disabled" : "" }' href="<t:linker target="${page.getViewHome()}" pagenb="1" limit="100"/>">100</a>
 		</div>
 	</div>
 </footer>
-<script src="${pageContext.request.contextPath}/js/dashboard.js"></script>

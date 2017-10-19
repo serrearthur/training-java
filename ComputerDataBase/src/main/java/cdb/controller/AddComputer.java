@@ -7,67 +7,68 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import cdb.controller.fields.ComputerFields;
 import cdb.controller.fields.GeneralFields;
-import cdb.model.Computer;
 import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
+import cdb.view.dto.DTOComputer;
 
 /**
- * Servlet implementing the mechanics behind the addition of a new computer.
+ * Controller implementing the mechanics behind the addition of a new computer.
  * @author aserre
  */
 @Controller
-@RequestMapping("/AddComputer")
+@RequestMapping("/add_computer")
 public class AddComputer implements ComputerFields, GeneralFields {
     private static final String VIEW = "addComputer";
     private ServiceComputer serviceComputer;
     private ServiceCompany serviceCompany;
 
+    /**
+     * Constructor.
+     * @param serviceCompany {@link ServiceCompany} bean
+     * @param serviceComputer {@link ServiceComputer} bean
+     */
     @Autowired
-    public void setServiceCompany(ServiceCompany serviceCompany) {
+    private AddComputer(ServiceCompany serviceCompany, ServiceComputer serviceComputer) {
         this.serviceCompany = serviceCompany;
-    }
-
-    @Autowired
-    public void setServiceComputer(ServiceComputer serviceComputer) {
         this.serviceComputer = serviceComputer;
     }
 
     /**
      * Behaviour when we execute a GET request on AddComputer.
+     * @param model {@link ModelMap} of the request
+     * @return address of the jsp to visit
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String doGet(ModelMap model) {
         model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
+        model.addAttribute("computerForm", new DTOComputer());
         return VIEW;
     }
 
     /**
      * Behaviour when we execute a POST request on AddComputer.
+     * @param model {@link Model} of the request
+     * @param computer {@link Computer} to add
+     * @param result result of the form
+     * @return addess of the jsp to visit
      */
-    @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(Model model, @ModelAttribute("computerForm") Computer computer, BindingResult result) {
-//        String name = request.getParameter(ATT_NAME);
-//        String introduced = request.getParameter(ATT_INTRODUCED);
-//        String discontinued = request.getParameter(ATT_DISCONTINUED);
-//        String companyId = request.getParameter(ATT_COMPANYID);
-        String name = null;
-        String introduced = null;
-        String discontinued = null;
-        String companyId = null;
-
-        Map<String, String> errors = serviceComputer.addComputer(name, introduced, discontinued, companyId);
+    @PostMapping
+    protected String doPost(Model model, @ModelAttribute("computerForm") DTOComputer computer, BindingResult result) {
+        Map<String, String> errors = serviceComputer.addComputer(computer);
 
         if (errors.isEmpty()) {
             return "redirect:" + VIEW_HOME;
         } else {
             model.addAttribute(ATT_ERRORS, errors);
             model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
+            model.addAttribute("computerForm", new DTOComputer());
             return VIEW;
         }
     }

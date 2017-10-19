@@ -1,13 +1,19 @@
 package cdb.view.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 /**
  * DTO representation of a {@link cdb.model.Company}.
  * @author aserre
  *
  */
 public class DTOCompany {
-    String id;
-    String name;
+    @Min(value = 1, message = "Id can't be empty or equal to 0")
+    private String id;
+
+    @NotBlank(message = "Company name can't be empty")
+    private String name;
 
     /**
      * Constructor.

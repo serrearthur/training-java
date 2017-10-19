@@ -32,8 +32,12 @@ public class DAOCompanyImpl implements DAOCompany {
 
     private ConnectionManager manager;
 
+    /**
+     * Constructor.
+     * @param manager connection manager used for the DAO
+     */
     @Autowired
-    public void setManager(ConnectionManager manager) {
+    private DAOCompanyImpl(ConnectionManager manager) {
         this.manager = manager;
     }
 

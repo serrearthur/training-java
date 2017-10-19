@@ -1,10 +1,10 @@
 <%@ tag body-content="empty"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags/" prefix="ex"%>
-<%@ attribute name="currentpage" required="true"%>
-<%@ attribute name="totalpage" required="true"%>
-<%@ attribute name="displayrange" required="true"%>
-<%@ attribute name="target" required="true"%>
+<%@ attribute name="currentpage" required="true" type="java.lang.Integer"%>
+<%@ attribute name="totalpage" required="true" type="java.lang.Integer"%>
+<%@ attribute name="displayrange" required="true" type="java.lang.Integer"%>
+<%@ attribute name="target" required="true" type="java.lang.String"%>
 
 <c:set var="nextpage" value="${currentpage < totalpage ? currentpage +1 : currentpage }"/>
 <c:set var="previouspage" value="${currentpage > 1 ? currentpage -1 : currentpage }"/>
@@ -29,7 +29,7 @@
 		</a>
 	</li>
 	<c:forEach var="i" begin="${displaymin}" end="${displaymax}">
-		<li class=${i eq currentpage?"active":"" }>
+		<li class=${i eq currentpage? "active" : "" }>
 			<a href="<ex:linker target="${target}" pagenb="${i}"/>">${i}</a>
 		</li>
 	</c:forEach>

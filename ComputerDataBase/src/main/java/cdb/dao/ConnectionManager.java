@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cdb.dao.exceptions.DAOConfigurationException;
 import cdb.dao.exceptions.DAOException;
 
 /**
@@ -24,22 +23,15 @@ public class ConnectionManager {
         }
     };
 
-    @Autowired
     private DataSource dataSource;
 
     /**
      * Contructor for a new ConnectionManager.
-     * @throws DAOConfigurationException thrown by {@link ConnectionManager#loadConfigFile()}
+     * @param ds DataSource used
      */
-    public ConnectionManager() throws DAOConfigurationException {
-    }
-
-    public void setDataSource(DataSource ds) {
+    @Autowired
+    private ConnectionManager(DataSource ds) {
         this.dataSource = ds;
-    }
-
-    public DataSource getDataSource() {
-        return this.dataSource;
     }
 
     /**

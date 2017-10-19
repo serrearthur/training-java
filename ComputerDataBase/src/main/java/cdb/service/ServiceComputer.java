@@ -25,8 +25,12 @@ public class ServiceComputer {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
     private DAOComputer dao;
 
+    /**
+     * Constructor.
+     * @param dao {@link DAOComputer} bean
+     */
     @Autowired
-    public void setDao(DAOComputer dao) {
+    private ServiceComputer(DAOComputer dao) {
         this.dao = dao;
     }
 
@@ -44,8 +48,7 @@ public class ServiceComputer {
         try {
             AtomicInteger count = new AtomicInteger();
             List<Computer> l = dao.getFromName((pageNb - 1) * limit, limit, count, search, col, order);
-            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col, order);
-            ret.setSearch(search);
+            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col, order, search);
         } catch (DAOException e) {
             logger.error(e.getMessage());
         }
@@ -84,18 +87,15 @@ public class ServiceComputer {
 
     /**
      * Add a new computer to the database.
-     * @param name Name of the new computer
-     * @param introduced Introduced date of the new computer, in 'dd-MM-yyyy' format
-     * @param discontinued Discontinued date of the new computer, in 'dd-MM-yyyy' format
-     * @param companyId companyId of the new computer
+     * @param computer {@link DTOComputer} to validate and add
      * @return a list of errors that occured during validation
      */
-    public Map<String, String> addComputer(String name, String introduced, String discontinued, String companyId) {
+    public Map<String, String> addComputer(DTOComputer computer) {
         Map<String, String> errors = new HashMap<String, String>();
-        Computer c = ComputerValidator.validate(name, introduced, discontinued, companyId, errors);
+        Computer valid = ComputerValidator.validateAdd(computer, errors);
         if (errors.isEmpty()) {
             try {
-                dao.create(c);
+                dao.create(valid);
             } catch (DAOException e) {
                 logger.error(e.getMessage());
             }
@@ -105,20 +105,15 @@ public class ServiceComputer {
 
     /**
      * Edit an existing computer.
-     * @param id ID of the computer
-     * @param name Name of the computer
-     * @param introduced Introduced date of the computer, in 'dd-MM-yyyy' format
-     * @param discontinued Discontinued date of the computer, in 'dd-MM-yyyy' format
-     * @param companyId companyId of the computer
+     * @param computer {@link DTOComputer} to validate and edit
      * @return a list of errors that occured during validation
      */
-    public Map<String, String> editComputer(String id, String name, String introduced, String discontinued,
-            String companyId) {
+    public Map<String, String> editComputer(DTOComputer computer) {
         Map<String, String> errors = new HashMap<String, String>();
-        Computer c = ComputerValidator.validate(id, name, introduced, discontinued, companyId, errors);
+        Computer valid = ComputerValidator.validateEdit(computer, errors);
         if (errors.isEmpty()) {
             try {
-                dao.update(c);
+                dao.update(valid);
             } catch (DAOException e) {
                 logger.error(e.getMessage());
             }

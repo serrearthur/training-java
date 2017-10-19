@@ -36,8 +36,12 @@ public class DAOComputerImpl implements DAOComputer {
 
     private ConnectionManager manager;
 
+    /**
+     * Constructor.
+     * @param manager connection manager used for the DAO
+     */
     @Autowired
-    public void setManager(ConnectionManager manager) {
+    private DAOComputerImpl(ConnectionManager manager) {
         this.manager = manager;
     }
 

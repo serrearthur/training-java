@@ -13,6 +13,7 @@
 
 		<!-- Dependencies properties -->
 		<spring.version>5.0.0.RELEASE</spring.version>
+		<javax.validation.version>2.0.0.Final</javax.validation.version>
 		<javax.servlet.version>4.0.0</javax.servlet.version>
 		<jstl.version>1.2</jstl.version>
 		<mysql.version>5.1.44</mysql.version>
@@ -33,6 +34,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -45,26 +47,37 @@
 				</exclusion>
 			</exclusions>
 			<version>${spring.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<!-- /Spring dependencies -->
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.0.Final</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

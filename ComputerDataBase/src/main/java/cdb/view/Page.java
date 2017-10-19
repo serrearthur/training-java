@@ -31,14 +31,16 @@ public class Page<T> implements AllFields {
      * @param col column to order by
      * @param order "ASC" or "DESC"
      * @param limit number of entries per page
+     * @param search string searched for this page
      */
-    public Page(List<T> data, int pageNb, int limit, int totalCount, String col, String order) {
+    public Page(List<T> data, int pageNb, int limit, int totalCount, String col, String order, String search) {
         this.data = new ArrayList<T>(data);
         this.limit = limit;
         this.pageNb = pageNb;
         this.totalCount = totalCount;
         this.col = col;
         this.order = order;
+        this.search = search;
         this.totalPage = 1 + totalCount / this.limit;
         this.paginationBorders = DEFAULT_BORDER_SIZE;
     }

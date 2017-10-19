@@ -24,18 +24,16 @@ public class ServiceCompany {
     private DAOCompany daoCompany;
     private ConnectionManager manager;
 
+    /**
+     * Constructor.
+     * @param daoCompany {@link DaoCompany} bean
+     * @param daoComputer {@link DaoComputer} bean
+     * @param manager {@link ConnectionManager} bean
+     */
     @Autowired
-    public void setDaoComputer(DAOComputer daoComputer) {
-        this.daoComputer = daoComputer;
-    }
-
-    @Autowired
-    public void setDaoCompany(DAOCompany daoCompany) {
+    private ServiceCompany(DAOCompany daoCompany, DAOComputer daoComputer, ConnectionManager manager) {
         this.daoCompany = daoCompany;
-    }
-
-    @Autowired
-    public void setManager(ConnectionManager manager) {
+        this.daoComputer = daoComputer;
         this.manager = manager;
     }
 

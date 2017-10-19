@@ -1,11 +1,11 @@
 <%@ tag body-content="empty" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ attribute name="target" required="true" %>
-<%@ attribute name="pagenb" required="false" %>
-<%@ attribute name="limit" required="false" %>
-<%@ attribute name="search" required="false" %>
-<%@ attribute name="col" required="false" %>
-<%@ attribute name="order" required="false" %>
+<%@ attribute name="target" required="true" type="java.lang.String"%>
+<%@ attribute name="pagenb" required="false" type="java.lang.Integer"%>
+<%@ attribute name="limit" required="false" type="java.lang.Integer"%>
+<%@ attribute name="search" required="false" type="java.lang.String"%>
+<%@ attribute name="col" required="false" type="java.lang.String"%>
+<%@ attribute name="order" required="false" type="java.lang.String"%>
 
 <c:if test="${not empty target}">
 	<c:set var="output" value="${target}?" />

@@ -1,15 +1,32 @@
 package cdb.view.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.lang.Nullable;
+
 /**
  * DTO representation of a {@link cdb.model.Computer}.
  * @author aserre
  */
 public class DTOComputer {
+    @Min(value = 1, message = "Id can't be empty or equal to 0")
     private String id;
+
+    @NotBlank(message = "Computer name can't be empty")
     private String name;
+
+    @Nullable
     private String introduced;
+
+    @Nullable
     private String discontinued;
+
+    @Nullable
     private String company;
+
+    @Nullable
+    @Min(value = 1, message = "Id can't be empty or equal to 0")
     private String companyId;
 
     /**

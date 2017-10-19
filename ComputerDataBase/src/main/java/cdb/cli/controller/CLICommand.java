@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
@@ -20,14 +20,23 @@ import cdb.view.dto.DTOComputer;
  *
  * @author aserre
  */
+@Controller
 public class CLICommand {
-    private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
-    private static final ServiceComputer SERVICE_COMPUTER = (ServiceComputer) ctx.getBean("serviceComputer");
-    private static final ServiceCompany SERVICE_COMPANY = (ServiceCompany) ctx.getBean("serviceCompany");
-
     private String command;
     private List<DTOComputer> result_computers;
     private List<DTOCompany> result_companies;
+    private ServiceComputer serviceComputer;
+    private ServiceCompany serviceCompany;
+
+    @Autowired
+    private void setServiceComputer(ServiceComputer service) {
+        this.serviceComputer = service;
+    }
+
+    @Autowired
+    private void setServiceCompany(ServiceCompany service) {
+        this.serviceCompany = service;
+    }
 
     /**
      * Creates a CLICommand object from a command line input. A CLICommand contains
@@ -136,12 +145,12 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            this.result_computers.addAll(SERVICE_COMPUTER.getPage("", 1, 1000, "cpt.id", "ASC").getData());
+            this.result_computers.addAll(serviceComputer.getPage("", 1, 1000, "cpt.id", "ASC").getData());
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
             System.out.println("LIST CPN");
-            this.result_companies.addAll(SERVICE_COMPANY.getCompanies());
+            this.result_companies.addAll(serviceCompany.getCompanies());
             ret = true;
         } else {
             System.out.println("LIST + ERROR");
@@ -167,7 +176,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with id X
                 System.out.println("SHOW -i " + parsed.get(2));
-                this.result_computers.add(SERVICE_COMPUTER.getComputer(parsed.get(2)));
+                this.result_computers.add(serviceComputer.getComputer(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("SHOW -i + EMPTY : " + command);
@@ -176,7 +185,7 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with name X
                 System.out.println("SHOW -n " + parsed.get(2));
-                this.result_computers.addAll(SERVICE_COMPUTER.getPage(parsed.get(2), 1, 1000, "cpt.id", "ASC").getData());
+                this.result_computers.addAll(serviceComputer.getPage(parsed.get(2), 1, 1000, "cpt.id", "ASC").getData());
                 ret = true;
             } else {
                 System.out.println("SHOW -n + EMPTY");
@@ -203,7 +212,9 @@ public class CLICommand {
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
             // case when we create a new computer with name X
             System.out.println("CREATE " + parsed.get(1));
-            SERVICE_COMPUTER.addComputer(parsed.get(1), "", "", "");
+            DTOComputer c = new DTOComputer();
+            c.setName(parsed.get(1));
+            serviceComputer.addComputer(c);
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -240,7 +251,7 @@ public class CLICommand {
                 }
             }
             System.out.println("UPDATE : " + command);
-            SERVICE_COMPUTER.editComputer(c.getId(), c.getName(), c.getIntroduced(), c.getDiscontinued(), c.getCompanyId());
+            serviceComputer.editComputer(c);
             ret = true;
         } else {
             System.out.println("UPDATE + NOT_ENOUGH_ARGS : " + command);
@@ -265,7 +276,7 @@ public class CLICommand {
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
-                SERVICE_COMPUTER.delete(parsed.get(2));
+                serviceComputer.delete(parsed.get(2));
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
@@ -273,7 +284,7 @@ public class CLICommand {
         } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -c " + parsed.get(2));
-                SERVICE_COMPANY.deleteCompany(Integer.parseInt(parsed.get(2)));
+                serviceCompany.deleteCompany(Integer.parseInt(parsed.get(2)));
                 ret = true;
             } else {
                 System.out.println("DELETE -c + EMPTY");

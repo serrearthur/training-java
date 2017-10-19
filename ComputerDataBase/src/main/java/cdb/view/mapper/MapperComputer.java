@@ -24,7 +24,7 @@ public class MapperComputer {
     private static DAOCompany dao;
 
     @Autowired
-    public void setDao(DAOCompany dao) {
+    private void setDao(DAOCompany dao) {
         MapperComputer.dao = dao;
     }
 
