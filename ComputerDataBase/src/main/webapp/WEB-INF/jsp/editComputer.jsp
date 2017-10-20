@@ -34,7 +34,9 @@
 							<form:select path="companyId" class="form-control" id="companyId" name="companyid">
 								<option value="0">--</option>
 								<c:forEach items="${companies}" var="c">
-									<option value="${c.id}" ${c.id eq computer.companyId? "selected":"" }>${c.name}</option>
+									<option value="${c.id}" ${c.id eq computer.companyId? "selected" : "" }>
+										<c:out value='${c.name}'/>
+									</option>
 								</c:forEach>
 							</form:select>
 						</div>

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import cdb.dao.DAOComputer;
 import cdb.dao.exceptions.DAOException;
 import cdb.model.Computer;
-import cdb.service.validation.ComputerValidator;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 import cdb.view.mapper.MapperComputer;
@@ -92,7 +91,8 @@ public class ServiceComputer {
      */
     public Map<String, String> addComputer(DTOComputer computer) {
         Map<String, String> errors = new HashMap<String, String>();
-        Computer valid = ComputerValidator.validateAdd(computer, errors);
+//        Computer valid = ComputerValidator.validateAdd(computer, errors);
+        Computer valid = MapperComputer.toComputer(computer);
         if (errors.isEmpty()) {
             try {
                 dao.create(valid);
@@ -110,7 +110,8 @@ public class ServiceComputer {
      */
     public Map<String, String> editComputer(DTOComputer computer) {
         Map<String, String> errors = new HashMap<String, String>();
-        Computer valid = ComputerValidator.validateEdit(computer, errors);
+//        Computer valid = ComputerValidator.validateEdit(computer, errors);
+        Computer valid = MapperComputer.toComputer(computer);
         if (errors.isEmpty()) {
             try {
                 dao.update(valid);

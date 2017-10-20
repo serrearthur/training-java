@@ -1,6 +1,6 @@
 package cdb.controller;
 
-import java.util.Map;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,16 +60,17 @@ public class AddComputer implements ComputerFields, GeneralFields {
      * @return addess of the jsp to visit
      */
     @PostMapping
-    protected String doPost(Model model, @ModelAttribute("computerForm") DTOComputer computer, BindingResult result) {
-        Map<String, String> errors = serviceComputer.addComputer(computer);
+    protected String doPost(Model model, @Valid @ModelAttribute("computerForm") DTOComputer computer, BindingResult result) {
+//        Map<String, String> errors = serviceComputer.addComputer(computer);
 
-        if (errors.isEmpty()) {
-            return "redirect:" + VIEW_HOME;
-        } else {
-            model.addAttribute(ATT_ERRORS, errors);
+        if (result.hasErrors()) {
+            System.out.println(result.getErrorCount() + " : " + result.getAllErrors().get(0));
             model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
-            model.addAttribute("computerForm", new DTOComputer());
             return VIEW;
+        } else {
+            System.out.println(computer.getIntroduced());
+            serviceComputer.addComputer(computer);
+            return "redirect:" + VIEW_HOME;
         }
     }
 }

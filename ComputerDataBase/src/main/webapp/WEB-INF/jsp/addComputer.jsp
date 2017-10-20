@@ -8,28 +8,32 @@
 					<fieldset>
 						<div class="form-group ${empty errors['name'] ? '' : 'has-error has-feedback'}">
 							<label for="name">Computer name</label>
-							<span style="font-style: italic; color:red;">${errors['name']}</span>
+							<%-- <span style="font-style: italic; color:red;">${errors['name']}</span> --%>
+							<form:errors path="name" style="font-style: italic; color:red;"/> 
 							<form:input path="name" type="text" class="form-control" id="name" name="name" placeholder="Computer name" required="true"/>
 						</div>
 						<div class="form-group ${empty errors['introduced'] ? '' : 'has-error has-feedback'}">
 							<label for="introduced">Introduced date</label>
-							<span style="font-style: italic; color:red;">${errors['introduced']}</span>
+							<%-- <span style="font-style: italic; color:red;">${errors['introduced']}</span> --%>
+							<form:errors path="introduced" style="font-style: italic; color:red;"/> 
 							<form:input path="introduced" type="date" class="form-control" id="introduced" name="introduced"
 							placeholder="Introduced date" pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$" title="YYYY-MM-DD"/>
 						</div>
 						<div class="form-group ${empty errors['discontinued'] ? '' : 'has-error has-feedback'}">
 							<label for="discontinued">Discontinued date</label>
-							<span style="font-style: italic; color:red;">${errors['discontinued']}</span>
+							<%-- <span style="font-style: italic; color:red;">${errors['discontinued']}</span> --%>
+							<form:errors path="discontinued" style="font-style: italic; color:red;"/> 
 							<form:input path="discontinued" type="date" class="form-control" id="discontinued" name="discontinued"
 							placeholder="Discontinued date" pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$" title="YYYY-MM-DD"/>
 						</div>
 						<div class="form-group ${empty errors['companyId'] ? '' : 'has-error has-feedback'}">
 							<label for="companyId">Company</label>
-							<span style="font-style: italic; color:red;">${errors['companyId']}</span>
+							<%-- <span style="font-style: italic; color:red;">${errors['companyId']}</span> --%>
+							<form:errors path="companyId" style="font-style: italic; color:red;"/> 
 							<form:select path="companyId" class="form-control" id="companyId" name="companyId">
 								<option value="0" selected>--</option>
 								<c:forEach items="${companies}" var="c">
-									<option value="${c.id}" >${c.name}</option>
+									<option value="<c:out value='${c.id}'/>" ><c:out value="${c.name}"/></option>
 								</c:forEach>
 							</form:select>
 						</div>

@@ -21,6 +21,7 @@
 		<jcloverslf4j.version>1.7.25</jcloverslf4j.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
+		<hibernate.validator.version>6.0.3.Final</hibernate.validator.version>
 
 		<!-- Plugins properties -->
 		<maven.compiler.version>3.7.0</maven.compiler.version>
@@ -127,8 +128,13 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
 
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<finalName>ComputerDataBase</finalName>
 		<plugins>

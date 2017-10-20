@@ -1,5 +1,6 @@
 package cdb.view.mapper;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -69,20 +70,27 @@ public class MapperComputer {
      */
     public static Computer toComputer(DTOComputer c) {
         Computer ret = new Computer();
-        ret.setId(Integer.parseInt(c.getId()));
+        try {
+            ret.setId(Integer.parseInt(c.getId()));
+        } catch (NumberFormatException e) {
+            ret.setId(null);
+        }
         ret.setName(c.getName());
         try {
             ret.setIntroduced(LocalDateTime.of(LocalDate.parse(c.getIntroduced()), LocalTime.of(0, 0)));
-        } catch (NullPointerException e) {
+        } catch (DateTimeException e) {
             ret.setIntroduced(null);
         }
         try {
             ret.setDiscontinued(LocalDateTime.of(LocalDate.parse(c.getDiscontinued()), LocalTime.of(0, 0)));
-        } catch (NullPointerException e) {
+        } catch (DateTimeException e) {
             ret.setDiscontinued(null);
         }
         try {
             ret.setCompanyId(Integer.parseInt(c.getCompanyId()));
+            if (ret.getCompanyId() == 0) {
+                ret.setCompanyId(null);
+            }
         } catch (NumberFormatException e) {
             ret.setCompanyId(null);
         }

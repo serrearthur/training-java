@@ -3,6 +3,7 @@ package cdb.view.dto;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 /**
@@ -10,23 +11,24 @@ import org.springframework.lang.Nullable;
  * @author aserre
  */
 public class DTOComputer {
-    @Min(value = 1, message = "Id can't be empty or equal to 0")
     private String id;
 
     @NotBlank(message = "Computer name can't be empty")
     private String name;
 
     @Nullable
+    @DateTimeFormat(pattern = "YYYY-MM-dd")
     private String introduced;
 
     @Nullable
+    @DateTimeFormat(pattern = "YYYY-MM-dd")
     private String discontinued;
 
     @Nullable
     private String company;
 
     @Nullable
-    @Min(value = 1, message = "Id can't be empty or equal to 0")
+    @Min(value = 0, message = "Id must be a positive integer")
     private String companyId;
 
     /**

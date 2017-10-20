@@ -70,10 +70,10 @@
 					<tr>
 						<td class="editMode">
 							<input type="checkbox" name="cb" class="cb" value="${c.id}"></td>
-						<td><a href="<c:url value="edit_computer?id=${c.id}"/>" >${c.name}</a></td>
-						<td>${c.introduced}</td>
-						<td>${c.discontinued}</td>
-						<td>${c.company}</td>
+						<td><a href="<c:url value="edit_computer?id=${c.id}"/>" ><c:out value="${c.name}"/></a></td>
+						<td><c:out value="${c.introduced}"/></td>
+						<td><c:out value="${c.discontinued}"/></td>
+						<td><c:out value="${c.company}"/></td>
 					</tr>
 				</c:forEach>
  			</tbody>

@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
 import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOCompany;
@@ -20,7 +17,6 @@ import cdb.view.dto.DTOComputer;
  *
  * @author aserre
  */
-@Controller
 public class CLICommand {
     private String command;
     private List<DTOComputer> result_computers;
@@ -28,13 +24,11 @@ public class CLICommand {
     private ServiceComputer serviceComputer;
     private ServiceCompany serviceCompany;
 
-    @Autowired
-    private void setServiceComputer(ServiceComputer service) {
+    public void setServiceComputer(ServiceComputer service) {
         this.serviceComputer = service;
     }
 
-    @Autowired
-    private void setServiceCompany(ServiceCompany service) {
+    public void setServiceCompany(ServiceCompany service) {
         this.serviceCompany = service;
     }
 
