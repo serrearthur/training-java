@@ -9,10 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import cdb.dao.ConnectionManager;
 import cdb.dao.DAOCompany;
 import cdb.dao.exceptions.DAOException;
 import cdb.model.Company;
@@ -30,15 +30,15 @@ public class DAOCompanyImpl implements DAOCompany {
     private static final String REQUEST_SELECT_NAME = "SELECT * FROM company WHERE name = ?";
     private static final String REQUEST_SELECT_ALL = "SELECT * FROM company";
 
-    private ConnectionManager manager;
+    private SessionFactory sessionFactory;
 
     /**
      * Constructor.
-     * @param manager connection manager used for the DAO
+     * @param sessionFactory sessionFactory used for the DAO
      */
     @Autowired
-    private DAOCompanyImpl(ConnectionManager manager) {
-        this.manager = manager;
+    private DAOCompanyImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     /**
@@ -76,7 +76,7 @@ public class DAOCompanyImpl implements DAOCompany {
         } catch (SQLException e) {
             throw new DAOException(e);
         } finally {
-            if (manager.getAutoCommit()) {
+            if (sessionFactory.getAutoCommit()) {
                 manager.closeConnection();
             }
         }

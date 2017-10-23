@@ -2,15 +2,30 @@ package cdb.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
 /**
  * Model class implementing a Computer.
  * @author aserre
  */
+@Entity
+@Table(name = "computer")
 public class Computer {
+    @Id @GeneratedValue
+    @Column(name = "id")
     private Integer id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "introduced")
     private LocalDateTime introduced;
+    @Column(name = "discontinued")
     private LocalDateTime discontinued;
+    @Column(name = "company_id")
     private Integer companyId;
 
     /**
