@@ -35,10 +35,10 @@ public interface DAOCompany {
     /**
      * Get a list of companies that have a specified id.
      * @param id ID of the companies
-     * @return a list of the corresponding companies
+     * @return the corresponding company
      * @throws DAOException thrown when a connection problem happens.
      */
-    List<Company> getFromId(Integer id) throws DAOException;
+    Company getFromId(Integer id) throws DAOException;
 
     /**
      * Get a list of companies that have a specified name.

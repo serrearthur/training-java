@@ -7,6 +7,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,7 @@ public class MapperComputer {
      * @param c original {@link Computer}
      * @return result {@link DTOComputer}
      */
+    @Transactional
     public static DTOComputer toDTOComputer(Computer c) {
         DTOComputer ret = new DTOComputer();
         ret.setId(c.getId().toString());
@@ -49,7 +52,7 @@ public class MapperComputer {
             ret.setDiscontinued(null);
         }
         try {
-            ret.setCompany(dao.getFromId(c.getCompanyId()).get(0).getName());
+            ret.setCompany(dao.getFromId(c.getCompanyId()).getName());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
         } catch (DAOException e) {

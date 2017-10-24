@@ -2,10 +2,11 @@ package cdb.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cdb.dao.ConnectionManager;
 import cdb.dao.DAOCompany;
 import cdb.dao.DAOComputer;
 import cdb.dao.exceptions.DAOException;
@@ -22,25 +23,23 @@ public class ServiceCompany {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
     private DAOComputer daoComputer;
     private DAOCompany daoCompany;
-    private ConnectionManager manager;
 
     /**
      * Constructor.
      * @param daoCompany {@link DaoCompany} bean
      * @param daoComputer {@link DaoComputer} bean
-     * @param manager {@link ConnectionManager} bean
      */
     @Autowired
-    private ServiceCompany(DAOCompany daoCompany, DAOComputer daoComputer, ConnectionManager manager) {
+    private ServiceCompany(DAOCompany daoCompany, DAOComputer daoComputer) {
         this.daoCompany = daoCompany;
         this.daoComputer = daoComputer;
-        this.manager = manager;
     }
 
     /**
      * Returns a list of all the companies inside the database.
      * @return a list of companies in {@link DTOCompany} format
      */
+    @Transactional
     public List<DTOCompany> getCompanies() {
         List<DTOCompany> ret = null;
         try {
@@ -56,21 +55,13 @@ public class ServiceCompany {
      * Delete a {@link Company} and all the computer it contains.
      * @param companyId company to be deleted
      */
+    @Transactional
     public void deleteCompany(Integer companyId) {
         try {
-            manager.setAutoCommit(false);
             daoComputer.deleteCompanyId(companyId.toString());
             daoCompany.delete(companyId);
-            manager.commit();
         } catch (DAOException e) {
-            logger.error(e.getMessage() + " : rolling back.");
-            manager.rollback();
-        } finally {
-            try {
-                manager.closeConnection();
-            } catch (DAOException e) {
-                logger.error(e.getMessage());
-            }
+            logger.error(e.getMessage());
         }
     }
 }

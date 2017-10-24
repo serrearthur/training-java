@@ -46,7 +46,7 @@ public interface DAOComputer {
      * @return a list of the corresponding computers
      * @throws DAOException thrown when a connection problem happens.
      */
-    List<Computer> getFromId(Integer id) throws DAOException;
+    Computer getFromId(Integer id) throws DAOException;
 
     /**
      * Get a list of computers that have a specified name.

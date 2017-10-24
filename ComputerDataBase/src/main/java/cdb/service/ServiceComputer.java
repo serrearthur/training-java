@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,7 @@ public class ServiceComputer {
      * @param order "ASC" or "DESC"
      * @return a list of computers in {@link DTOComputer} format
      */
+    @Transactional
     public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col, String order) {
         Page<DTOComputer> ret = null;
         try {
@@ -58,6 +61,7 @@ public class ServiceComputer {
      * Delete the requested computers from the database.
      * @param requestedDelete ID of the computers to delete, spearated by a comma
      */
+    @Transactional
     public void delete(String requestedDelete) {
         try {
             dao.delete(requestedDelete);
@@ -71,10 +75,11 @@ public class ServiceComputer {
      * @param computerID ID of the computer we want to access
      * @return a computers in {@link DTOComputer} format
      */
+    @Transactional
     public DTOComputer getComputer(String computerID) {
         DTOComputer c = new DTOComputer();
         try {
-            Computer comp = dao.getFromId(Integer.parseInt(computerID)).get(0);
+            Computer comp = dao.getFromId(Integer.parseInt(computerID));
             c = MapperComputer.toDTOComputer(comp);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             logger.error(e.getMessage() + " : Computer \"" + computerID + "\" not found : ");
@@ -89,6 +94,7 @@ public class ServiceComputer {
      * @param computer {@link DTOComputer} to validate and add
      * @return a list of errors that occured during validation
      */
+    @Transactional
     public Map<String, String> addComputer(DTOComputer computer) {
         Map<String, String> errors = new HashMap<String, String>();
 //        Computer valid = ComputerValidator.validateAdd(computer, errors);
@@ -108,6 +114,7 @@ public class ServiceComputer {
      * @param computer {@link DTOComputer} to validate and edit
      * @return a list of errors that occured during validation
      */
+    @Transactional
     public Map<String, String> editComputer(DTOComputer computer) {
         Map<String, String> errors = new HashMap<String, String>();
 //        Computer valid = ComputerValidator.validateEdit(computer, errors);
