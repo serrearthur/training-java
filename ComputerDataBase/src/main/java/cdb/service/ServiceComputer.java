@@ -3,7 +3,6 @@ package cdb.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,9 +46,9 @@ public class ServiceComputer {
     public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col, String order) {
         Page<DTOComputer> ret = null;
         try {
-            AtomicInteger count = new AtomicInteger();
-            List<Computer> l = dao.getFromName((pageNb - 1) * limit, limit, count, search, col, order);
-            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count.get(), col, order, search);
+            int count = dao.countByNameAndCompanyName(search);
+            List<Computer> l = dao.findByNameAndCompanyName(search, col, order, (pageNb - 1) * limit, limit);
+            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count, col, order, search);
         } catch (DAOException e) {
             logger.error(e.getMessage());
         }
@@ -62,7 +61,7 @@ public class ServiceComputer {
      */
     public void delete(List<String> requestedDelete) {
         try {
-            dao.delete(requestedDelete);
+            dao.deleteInBatchFromId(requestedDelete);
         } catch (DAOException e) {
             logger.error(e.getMessage());
         }
@@ -76,7 +75,7 @@ public class ServiceComputer {
     public DTOComputer getComputer(String computerID) {
         DTOComputer c = new DTOComputer();
         try {
-            Computer comp = dao.getFromId(Integer.parseInt(computerID));
+            Computer comp = dao.getOne(Integer.parseInt(computerID));
             c = MapperComputer.toDTOComputer(comp);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             logger.error(e.getMessage() + " : Computer \"" + computerID + "\" not found : ");
@@ -97,7 +96,7 @@ public class ServiceComputer {
         Computer valid = MapperComputer.toComputer(computer);
         if (errors.isEmpty()) {
             try {
-                dao.create(valid);
+                dao.save(valid);
             } catch (DAOException e) {
                 logger.error(e.getMessage());
             }
@@ -116,7 +115,7 @@ public class ServiceComputer {
         Computer valid = MapperComputer.toComputer(computer);
         if (errors.isEmpty()) {
             try {
-                dao.update(valid);
+                dao.save(valid);
             } catch (DAOException e) {
                 logger.error(e.getMessage());
             }

@@ -43,7 +43,7 @@ public class ServiceCompany {
     public List<DTOCompany> getCompanies() {
         List<DTOCompany> ret = null;
         try {
-            List<Company> l = daoCompany.getAll();
+            List<Company> l = daoCompany.findAll();
             ret = MapperCompany.toDTOCompany(l);
         } catch (DAOException e) {
             logger.error(e.getMessage());
@@ -57,8 +57,8 @@ public class ServiceCompany {
      */
     public void deleteCompany(Integer companyId) {
         try {
-            daoComputer.deleteCompanyId(companyId);
-            daoCompany.delete(companyId);
+            daoComputer.deleteByCompanyId(companyId);
+            daoCompany.deleteById(companyId);
         } catch (DAOException e) {
             logger.error(e.getMessage());
         }

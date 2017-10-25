@@ -52,7 +52,7 @@ public class MapperComputer {
             ret.setDiscontinued(null);
         }
         try {
-            ret.setCompany(dao.getFromId(c.getCompanyId()).getName());
+            ret.setCompany(dao.findById(c.getCompanyId()).get().getName());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             ret.setCompany(null);
         } catch (DAOException e) {
