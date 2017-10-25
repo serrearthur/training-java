@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cdb.dao.exceptions.DAOException;
+//import cdb.dao.exceptions.DAOException;
 import cdb.dao.DAOCompany;
 import cdb.model.Computer;
 import cdb.view.dto.DTOComputer;
@@ -53,11 +53,12 @@ public class MapperComputer {
         }
         try {
             ret.setCompany(dao.findById(c.getCompanyId()).get().getName());
-        } catch (NullPointerException | IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             ret.setCompany(null);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
         }
+//        catch (DAOException e) {
+//            logger.error(e.getMessage());
+//        }
         try {
             ret.setCompanyId(c.getCompanyId().toString());
         } catch (NullPointerException e) {

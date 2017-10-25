@@ -47,7 +47,8 @@ public class ServiceComputer {
         Page<DTOComputer> ret = null;
         try {
             int count = dao.countByNameAndCompanyName(search);
-            List<Computer> l = dao.findByNameAndCompanyName(search, col, order, (pageNb - 1) * limit, limit);
+//            List<Computer> l = dao.findByNameAndCompanyName(search, col, order, (pageNb - 1) * limit, limit);
+            List<Computer> l = dao.findAll();
             ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count, col, order, search);
         } catch (DAOException e) {
             logger.error(e.getMessage());

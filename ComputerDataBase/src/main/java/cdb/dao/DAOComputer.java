@@ -3,7 +3,6 @@ package cdb.dao;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -31,9 +30,8 @@ public interface DAOComputer extends JpaRepository<Computer, Integer> {
     * Method to delete a computer in the database.
     * @param idList list of id of the {@link Computer} to be deleted
     */
-    @Modifying
-    @Query("DELETE FROM Computer c WHERE c.id IN ?1")
-    void deleteInBatchFromId(List<String> idList);
+    @Query("DELETE FROM Computer c WHERE c.id IN :idList")
+    void deleteInBatchFromId(@Param("idList") List<String> idList);
 
     /**
     * Get a list of computers that have a specified name.
@@ -44,8 +42,7 @@ public interface DAOComputer extends JpaRepository<Computer, Integer> {
     * @param limit limit for the page size
     * @return a list of the corresponding computers
     */
-    @Modifying
-    @Query(nativeQuery = true, value = "SELECT * FROM Computer cpt LEFT JOIN Company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE %:name% OR cpn.name LIKE %:name% ORDER BY :col :order LIMIT :start, :limit")
+    @Query(value = "SELECT * FROM Computer cpt LEFT JOIN Company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE :name OR cpn.name LIKE :name ORDER BY :col :order LIMIT :start , :limit", nativeQuery = true)
     List<Computer> findByNameAndCompanyName(@Param("name") String name, @Param("col") String col, @Param("order") String order, @Param("start") Integer start, @Param("limit") Integer limit);
 
     /**
@@ -53,8 +50,7 @@ public interface DAOComputer extends JpaRepository<Computer, Integer> {
     * @param name name of the computers
     * @return the count of {@link Computer} from the request
     */
-    @Modifying
-    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM Computer cpt LEFT JOIN Company cpn ON cpt.company_id = cpn.id WHERE cpt.name LIKE %:name% OR cpn.name LIKE %:name%")
+    @Query("SELECT COUNT(*) FROM Computer cpt LEFT JOIN Company cpn ON cpt.companyId = cpn.id WHERE cpt.name LIKE :name OR cpn.name LIKE :name ")
     int countByNameAndCompanyName(@Param("name") String name);
 //    /**
 //     * Method to create a computer in the database.
