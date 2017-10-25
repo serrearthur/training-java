@@ -2,10 +2,10 @@ package cdb.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cdb.dao.DAOCompany;
 import cdb.dao.DAOComputer;
@@ -19,6 +19,7 @@ import cdb.view.mapper.MapperCompany;
  * @author aserre
  */
 @Service
+@Transactional
 public class ServiceCompany {
     private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
     private DAOComputer daoComputer;
@@ -30,7 +31,7 @@ public class ServiceCompany {
      * @param daoComputer {@link DaoComputer} bean
      */
     @Autowired
-    private ServiceCompany(DAOCompany daoCompany, DAOComputer daoComputer) {
+    public ServiceCompany(DAOCompany daoCompany, DAOComputer daoComputer) {
         this.daoCompany = daoCompany;
         this.daoComputer = daoComputer;
     }
@@ -39,7 +40,6 @@ public class ServiceCompany {
      * Returns a list of all the companies inside the database.
      * @return a list of companies in {@link DTOCompany} format
      */
-    @Transactional
     public List<DTOCompany> getCompanies() {
         List<DTOCompany> ret = null;
         try {
@@ -55,10 +55,9 @@ public class ServiceCompany {
      * Delete a {@link Company} and all the computer it contains.
      * @param companyId company to be deleted
      */
-    @Transactional
     public void deleteCompany(Integer companyId) {
         try {
-            daoComputer.deleteCompanyId(companyId.toString());
+            daoComputer.deleteCompanyId(companyId);
             daoCompany.delete(companyId);
         } catch (DAOException e) {
             logger.error(e.getMessage());

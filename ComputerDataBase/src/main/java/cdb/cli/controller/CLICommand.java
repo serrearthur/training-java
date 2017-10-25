@@ -1,6 +1,7 @@
 package cdb.cli.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -270,7 +271,7 @@ public class CLICommand {
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
-                serviceComputer.delete(parsed.get(2));
+                serviceComputer.delete(Arrays.asList(parsed.get(2).split(",")));
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");

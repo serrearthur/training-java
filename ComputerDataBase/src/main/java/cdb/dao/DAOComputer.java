@@ -29,24 +29,33 @@ public interface DAOComputer {
     /**
      * Method to delete a computer in the database.
      * @param idList list of id of the {@link Computer} to be deleted
+     * @return the number of rows deleted
      * @throws DAOException thrown when a connection problem happens.
      */
-    void delete(String idList) throws DAOException;
+    int delete(List<String> idList) throws DAOException;
 
     /**
      * Method to delete all computers with a specific companyId.
-     * @param idList list of companyId from the companyies to be deleted
+     * @param companyId companyId of the computers to be deleted
+     * @return the number of rows deleted
      * @throws DAOException thrown when a connection problem happens.
      */
-    void deleteCompanyId(String idList) throws DAOException;
+    int deleteCompanyId(Integer companyId) throws DAOException;
 
     /**
-     * Get a list of computers that have a specified id.
+     * Get a computer that have a specified id.
      * @param id ID of the computers
      * @return a list of the corresponding computers
      * @throws DAOException thrown when a connection problem happens.
      */
     Computer getFromId(Integer id) throws DAOException;
+
+    /**
+     * Get a list of computers that have a specified copanyId.
+     * @param companyId CompanyId of the computers
+     * @return a list of the corresponding computers
+     */
+    List<Computer> getFromCompanyId(Integer companyId);
 
     /**
      * Get a list of computers that have a specified name.

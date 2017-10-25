@@ -1,13 +1,17 @@
 package cdb.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Model class implementing a Company.
  * @author aserre
  */
+@Entity
+@Table(name = "company")
 public class Company {
     @Id @GeneratedValue
     @Column(name = "id")

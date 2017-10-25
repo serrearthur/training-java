@@ -1,5 +1,7 @@
 package cdb.controller;
 
+import java.util.Arrays;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,7 +58,7 @@ public class Dashboard implements GeneralFields, PageFields {
     @PostMapping
     public String doPost(@RequestParam(value = "selection", required = true) String requestedDelete) throws ServletException {
         if (requestedDelete != null) {
-            serviceComputer.delete(requestedDelete);
+            serviceComputer.delete(Arrays.asList(requestedDelete.split(",")));
             return "redirect:" + VIEW_HOME;
         } else {
             throw new ServletException("Invalid operation : POST.");

@@ -13,6 +13,7 @@
 
 		<!-- Dependencies properties -->
 		<spring.version>5.0.0.RELEASE</spring.version>
+		<spring.data.jpa.version>2.0.0.RELEASE</spring.data.jpa.version>
 		<javax.validation.version>2.0.0.Final</javax.validation.version>
 		<javax.servlet.version>4.0.0</javax.servlet.version>
 		<jstl.version>1.2</jstl.version>
@@ -85,6 +86,12 @@
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring.data.jpa.version}</version>
+		</dependency>
 		<!-- /Spring dependencies -->
 
 		<dependency>
@@ -148,19 +155,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.core.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.core.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>${hibernate.annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
 

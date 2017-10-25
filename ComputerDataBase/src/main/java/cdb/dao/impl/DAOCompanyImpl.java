@@ -2,16 +2,15 @@ package cdb.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import cdb.dao.DAOCompany;
+import cdb.dao.exceptions.DAOException;
 import cdb.model.Company;
 
 /**
@@ -20,7 +19,6 @@ import cdb.model.Company;
  */
 @Repository
 public class DAOCompanyImpl implements DAOCompany {
-
     private SessionFactory sessionFactory;
 
     /**
@@ -34,45 +32,74 @@ public class DAOCompanyImpl implements DAOCompany {
 
     @Override
     public void create(Company company) {
-        Session session = this.sessionFactory.getCurrentSession();
-        session.save(company);
+        try {
+            Session session = this.sessionFactory.getCurrentSession();
+            session.save(company);
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
     }
 
     @Override
     public void update(Company company) {
-        Session session = this.sessionFactory.getCurrentSession();
-        session.update(company);
+        try {
+            Session session = this.sessionFactory.getCurrentSession();
+            session.update(company);
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
     }
 
     @Override
     public void delete(Integer id) {
-        Session session = sessionFactory.getCurrentSession();
-        Company personToDelete = getFromId(id);
-        session.delete(personToDelete);
-    }
-
-    @Override
-    public List<Company> getFromName(String name) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Company> criteria = builder.createQuery(Company.class);
-        Root<Company> root = criteria.from(Company.class);
-        criteria.select(root).where(builder.equal(root.get("name"), name));
-        return session.createQuery(criteria).getResultList();
-    }
-
-    @Override
-    public List<Company> getAll()  {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaQuery<Company> criteria = session.getCriteriaBuilder().createQuery(Company.class);
-        criteria.from(Company.class);
-        return session.createQuery(criteria).getResultList();
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Company companyToDelete = getFromId(id);
+            session.delete(companyToDelete);
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
     }
 
     @Override
     public Company getFromId(Integer id) {
-        Session session = sessionFactory.getCurrentSession();
-        Company retrievedPerson = (Company) session.get(Company.class, id);
-        return retrievedPerson;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Company retrievedPerson = (Company) session.get(Company.class, id);
+            return retrievedPerson;
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
+    }
+
+    private static final String REQUEST_SELECT_NAME = "FROM Company WHERE name = :name";
+    @Override
+    public List<Company> getFromName(String name) {
+        try {
+            Session session = this.sessionFactory.getCurrentSession();
+            Query<Company> query = session.createQuery(REQUEST_SELECT_NAME, Company.class);
+            query.setParameter(":name", name);
+            return query.getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
+    }
+
+    private static final String REQUEST_SELECT_ALL = "FROM Company";
+    @Override
+    public List<Company> getAll()  {
+        try {
+            Session session = this.sessionFactory.getCurrentSession();
+            Query<Company> query = session.createQuery(REQUEST_SELECT_ALL, Company.class);
+            return query.getResultList();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
     }
 }
