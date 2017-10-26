@@ -13,6 +13,7 @@
 
 		<!-- Dependencies properties -->
 		<spring.version>5.0.0.RELEASE</spring.version>
+		<spring.security.version>4.2.3.RELEASE</spring.security.version>
 		<spring.data.jpa.version>2.0.0.RELEASE</spring.data.jpa.version>
 		<javax.validation.version>2.0.0.Final</javax.validation.version>
 		<javax.servlet.version>4.0.0</javax.servlet.version>
@@ -85,6 +86,18 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 
 		<dependency>
