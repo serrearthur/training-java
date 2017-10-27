@@ -16,7 +16,7 @@
 
 	<context:annotation-config />
 	<context:component-scan base-package="cdb" />
-	<jpa:repositories base-package="cdb.dao" entity-manager-factory-ref="emf" />
+	<jpa:repositories base-package="cdb.persistence" entity-manager-factory-ref="emf" />
 	<tx:annotation-driven />
 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

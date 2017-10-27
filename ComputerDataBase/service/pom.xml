@@ -4,23 +4,29 @@
 		<artifactId>cdb</artifactId>
 		<groupId>com.ebiz</groupId>
 		<version>4.5.2</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<modelVersion>${parent.modelVersion}</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 	<artifactId>service</artifactId>
-	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>core</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>binding</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>persistence</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 </project>

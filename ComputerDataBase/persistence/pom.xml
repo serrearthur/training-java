@@ -4,9 +4,10 @@
 		<artifactId>cdb</artifactId>
 		<groupId>com.ebiz</groupId>
 		<version>4.5.2</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<modelVersion>${parent.modelVersion}</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 	<artifactId>persistence</artifactId>
 	<packaging>jar</packaging>
 
@@ -17,9 +18,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>core</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 </project>

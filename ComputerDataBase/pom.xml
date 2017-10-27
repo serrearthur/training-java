@@ -14,7 +14,6 @@
 		<module>persistence</module>
 		<module>service</module>
 		<module>webapp</module>
-		<module>bob</module>
 	</modules>
 
 	<properties>
@@ -23,10 +22,11 @@
 
 		<!-- Dependencies properties -->
 		<spring.version>5.0.0.RELEASE</spring.version>
-		<spring.security.version>4.2.3.RELEASE</spring.security.version>
+		<spring.security.version>5.0.0.M5</spring.security.version>
 		<spring.data.jpa.version>2.0.0.RELEASE</spring.data.jpa.version>
 		<javax.validation.version>2.0.0.Final</javax.validation.version>
 		<javax.servlet.version>4.0.0</javax.servlet.version>
+		<jsp.api.version>6.0.32</jsp.api.version>
 		<jstl.version>1.2</jstl.version>
 		<mysql.version>5.1.44</mysql.version>
 		<logback.version>1.2.3</logback.version>
@@ -42,6 +42,17 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -129,6 +140,18 @@
 				<groupId>javax.servlet</groupId>
 				<artifactId>jstl</artifactId>
 				<version>${jstl.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.tomcat</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>${jsp.api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>taglibs</groupId>
+				<artifactId>standard</artifactId>
+				<version>1.1.2</version>
 			</dependency>
 
 			<dependency>
