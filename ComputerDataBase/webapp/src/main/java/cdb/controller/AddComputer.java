@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import cdb.controller.fields.ComputerFields;
-import cdb.controller.fields.GeneralFields;
 import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOComputer;
+import cdb.view.fields.ComputerFields;
+import cdb.view.fields.GeneralFields;
 
 /**
  * Controller implementing the mechanics behind the addition of a new computer.

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cdb.controller.fields.ComputerFields;
+import cdb.view.fields.ComputerFields;
 import cdb.model.Computer;
 import cdb.view.dto.DTOComputer;
 

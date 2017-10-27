@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import cdb.controller.fields.ComputerFields;
-import cdb.controller.fields.GeneralFields;
 import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOComputer;
+import cdb.view.fields.ComputerFields;
+import cdb.view.fields.GeneralFields;
 
 /**
  * Controller implementing the mechanics behind the edition of a computer.

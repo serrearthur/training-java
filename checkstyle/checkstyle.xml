@@ -176,10 +176,10 @@
 	<module name="Header">
 		<property name="fileExtensions" value="java" />
 		<property name="severity" value="error" />
-		<property name="headerFile" value="${basedir}/${header.file}" />
+		<property name="headerFile" value="${basedir}/../checkstyle/header.txt" />
 	</module>
 	<module name="SuppressionFilter">
-		<property name="file" value="${basedir}/${suppressions.file}" />
+		<property name="file" value="${basedir}/../checkstyle/suppressions.xml" />
 	</module>
 
 </module>

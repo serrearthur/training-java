@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import cdb.controller.fields.GeneralFields;
-import cdb.controller.fields.PageFields;
 import cdb.service.ServiceComputer;
 import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
+import cdb.view.fields.GeneralFields;
+import cdb.view.fields.PageFields;
 
 /**
  * Controller implementing the mechanics behind the home page.

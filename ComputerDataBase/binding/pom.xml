@@ -3,6 +3,7 @@
     <parent>
         <artifactId>cdb</artifactId>
     	<groupId>com.ebiz</groupId>
+    	<version>4.5.2</version>
     </parent>
 	
 	<modelVersion>${parent.modelVersion}</modelVersion>
@@ -47,5 +48,4 @@
             <version>${parent.version}</version>
         </dependency>
 </dependencies>
-
 </project>

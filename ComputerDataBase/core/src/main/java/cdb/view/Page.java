@@ -3,7 +3,7 @@ package cdb.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import cdb.controller.fields.AllFields;
+import cdb.view.fields.AllFields;
 
 /**
  * List of data represented as a page in order to be displayed.
