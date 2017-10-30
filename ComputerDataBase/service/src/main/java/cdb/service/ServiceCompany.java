@@ -50,6 +50,23 @@ public class ServiceCompany {
         }
         return ret;
     }
+    
+    /**
+     * Returns the company corresponding to the id.
+     * @param id the id of the company
+     * @return a companies in {@link DTOCompany} format
+     */
+    public DTOCompany getCompany(Integer id) {
+        DTOCompany ret = null;
+        try {
+            Company l = daoCompany.findById(id).get();
+            ret = MapperCompany.toDTOCompany(l);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+        }
+        return ret;
+    }
+
 
     /**
      * Delete a {@link Company} and all the computer it contains.

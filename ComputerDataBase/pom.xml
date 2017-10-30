@@ -36,6 +36,7 @@
 		<hibernate.core.version>5.2.12.Final</hibernate.core.version>
 		<hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version>
 		<hibernate.validator.version>6.0.3.Final</hibernate.validator.version>
+		<jackson.version>2.9.2</jackson.version>
 
 		<!-- Plugins properties -->
 		<maven.compiler.version>3.7.0</maven.compiler.version>
@@ -197,6 +198,12 @@
 				<version>${hibernate.validator.version}</version>
 			</dependency>
 			<!-- /Hibernate -->
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

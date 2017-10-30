@@ -54,6 +54,17 @@ public class ServiceComputer {
         }
         return ret;
     }
+    
+    public List<DTOComputer> getAllComputers() {
+        List<DTOComputer> ret = null;
+        try {
+            List<Computer> l = dao.findAll();
+            ret = MapperComputer.toDTOComputer(l);
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+        }
+        return ret;
+    }
 
     /**
      * Delete the requested computers from the database.

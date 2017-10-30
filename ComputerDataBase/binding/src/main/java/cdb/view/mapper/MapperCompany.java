@@ -16,7 +16,7 @@ public class MapperCompany {
      * @param c original {@link Company}
      * @return result {@link DTOCompany}
      */
-    public static DTOCompany toDtoCompany(Company c) {
+    public static DTOCompany toDTOCompany(Company c) {
         DTOCompany ret = new DTOCompany();
         ret.setId(c.getId().toString());
         ret.setName(c.getName());
@@ -44,7 +44,7 @@ public class MapperCompany {
     public static List<DTOCompany> toDTOCompany(List<Company> l) {
         List<DTOCompany> ret = new ArrayList<DTOCompany>();
         for (Company c : l) {
-            ret.add(toDtoCompany(c));
+            ret.add(toDTOCompany(c));
         }
         return ret;
     }
