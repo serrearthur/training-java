@@ -82,12 +82,12 @@ public class MapperComputer {
         ret.setName(c.getName());
         try {
             ret.setIntroduced(LocalDateTime.of(LocalDate.parse(c.getIntroduced()), LocalTime.of(0, 0)));
-        } catch (DateTimeException e) {
+        } catch (DateTimeException | NullPointerException e) {
             ret.setIntroduced(null);
         }
         try {
             ret.setDiscontinued(LocalDateTime.of(LocalDate.parse(c.getDiscontinued()), LocalTime.of(0, 0)));
-        } catch (DateTimeException e) {
+        } catch (DateTimeException | NullPointerException e) {
             ret.setDiscontinued(null);
         }
         try {

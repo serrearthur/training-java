@@ -6,26 +6,34 @@
    http://www.springframework.org/schema/security
    http://www.springframework.org/schema/security/spring-security.xsd
    ">
-
-	<security:http use-expressions="true" create-session="stateless" entry-point-ref="digestEntryPoint">
+	<security:http use-expressions="true" create-session="stateless"
+		entry-point-ref="digestEntryPoint">
 		<security:http-basic />
-		<security:intercept-url pattern="/login*" access="isAnonymous()" />
-		<security:intercept-url pattern="/**" access="isAuthenticated()" />
-		<security:form-login default-target-url="/home" always-use-default-target="true" />
-        <security:logout delete-cookies="JSESSIONID" logout-success-url="/login" />
-        <security:custom-filter ref="digestFilter" after="BASIC_AUTH_FILTER" />
+		<security:intercept-url pattern="/login*"
+			access="isAnonymous()" />
+		<security:intercept-url pattern="/**"
+			access="isAuthenticated()" />
+		<security:form-login default-target-url="/home"
+			always-use-default-target="true" />
+		<security:logout delete-cookies="JSESSIONID"
+			logout-success-url="/login" />
+		<security:custom-filter ref="digestFilter"
+			after="BASIC_AUTH_FILTER" />
+		<security:csrf disabled="true" />
 	</security:http>
 
-	<bean id="digestFilter" class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
-	   <property name="userDetailsService" ref="userService" />
-	   <property name="authenticationEntryPoint" ref="digestEntryPoint" />
+	<bean id="digestFilter"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+		<property name="userDetailsService" ref="userService" />
+		<property name="authenticationEntryPoint" ref="digestEntryPoint" />
 	</bean>
-	 
-	<bean id="digestEntryPoint" class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
-	   <property name="realmName" value="Contacts Realm via Digest Authentication"/>
-	   <property name="key" value="acegi" />
+
+	<bean id="digestEntryPoint"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+		<property name="realmName" value="Contacts Realm via Digest Authentication" />
+		<property name="key" value="acegi" />
 	</bean>
-	
+
 	<security:authentication-manager>
 		<security:authentication-provider>
 			<security:jdbc-user-service id="userService"
