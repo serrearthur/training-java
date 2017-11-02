@@ -19,6 +19,7 @@ public interface DAOComputer extends JpaRepository<Computer, Integer> {
     * Method to delete all computers with a specific companyId.
     * @param companyId companyId of the computers to be deleted
     */
+    @Transactional
     void deleteByCompanyId(Integer companyId);
 
     /**

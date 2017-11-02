@@ -33,9 +33,8 @@ public class CLICommand {
     private String command;
     private List<DTOComputer> result_computers;
     private List<DTOCompany> result_companies;
-    private HttpEntity<DTOCompany> headersCompany;
-    private HttpEntity<DTOComputer> headersComputer;
     private RestTemplate restTemplate;
+    private HttpHeaders headers;
 
     private static final String API_URL = "http://localhost:8080/ComputerDataBase/api/";
     private static final String AUTH = Base64.getEncoder().encodeToString("bob:azerty".getBytes());
@@ -53,14 +52,9 @@ public class CLICommand {
         this.result_computers = new ArrayList<DTOComputer>();
         this.restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
+        this.headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + AUTH);
-        List<MediaType> media = new ArrayList<MediaType>();
-        media.add(MediaType.APPLICATION_JSON_UTF8);
-        headers.setAccept(media);
-        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
-        this.headersCompany = new HttpEntity<DTOCompany>(headers);
-        this.headersComputer = new HttpEntity<DTOComputer>(headers);
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     }
 
     /**
@@ -161,13 +155,15 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            ResponseEntity<DTOComputer[]> res = restTemplate.exchange(API_URL+"computer/all", HttpMethod.GET, headersComputer, DTOComputer[].class);
+            HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(headers);
+            ResponseEntity<DTOComputer[]> res = restTemplate.exchange(API_URL+"computer/all", HttpMethod.GET, request, DTOComputer[].class);
             this.result_computers.addAll(Arrays.asList(res.getBody()));
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
             System.out.println("LIST CPN");
-            ResponseEntity<DTOCompany[]> res = restTemplate.exchange(API_URL+"company/all", HttpMethod.GET, headersCompany, DTOCompany[].class);
+            HttpEntity<DTOCompany> request = new HttpEntity<DTOCompany>(headers);
+            ResponseEntity<DTOCompany[]> res = restTemplate.exchange(API_URL+"company/all", HttpMethod.GET, request, DTOCompany[].class);
             this.result_companies.addAll(Arrays.asList(res.getBody()));
             ret = true;
         } else {
@@ -194,7 +190,8 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with id X
                 System.out.println("SHOW -i " + parsed.get(2));
-                ResponseEntity<DTOComputer> res = restTemplate.exchange(API_URL+"computer/"+parsed.get(2), HttpMethod.GET, headersComputer, DTOComputer.class);
+                HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(headers);
+                ResponseEntity<DTOComputer> res = restTemplate.exchange(API_URL+"computer/"+parsed.get(2), HttpMethod.GET, request, DTOComputer.class);
                 this.result_computers.add(res.getBody());
                 ret = true;
             } else {
@@ -236,7 +233,8 @@ public class CLICommand {
             DTOComputer c = new DTOComputer();
             c.setName(parsed.get(1));
             System.out.println(MAPPER.writeValueAsString(c));
-            restTemplate.exchange(API_URL+"computer/", HttpMethod.POST, headersComputer, DTOComputer.class, MAPPER.writeValueAsString(c));
+            HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(c, headers);
+            restTemplate.exchange(API_URL+"computer/", HttpMethod.POST, request, DTOComputer.class);
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -275,7 +273,9 @@ public class CLICommand {
                 }
             }
             System.out.println("UPDATE : " + command);
-            restTemplate.exchange(API_URL+"computer/", HttpMethod.PUT, headersComputer, DTOComputer.class, MAPPER.writeValueAsString(c));
+            System.out.println(MAPPER.writeValueAsString(c));
+            HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(c, headers);
+            restTemplate.exchange(API_URL+"computer/", HttpMethod.PUT, request, DTOComputer.class);
             ret = true;
         } else {
             System.out.println("UPDATE + NOT_ENOUGH_ARGS : " + command);
@@ -302,7 +302,9 @@ public class CLICommand {
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
-                restTemplate.exchange(API_URL+"computer/", HttpMethod.DELETE, headersComputer, DTOComputer.class, MAPPER.writeValueAsString(parsed.get(2).split(",")));
+                HttpEntity<int[]> request = new HttpEntity<int[]>(Arrays.stream(parsed.get(2).split(",")).mapToInt(Integer::valueOf).toArray(), headers);
+                System.out.println(request.getBody() + " / " + request.getHeaders().toString());
+                restTemplate.exchange(API_URL+"computer/", HttpMethod.DELETE, request, DTOComputer.class);
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
@@ -310,7 +312,8 @@ public class CLICommand {
         } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -c " + parsed.get(2));
-                restTemplate.exchange(API_URL+"company/"+parsed.get(2), HttpMethod.DELETE, headersCompany, DTOCompany.class);
+                HttpEntity<DTOCompany> request = new HttpEntity<DTOCompany>(headers);
+                restTemplate.exchange(API_URL+"company/"+parsed.get(2), HttpMethod.DELETE, request, DTOCompany.class);
                 ret = true;
             } else {
                 System.out.println("DELETE -c + EMPTY");

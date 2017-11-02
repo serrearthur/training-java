@@ -27,32 +27,32 @@ public class ApiComputer {
         this.serviceComputer = serviceComputer;
     }
 
-    @GetMapping(value = "/{id}", produces = "application/json")
+    @GetMapping(value = "/{id}")
     public DTOComputer getComputer( @PathVariable String id ) {
         return serviceComputer.getComputer(id);
     }
 
-    @GetMapping(value = "/search/{search}/{page}/{limit}/{col}/{order}", produces = "application/json")
+    @GetMapping(value = "/search/{search}/{page}/{limit}/{col}/{order}")
     public Page<DTOComputer> getComputers(@PathVariable String search, @PathVariable int page, @PathVariable int limit, @PathVariable String col, @PathVariable String order) {
         return serviceComputer.getPage(search, page, limit, col, order);
     }
     
-    @GetMapping(value = "/all", produces = "application/json")
+    @GetMapping(value = "/all")
     public List<DTOComputer> getAllComputers() {
         return serviceComputer.getAllComputers();
     }
     
-    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public void createComputer(@RequestBody DTOComputer c ) {
         serviceComputer.addComputer(c);
     }
-    
+   
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     public void editComputer(@RequestBody DTOComputer c ) {
         serviceComputer.editComputer(c);
     }
     
-    @RequestMapping(value = "/", method = RequestMethod.DELETE, consumes = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/", method = RequestMethod.DELETE)
     public void deleteComputer(@RequestBody int[] id ) {
         serviceComputer.delete(id);
     }

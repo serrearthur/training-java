@@ -44,7 +44,7 @@ public class ApiCompany {
 //    public void editCompany(@RequestBody DTOComputer c ) {
 //    }
     
-    @DeleteMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteCompany(@PathVariable Integer id ) {
         serviceCompany.deleteCompany(id);
     }
