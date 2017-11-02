@@ -25,7 +25,7 @@ public class DTOComputer {
     private String discontinued;
 
     @Nullable
-    private String company;
+    private String companyName;
 
     @Nullable
     @Min(value = 0, message = "Id must be a positive integer")
@@ -69,12 +69,12 @@ public class DTOComputer {
         this.discontinued = discontinued;
     }
 
-    public String getCompany() {
-        return this.company;
+    public String getCompanyName() {
+        return this.companyName;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getCompanyId() {

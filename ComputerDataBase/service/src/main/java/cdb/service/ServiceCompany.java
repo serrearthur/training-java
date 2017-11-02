@@ -2,7 +2,7 @@ package cdb.service;
 
 import java.util.List;
 
-
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +45,8 @@ public class ServiceCompany {
         try {
             List<Company> l = daoCompany.findAll();
             ret = MapperCompany.toDTOCompany(l);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
+        } catch (DAOException | HibernateException e) {
+            logger.error("Company Service - Error during getCompanies : ", e);
         }
         return ret;
     }
@@ -61,8 +61,8 @@ public class ServiceCompany {
         try {
             Company l = daoCompany.findById(id).get();
             ret = MapperCompany.toDTOCompany(l);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
+        } catch (DAOException | HibernateException e) {
+            logger.error("Company Service - Error during getCompany : ", e);
         }
         return ret;
     }
@@ -76,8 +76,8 @@ public class ServiceCompany {
         try {
             daoComputer.deleteByCompanyId(companyId);
             daoCompany.deleteById(companyId);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
+        } catch (DAOException | HibernateException e) {
+            logger.error("Company Service - Error during deleteCompany : ", e);
         }
     }
 }

@@ -11,6 +11,7 @@ public interface ComputerFields {
     String ATT_DISCONTINUED = "discontinued";
     String ATT_COMPANYID = "companyId";
     String ATT_COMPUTER = "computer";
+    String ATT_COMPUTER_FORM = "computerForm";
 
     default String getAttComputerId() {
         return ATT_COMPUTERID;
@@ -34,5 +35,9 @@ public interface ComputerFields {
 
     default String getAttComputer() {
         return ATT_COMPUTER;
+    }
+    
+    default String getAttComputerForm() {
+        return ATT_COMPUTER_FORM;
     }
 }

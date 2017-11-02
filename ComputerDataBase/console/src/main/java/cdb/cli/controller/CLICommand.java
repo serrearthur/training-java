@@ -10,8 +10,13 @@ import java.util.regex.Pattern;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cdb.model.Computer;
 import cdb.view.dto.DTOCompany;
@@ -31,10 +36,10 @@ public class CLICommand {
     private HttpEntity<DTOCompany> headersCompany;
     private HttpEntity<DTOComputer> headersComputer;
     private RestTemplate restTemplate;
-    
+
     private static final String API_URL = "http://localhost:8080/ComputerDataBase/api/";
     private static final String AUTH = Base64.getEncoder().encodeToString("bob:azerty".getBytes());
-
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     /**
      * Creates a CLICommand object from a command line input. A CLICommand contains
      * methods to convert text input to backend actions.
@@ -50,6 +55,10 @@ public class CLICommand {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + AUTH);
+        List<MediaType> media = new ArrayList<MediaType>();
+        media.add(MediaType.APPLICATION_JSON_UTF8);
+        headers.setAccept(media);
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
         this.headersCompany = new HttpEntity<DTOCompany>(headers);
         this.headersComputer = new HttpEntity<DTOComputer>(headers);
     }
@@ -98,38 +107,42 @@ public class CLICommand {
     public boolean parse() {
         // we reset the values for the request
         boolean ret = false;
-        this.result_companies = new ArrayList<DTOCompany>();
-        this.result_computers = new ArrayList<DTOComputer>();
+        try {
+            this.result_companies = new ArrayList<DTOCompany>();
+            this.result_computers = new ArrayList<DTOComputer>();
 
-        List<String> parsed = new ArrayList<String>();
-        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(this.command);
-        while (m.find()) {
-            parsed.add(m.group(1).replace("\"", ""));
-        }
-
-        if (parsed.size() > 0) {
-            switch (parsed.get(0)) {
-            case "list":
-                ret = parseList(parsed);
-                break;
-            case "show":
-                ret = parseShow(parsed);
-                break;
-            case "create":
-                ret = parseCreate(parsed);
-                break;
-            case "update":
-                ret = parseUpdate(parsed);
-                break;
-            case "delete":
-                ret = parseDelete(parsed);
-                break;
-            default:
-                System.out.println("UNKNOWN_COMMAND : " + command);
+            List<String> parsed = new ArrayList<String>();
+            Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(this.command);
+            while (m.find()) {
+                parsed.add(m.group(1).replace("\"", ""));
             }
-        } else {
-            System.out.println("EMPTY_COMMAND : " + command);
-        }
+
+            if (parsed.size() > 0) {
+                switch (parsed.get(0)) {
+                case "list":
+                    ret = parseList(parsed);
+                    break;
+                case "show":
+                    ret = parseShow(parsed);
+                    break;
+                case "create":
+                    ret = parseCreate(parsed);
+                    break;
+                case "update":
+                    ret = parseUpdate(parsed);
+                    break;
+                case "delete":
+                    ret = parseDelete(parsed);
+                    break;
+                default:
+                    System.out.println("UNKNOWN_COMMAND : " + command);
+                }
+            } else {
+                System.out.println("EMPTY_COMMAND : " + command);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
         return ret;
     }
 
@@ -211,16 +224,19 @@ public class CLICommand {
      *            sub command to parse
      * @return <code>true</code> if the command was valid, <code>false</code>
      *         otherwise
+     * @throws JsonProcessingException ok
+     * @throws RestClientException ok
      * @see DAOFactory
      */
-    private boolean parseCreate(List<String> parsed) {
+    private boolean parseCreate(List<String> parsed) throws RestClientException, JsonProcessingException {
         boolean ret = false;
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
             // case when we create a new computer with name X
             System.out.println("CREATE " + parsed.get(1));
             DTOComputer c = new DTOComputer();
             c.setName(parsed.get(1));
-            restTemplate.exchange(API_URL+"computer/", HttpMethod.POST, headersComputer, DTOComputer.class, c);
+            System.out.println(MAPPER.writeValueAsString(c));
+            restTemplate.exchange(API_URL+"computer/", HttpMethod.POST, headersComputer, DTOComputer.class, MAPPER.writeValueAsString(c));
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -238,9 +254,11 @@ public class CLICommand {
      *            sub command to parse
      * @return <code>true</code> if the command was valid, <code>false</code>
      *         otherwise
+     * @throws JsonProcessingException ok
+     * @throws RestClientException ok
      * @see DAOFactory
      */
-    private boolean parseUpdate(List<String> parsed) {
+    private boolean parseUpdate(List<String> parsed) throws RestClientException, JsonProcessingException {
         boolean ret = false;
         // we check if each parameter is present, if yes we add it to our computer object
         if (parsed.size() >= 3 && !parsed.get(2).isEmpty()) {
@@ -257,7 +275,7 @@ public class CLICommand {
                 }
             }
             System.out.println("UPDATE : " + command);
-            restTemplate.exchange(API_URL+"computer/", HttpMethod.PUT, headersComputer, DTOComputer.class, c);
+            restTemplate.exchange(API_URL+"computer/", HttpMethod.PUT, headersComputer, DTOComputer.class, MAPPER.writeValueAsString(c));
             ret = true;
         } else {
             System.out.println("UPDATE + NOT_ENOUGH_ARGS : " + command);
@@ -275,14 +293,16 @@ public class CLICommand {
      *            sub command to parse
      * @return <code>true</code> if the command was valid, <code>false</code>
      *         otherwise
+     * @throws JsonProcessingException ok
+     * @throws RestClientException ok
      * @see DAOFactory
      */
-    private boolean parseDelete(List<String> parsed) {
+    private boolean parseDelete(List<String> parsed) throws RestClientException, JsonProcessingException {
         boolean ret = false;
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
-                restTemplate.exchange(API_URL+"computer/", HttpMethod.DELETE, headersComputer, DTOComputer.class, Arrays.asList(parsed.get(2).split(",")));
+                restTemplate.exchange(API_URL+"computer/", HttpMethod.DELETE, headersComputer, DTOComputer.class, MAPPER.writeValueAsString(parsed.get(2).split(",")));
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
@@ -290,7 +310,7 @@ public class CLICommand {
         } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -c " + parsed.get(2));
-                restTemplate.exchange(API_URL+"computer/"+parsed.get(2), HttpMethod.DELETE, headersCompany, DTOCompany.class);
+                restTemplate.exchange(API_URL+"company/"+parsed.get(2), HttpMethod.DELETE, headersCompany, DTOCompany.class);
                 ret = true;
             } else {
                 System.out.println("DELETE -c + EMPTY");

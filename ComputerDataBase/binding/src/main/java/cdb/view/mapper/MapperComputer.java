@@ -9,11 +9,9 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cdb.model.Computer;
-import cdb.persistence.DAOCompany;
 import cdb.persistence.exceptions.DAOException;
 import cdb.view.dto.DTOComputer;
 
@@ -24,12 +22,6 @@ import cdb.view.dto.DTOComputer;
 @Component
 public class MapperComputer {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapperComputer.class);
-    private static DAOCompany dao;
-
-    @Autowired
-    private void setDao(DAOCompany dao) {
-        MapperComputer.dao = dao;
-    }
 
     /**
      * Function converting a {@link Computer} into a {@link DTOComputer}.
@@ -52,12 +44,12 @@ public class MapperComputer {
             ret.setDiscontinued(null);
         }
         try {
-            ret.setCompany(dao.findById(c.getCompanyId()).get().getName());
+            ret.setCompanyName(c.getCompanyName());
         } catch (DAOException e) {
             logger.error(e.getMessage());
-            ret.setCompany(null);
+            ret.setCompanyName(null);
         } catch (RuntimeException e) {
-            ret.setCompany(null);
+            ret.setCompanyName(null);
         }
         try {
             ret.setCompanyId(c.getCompanyId().toString());

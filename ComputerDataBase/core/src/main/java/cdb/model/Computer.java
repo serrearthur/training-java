@@ -9,6 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -37,6 +42,10 @@ public class Computer {
     private LocalDateTime discontinued;
     @Column(name = "company_id")
     private Integer companyId;
+    @JsonIgnore
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @Formula("(SELECT c.name FROM company c WHERE c.id = company_id)")
+    private String companyName;
 
     /**
      * Constructor.
@@ -100,5 +109,13 @@ public class Computer {
 
     public void setCompanyId(Integer companyId) {
         this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return this.companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

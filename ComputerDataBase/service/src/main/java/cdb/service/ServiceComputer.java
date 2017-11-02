@@ -4,14 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cdb.model.Computer;
 import cdb.persistence.DAOComputer;
 import cdb.persistence.exceptions.DAOException;
-import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 import cdb.view.mapper.MapperComputer;
 
@@ -45,14 +49,18 @@ public class ServiceComputer {
      */
     public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col, String order) {
         Page<DTOComputer> ret = null;
+        PageRequest request = PageRequest.of(pageNb, limit, order.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, col);
         try {
-            int count = dao.countByNameAndCompanyName(search);
-            List<Computer> l = dao.findByNameAndCompanyName(search, col, order, (pageNb - 1) * limit, limit);
-            ret = new Page<DTOComputer>(MapperComputer.toDTOComputer(l), pageNb, limit, count, col, order, search);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
+            Page<Computer> page = dao.findAllComputersByNameContainingOrCompanyNameContaining(request, search, search);
+            ret = new PageImpl<DTOComputer>(MapperComputer.toDTOComputer(page.getContent()), request, getCount(search));
+        } catch (DAOException | HibernateException e) {
+            logger.error("Computer Service - Error during getPage : ", e);
         }
         return ret;
+    }
+    
+    public int getCount(String search) {
+        return dao.countByNameContainingOrCompanyNameContaining(search, search);
     }
     
     public List<DTOComputer> getAllComputers() {
@@ -61,7 +69,7 @@ public class ServiceComputer {
             List<Computer> l = dao.findAll();
             ret = MapperComputer.toDTOComputer(l);
         } catch (DAOException e) {
-            logger.error(e.getMessage());
+            logger.error("Computer Service - Error during getAllComputers : ", e);
         }
         return ret;
     }
@@ -70,11 +78,11 @@ public class ServiceComputer {
      * Delete the requested computers from the database.
      * @param requestedDelete ID of the computers to delete, spearated by a comma
      */
-    public void delete(List<String> requestedDelete) {
+    public void delete(int[] requestedDelete) {
         try {
             dao.deleteInBatchFromId(requestedDelete);
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
+        } catch (DAOException | HibernateException e) {
+            logger.error("Computer Service - Error during computer deletion : ", e);
         }
     }
 
@@ -89,9 +97,9 @@ public class ServiceComputer {
             Computer comp = dao.getOne(Integer.parseInt(computerID));
             c = MapperComputer.toDTOComputer(comp);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            logger.error(e.getMessage() + " : Computer \"" + computerID + "\" not found : ");
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
+            logger.error("Computer \"" + computerID + "\" not found : ", e);
+        } catch (DAOException | HibernateException e) {
+            logger.error("Computer Service - Error during getComputer : ", e);
         }
         return c;
     }
@@ -108,8 +116,8 @@ public class ServiceComputer {
         if (errors.isEmpty()) {
             try {
                 dao.save(valid);
-            } catch (DAOException e) {
-                logger.error(e.getMessage());
+            } catch (DAOException | HibernateException e) {
+                logger.error("Computer Service - Error during addComputer : ", e);
             }
         }
         return errors;
@@ -127,8 +135,8 @@ public class ServiceComputer {
         if (errors.isEmpty()) {
             try {
                 dao.save(valid);
-            } catch (DAOException e) {
-                logger.error(e.getMessage());
+            } catch (DAOException | HibernateException e) {
+                logger.error("Computer Service - Error during editComputer : ", e);
             }
         }
         return errors;

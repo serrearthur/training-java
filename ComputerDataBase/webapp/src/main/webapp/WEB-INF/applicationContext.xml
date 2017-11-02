@@ -32,7 +32,6 @@
 	    <property name="dataSource" ref="dataSource" />
 	    <property name="jpaProperties">
 	        <props>
-	            <prop key="hibernate.show_sql">true</prop>
 	            <prop key="hibernate.hbm2ddl.auto">update</prop>
 	            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
 	            <prop key="hibernate.id.new_generator_mappings">false</prop>

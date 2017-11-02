@@ -1,11 +1,10 @@
 package cdb.controller;
 
-import java.util.Arrays;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cdb.service.ServiceComputer;
-import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
+import cdb.view.fields.Fields;
 import cdb.view.fields.GeneralFields;
 import cdb.view.fields.PageFields;
 
@@ -26,6 +25,7 @@ import cdb.view.fields.PageFields;
 @RequestMapping("/home")
 public class Dashboard implements GeneralFields, PageFields {
     private static final String VIEW = "home";
+    private static final Fields FIELDS = new Fields();
     private ServiceComputer serviceComputer;
 
     /**
@@ -46,6 +46,7 @@ public class Dashboard implements GeneralFields, PageFields {
     public String doGet(HttpServletRequest request) {
         Page<DTOComputer> page = requestParser(request);
         request.setAttribute(ATT_PAGE, page);
+        request.setAttribute(ATT_FIELDS, FIELDS);
         return VIEW;
     }
 
@@ -56,9 +57,9 @@ public class Dashboard implements GeneralFields, PageFields {
      * @throws ServletException thrown when a bad POST request is done
      */
     @PostMapping
-    public String doPost(@RequestParam(value = "selection", required = true) String requestedDelete) throws ServletException {
+    public String doPost(@RequestParam(value = "selection", required = true) int[] requestedDelete) throws ServletException {
         if (requestedDelete != null) {
-            serviceComputer.delete(Arrays.asList(requestedDelete.split(",")));
+            serviceComputer.delete(requestedDelete);
             return "redirect:" + VIEW_HOME;
         } else {
             throw new ServletException("Invalid operation : POST.");
@@ -74,7 +75,7 @@ public class Dashboard implements GeneralFields, PageFields {
         int limit = 10;
         int pageNb = 1;
         String search = "";
-        String col = "cpt.id";
+        String col = "id";
         String order = "ASC";
 
         String requestedPage = request.getParameter(ATT_PAGENUMBER);
@@ -101,7 +102,7 @@ public class Dashboard implements GeneralFields, PageFields {
         if (requestedOrder != null) {
             order = requestedOrder;
         }
-
-        return serviceComputer.getPage(search, pageNb, limit, col, order);
+        request.setAttribute(ATT_SEARCH, search);
+        return serviceComputer.getPage(search, pageNb-1, limit, col, order);
     }
 }

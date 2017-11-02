@@ -7,6 +7,7 @@ package cdb.view.fields;
 public interface GeneralFields {
     String ATT_ERRORS = "errors";
     String ATT_COMPANIES = "companies";
+    String ATT_FIELDS = "fields";
     String VIEW_HOME = "/home";
 
     default String getAttErrors() {
@@ -17,6 +18,10 @@ public interface GeneralFields {
         return ATT_COMPANIES;
     }
 
+    default String getAttFields() {
+        return ATT_FIELDS;
+    }
+    
     default String getViewHome() {
         return VIEW_HOME;
     }

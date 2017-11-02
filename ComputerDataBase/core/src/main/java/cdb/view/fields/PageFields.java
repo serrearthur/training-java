@@ -12,6 +12,7 @@ public interface PageFields {
     String ATT_DELETE = "selection";
     String ATT_COL = "col";
     String ATT_ORDER = "order";
+    String DISPALYRANGE = "4";
 
     default String getAttPage() {
         return ATT_PAGE;
@@ -39,5 +40,9 @@ public interface PageFields {
 
     default String getAttOrder() {
         return ATT_ORDER;
+    }
+    
+    default String getDisplayRange() {
+        return DISPALYRANGE;
     }
 }

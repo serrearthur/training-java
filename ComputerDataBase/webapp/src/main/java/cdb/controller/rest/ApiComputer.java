@@ -1,19 +1,16 @@
-package cdb.controller;
+package cdb.controller.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import cdb.service.ServiceComputer;
-import cdb.view.Page;
 import cdb.view.dto.DTOComputer;
 
 @RestController
@@ -45,7 +42,7 @@ public class ApiComputer {
         return serviceComputer.getAllComputers();
     }
     
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8")
     public void createComputer(@RequestBody DTOComputer c ) {
         serviceComputer.addComputer(c);
     }
@@ -55,8 +52,8 @@ public class ApiComputer {
         serviceComputer.editComputer(c);
     }
     
-    @RequestMapping(value = "/", method = RequestMethod.DELETE)
-    public void deleteComputer(@RequestBody List<String> id ) {
+    @RequestMapping(value = "/", method = RequestMethod.DELETE, consumes = "application/json;charset=UTF-8")
+    public void deleteComputer(@RequestBody int[] id ) {
         serviceComputer.delete(id);
     }
 }

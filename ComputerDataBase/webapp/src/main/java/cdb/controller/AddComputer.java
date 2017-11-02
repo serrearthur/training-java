@@ -16,6 +16,7 @@ import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOComputer;
 import cdb.view.fields.ComputerFields;
+import cdb.view.fields.Fields;
 import cdb.view.fields.GeneralFields;
 
 /**
@@ -26,6 +27,8 @@ import cdb.view.fields.GeneralFields;
 @RequestMapping("/add_computer")
 public class AddComputer implements ComputerFields, GeneralFields {
     private static final String VIEW = "addComputer";
+    private static final DTOComputer FORM = new DTOComputer();
+    private static final Fields FIELDS = new Fields();
     private ServiceComputer serviceComputer;
     private ServiceCompany serviceCompany;
 
@@ -48,7 +51,8 @@ public class AddComputer implements ComputerFields, GeneralFields {
     @GetMapping
     public String doGet(ModelMap model) {
         model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
-        model.addAttribute("computerForm", new DTOComputer());
+        model.addAttribute(ATT_COMPUTER_FORM, FORM);
+        model.addAttribute(ATT_FIELDS, FIELDS);
         return VIEW;
     }
 
@@ -60,15 +64,14 @@ public class AddComputer implements ComputerFields, GeneralFields {
      * @return addess of the jsp to visit
      */
     @PostMapping
-    protected String doPost(Model model, @Valid @ModelAttribute("computerForm") DTOComputer computer, BindingResult result) {
+    protected String doPost(Model model, @Valid @ModelAttribute(value = ATT_COMPUTER_FORM) DTOComputer computer, BindingResult result) {
 //        Map<String, String> errors = serviceComputer.addComputer(computer);
-
         if (result.hasErrors()) {
-            System.out.println(result.getErrorCount() + " : " + result.getAllErrors().get(0));
             model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
+            model.addAttribute(ATT_COMPUTER_FORM, FORM);
+            model.addAttribute(ATT_FIELDS, FIELDS);
             return VIEW;
         } else {
-            System.out.println(computer.getIntroduced());
             serviceComputer.addComputer(computer);
             return "redirect:" + VIEW_HOME;
         }

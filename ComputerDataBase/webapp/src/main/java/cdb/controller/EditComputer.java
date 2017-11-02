@@ -17,6 +17,7 @@ import cdb.service.ServiceCompany;
 import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOComputer;
 import cdb.view.fields.ComputerFields;
+import cdb.view.fields.Fields;
 import cdb.view.fields.GeneralFields;
 
 /**
@@ -27,6 +28,8 @@ import cdb.view.fields.GeneralFields;
 @RequestMapping("/edit_computer")
 public class EditComputer implements ComputerFields, GeneralFields {
     private static final String VIEW = "editComputer";
+    private static final DTOComputer FORM = new DTOComputer();
+    private static final Fields FIELDS = new Fields();
     private ServiceComputer serviceComputer;
     private ServiceCompany serviceCompany;
 
@@ -51,7 +54,8 @@ public class EditComputer implements ComputerFields, GeneralFields {
     protected String doGet(ModelMap model, @RequestParam(value = ATT_COMPUTERID, required = true) String computerId) {
         model.addAttribute(ATT_COMPUTER, serviceComputer.getComputer(computerId));
         model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
-        model.addAttribute("computerForm", new DTOComputer());
+        model.addAttribute(ATT_COMPUTER_FORM, FORM);
+        model.addAttribute(ATT_FIELDS, FIELDS);
         return VIEW;
     }
 
@@ -64,7 +68,7 @@ public class EditComputer implements ComputerFields, GeneralFields {
      * @return address of the jsp to visit
      */
     @PostMapping
-    protected String doPost(Model model, @ModelAttribute("computerForm") DTOComputer computer,
+    protected String doPost(Model model, @ModelAttribute(value = ATT_COMPUTER_FORM) DTOComputer computer,
             BindingResult result, @RequestParam(value = ATT_COMPUTERID, required = true) String computerId) {
         Map<String, String> errors = serviceComputer.editComputer(computer);
         if (errors.isEmpty()) {
@@ -73,7 +77,8 @@ public class EditComputer implements ComputerFields, GeneralFields {
             model.addAttribute(ATT_ERRORS, errors);
             model.addAttribute(ATT_COMPUTER, serviceComputer.getComputer(computerId));
             model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
-            model.addAttribute("computerForm", new DTOComputer());
+            model.addAttribute(ATT_COMPUTER_FORM, FORM);
+            model.addAttribute(ATT_FIELDS, FIELDS);
             return VIEW;
         }
     }

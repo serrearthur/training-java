@@ -1,6 +1,6 @@
 <%@ tag body-content="empty"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib tagdir="/WEB-INF/tags/" prefix="ex"%>
+<%@ taglib tagdir="/WEB-INF/tags/" prefix="t"%>
 <%@ attribute name="currentpage" required="true" type="java.lang.Integer"%>
 <%@ attribute name="totalpage" required="true" type="java.lang.Integer"%>
 <%@ attribute name="displayrange" required="true" type="java.lang.Integer"%>
@@ -19,27 +19,27 @@
 
 <ul class="pagination">
 	<li>
-		<a href="<ex:linker target="${target}" pagenb="1"/>" aria-label="First">
+		<a href="<t:linker target="${target}" pagenb="1"/>" aria-label="First">
 			<span aria-hidden="true">&lt;&lt;</span>
 		</a>
 	</li>
 	<li>
-		<a href="<ex:linker target="${target}" pagenb="${previouspage}"/>" aria-label="Previous">
+		<a href="<t:linker target="${target}" pagenb="${previouspage}"/>" aria-label="Previous">
 			<span aria-hidden="true">&lt;</span>
 		</a>
 	</li>
 	<c:forEach var="i" begin="${displaymin}" end="${displaymax}">
 		<li class=${i eq currentpage? "active" : "" }>
-			<a href="<ex:linker target="${target}" pagenb="${i}"/>">${i}</a>
+			<a href="<t:linker target="${target}" pagenb="${i}"/>">${i}</a>
 		</li>
 	</c:forEach>
 	<li>
-		<a href="<ex:linker target="${target}" pagenb="${nextpage}"/>" aria-label="Next">
+		<a href="<t:linker target="${target}" pagenb="${nextpage}"/>" aria-label="Next">
 			<span aria-hidden="true">&gt;</span>
 		</a>
 	</li>
 	<li>
-		<a href="<ex:linker target="${target}" pagenb="${totalpage}"/>" aria-label="Last">
+		<a href="<t:linker target="${target}" pagenb="${totalpage}"/>" aria-label="Last">
 			<span aria-hidden="true">&gt;&gt;</span>
 		</a>
 	</li>

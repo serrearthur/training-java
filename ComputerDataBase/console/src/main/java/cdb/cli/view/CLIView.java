@@ -55,7 +55,7 @@ public class CLIView {
                 System.out.printf(format, c.getId(), c.getName(),
                         c.getIntroduced() == null ? "" : c.getIntroduced().toString(),
                                 c.getDiscontinued() == null ? "" : c.getDiscontinued().toString(),
-                                        c.getCompanyId() == null ? "" : c.getCompanyId());
+                                        c.getCompanyName() == null ? "" : c.getCompanyName());
             }
         }
     }

@@ -1,4 +1,4 @@
-package cdb.controller;
+package cdb.controller.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
