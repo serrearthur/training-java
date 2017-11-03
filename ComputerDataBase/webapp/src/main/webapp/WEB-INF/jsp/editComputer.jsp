@@ -6,7 +6,7 @@
 				<div class="label label-default pull-right">id: ${computer.id}</div>
 				<h1>Edit Computer</h1>
 				<form:form modelAttribute="${fields.getAttComputerForm()}" action="" method="POST">
-					<%-- <form:hidden path="id" value="${computer.id}" id="id" name="id" /> --%>
+					<form:hidden path="${fields.getAttComputerId()}" value="${computer.id}" id="${fields.getAttComputerId()}" name="${fields.getAttComputerId()}" />
 					<fieldset>
 						<div class="form-group ${empty errors['name'] ? '' : 'has-error has-feedback'}">
 							<label for="${fields.getAttName()}">Computer name</label>
@@ -43,7 +43,7 @@
 					</fieldset>
 					<div class="actions pull-right">
 						<input type="submit" value="Edit" class="btn btn-primary"> or 
-						<a href="<c:url value="/home"/>" class="btn btn-default">Cancel</a>
+						<a href="<c:url value="${fields.getViewHome()}"/>" class="btn btn-default">Cancel</a>
 					</div>
 				</form:form>
 			</div>

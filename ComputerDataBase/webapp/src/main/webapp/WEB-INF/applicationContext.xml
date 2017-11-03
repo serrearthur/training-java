@@ -15,7 +15,8 @@
    ">
 
 	<context:annotation-config />
-	<context:component-scan base-package="cdb" />
+	<context:component-scan base-package="cdb.controller" />
+	<context:component-scan base-package="cdb.service" />
 	<jpa:repositories base-package="cdb.persistence" entity-manager-factory-ref="emf" />
 	<tx:annotation-driven />
 
@@ -28,7 +29,7 @@
 	</bean>
 	
 	<bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-	    <property name="packagesToScan" value="cdb" />
+	    <property name="packagesToScan" value="cdb.model" />
 	    <property name="dataSource" ref="dataSource" />
 	    <property name="jpaProperties">
 	        <props>

@@ -5,17 +5,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import cdb.model.Computer;
 import cdb.service.ServiceComputer;
 import cdb.view.dto.DTOComputer;
 import cdb.view.fields.Fields;
 import cdb.view.fields.GeneralFields;
 import cdb.view.fields.PageFields;
+import cdb.view.mapper.MapperComputer;
 
 /**
  * Controller implementing the mechanics behind the home page.
@@ -25,7 +30,7 @@ import cdb.view.fields.PageFields;
 @RequestMapping("/home")
 public class Dashboard implements GeneralFields, PageFields {
     private static final String VIEW = "home";
-    private static final Fields FIELDS = new Fields();
+    private static final Fields FIELDS = Fields.getInstance();
     private ServiceComputer serviceComputer;
 
     /**
@@ -57,13 +62,9 @@ public class Dashboard implements GeneralFields, PageFields {
      * @throws ServletException thrown when a bad POST request is done
      */
     @PostMapping
-    public String doPost(@RequestParam(value = "selection", required = true) int[] requestedDelete) throws ServletException {
-        if (requestedDelete != null) {
-            serviceComputer.delete(requestedDelete);
-            return "redirect:" + VIEW_HOME;
-        } else {
-            throw new ServletException("Invalid operation : POST.");
-        }
+    public String doPost(@RequestParam(value = "selection") int[] requestedDelete) {
+        serviceComputer.delete(requestedDelete);
+        return "redirect:" + VIEW_HOME;
     }
 
     /**
@@ -102,7 +103,10 @@ public class Dashboard implements GeneralFields, PageFields {
         if (requestedOrder != null) {
             order = requestedOrder;
         }
+
+        PageRequest pageRequest = PageRequest.of(pageNb - 1, limit, order.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, col);
+        Page<Computer> computerPage = serviceComputer.getPage(search, pageRequest);
         request.setAttribute(ATT_SEARCH, search);
-        return serviceComputer.getPage(search, pageNb-1, limit, col, order);
+        return new PageImpl<DTOComputer>(MapperComputer.toDTOComputer(computerPage.getContent()), pageRequest, computerPage.getTotalElements());
     }
 }

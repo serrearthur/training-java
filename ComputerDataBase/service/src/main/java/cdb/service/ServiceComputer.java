@@ -1,23 +1,17 @@
 package cdb.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.hibernate.HibernateException;
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cdb.model.Computer;
 import cdb.persistence.DAOComputer;
-import cdb.persistence.exceptions.DAOException;
-import cdb.view.dto.DTOComputer;
-import cdb.view.mapper.MapperComputer;
 
 /**
  * Service providing an interface between the servlet and the Computer DAO.
@@ -41,104 +35,74 @@ public class ServiceComputer {
     /**
      * Creates a page of computers from the result of the search request.
      * @param search The search criteria
-     * @param pageNb the page number to get
-     * @param limit The maximum number of Computer per page
-     * @param col column to order by
-     * @param order "ASC" or "DESC"
-     * @return a list of computers in {@link DTOComputer} format
+     * @param request The request format containing the pagination details
+     * @return a list of computers in {@link Computer} format
      */
-    public Page<DTOComputer> getPage(String search, int pageNb, int limit, String col, String order) {
-        Page<DTOComputer> ret = null;
-        PageRequest request = PageRequest.of(pageNb, limit, order.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, col);
+    @Transactional(readOnly = true)
+    public Page<Computer> getPage(String search, PageRequest request) {
         try {
-            Page<Computer> page = dao.findAllComputersByNameContainingOrCompanyNameContaining(request, search, search);
-            ret = new PageImpl<DTOComputer>(MapperComputer.toDTOComputer(page.getContent()), request, getCount(search));
-        } catch (DAOException | HibernateException e) {
+            return dao.findAllComputersByNameContainingOrCompanyNameContaining(request, search, search);
+        } catch (RuntimeException e) {
             logger.error("Computer Service - Error during getPage : ", e);
+            throw e;
         }
-        return ret;
     }
     
-    public int getCount(String search) {
-        return dao.countByNameContainingOrCompanyNameContaining(search, search);
-    }
-    
-    public List<DTOComputer> getAllComputers() {
-        List<DTOComputer> ret = null;
-        try {
-            List<Computer> l = dao.findAll();
-            ret = MapperComputer.toDTOComputer(l);
-        } catch (DAOException e) {
-            logger.error("Computer Service - Error during getAllComputers : ", e);
-        }
-        return ret;
-    }
-
     /**
-     * Delete the requested computers from the database.
-     * @param requestedDelete ID of the computers to delete, spearated by a comma
+     * Find all the {@link Computer} objects in the database
+     * @return the list of all the computers
      */
-    public void delete(int[] requestedDelete) {
+    @Transactional(readOnly = true)
+    public List<Computer> getAllComputers() {
         try {
-            dao.deleteInBatchFromId(requestedDelete);
-        } catch (DAOException | HibernateException e) {
-            logger.error("Computer Service - Error during computer deletion : ", e);
+            return dao.findAll();
+        } catch (RuntimeException e) {
+            logger.error("Computer Service - Error during getAllComputers : ", e);
+            throw e;
         }
     }
 
     /**
      * Gets a specific computer from the database.
      * @param computerID ID of the computer we want to access
-     * @return a computers in {@link DTOComputer} format
+     * @return a computers in {@link Computer} format
      */
-    public DTOComputer getComputer(String computerID) {
-        DTOComputer c = new DTOComputer();
+    @Transactional(readOnly = true)
+    public Computer getComputer(String computerID) {
         try {
-            Computer comp = dao.getOne(Integer.parseInt(computerID));
-            c = MapperComputer.toDTOComputer(comp);
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return dao.getOne(Integer.parseInt(computerID));
+        } catch (NumberFormatException | EntityNotFoundException e) {
             logger.error("Computer \"" + computerID + "\" not found : ", e);
-        } catch (DAOException | HibernateException e) {
+            throw e;
+        } catch (RuntimeException e) {
             logger.error("Computer Service - Error during getComputer : ", e);
+            throw e;
         }
-        return c;
+    }
+    
+    /**
+     * Delete the requested computers from the database.
+     * @param requestedDelete array of ID of the computers to delete
+     */
+    public void delete(int[] requestedDelete) {
+        try {
+            dao.deleteInBatchFromId(requestedDelete);
+        } catch (RuntimeException e) {
+            logger.error("Computer Service - Error during computer deletion : ", e);
+            throw e;
+        }
     }
 
     /**
      * Add a new computer to the database.
-     * @param computer {@link DTOComputer} to validate and add
-     * @return a list of errors that occured during validation
+     * @param computer {@link Computer} to validate and add
      */
-    public Map<String, String> addComputer(DTOComputer computer) {
-        Map<String, String> errors = new HashMap<String, String>();
-//        Computer valid = ComputerValidator.validateAdd(computer, errors);
-        Computer valid = MapperComputer.toComputer(computer);
-        if (errors.isEmpty()) {
+    public void saveComputer(Computer computer) {
             try {
-                dao.save(valid);
-            } catch (DAOException | HibernateException e) {
+                dao.save(computer);
+            } catch (RuntimeException e) {
                 logger.error("Computer Service - Error during addComputer : ", e);
+                throw e;
             }
-        }
-        return errors;
-    }
-
-    /**
-     * Edit an existing computer.
-     * @param computer {@link DTOComputer} to validate and edit
-     * @return a list of errors that occured during validation
-     */
-    public Map<String, String> editComputer(DTOComputer computer) {
-        Map<String, String> errors = new HashMap<String, String>();
-//        Computer valid = ComputerValidator.validateEdit(computer, errors);
-        Computer valid = MapperComputer.toComputer(computer);
-        if (errors.isEmpty()) {
-            try {
-                dao.save(valid);
-            } catch (DAOException | HibernateException e) {
-                logger.error("Computer Service - Error during editComputer : ", e);
-            }
-        }
-        return errors;
     }
 }

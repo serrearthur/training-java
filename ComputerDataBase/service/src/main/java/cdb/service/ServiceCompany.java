@@ -2,7 +2,6 @@ package cdb.service;
 
 import java.util.List;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,9 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import cdb.model.Company;
 import cdb.persistence.DAOCompany;
 import cdb.persistence.DAOComputer;
-import cdb.persistence.exceptions.DAOException;
-import cdb.view.dto.DTOCompany;
-import cdb.view.mapper.MapperCompany;
 
 /**
  * Service providing an interface between the servlet and the Company DAO.
@@ -40,15 +36,14 @@ public class ServiceCompany {
      * Returns a list of all the companies inside the database.
      * @return a list of companies in {@link DTOCompany} format
      */
-    public List<DTOCompany> getCompanies() {
-        List<DTOCompany> ret = null;
+    @Transactional(readOnly = true)
+    public List<Company> getCompanies() {
         try {
-            List<Company> l = daoCompany.findAll();
-            ret = MapperCompany.toDTOCompany(l);
-        } catch (DAOException | HibernateException e) {
+            return daoCompany.findAll();
+        } catch (RuntimeException e) {
             logger.error("Company Service - Error during getCompanies : ", e);
+            throw e;
         }
-        return ret;
     }
     
     /**
@@ -56,15 +51,14 @@ public class ServiceCompany {
      * @param id the id of the company
      * @return a companies in {@link DTOCompany} format
      */
-    public DTOCompany getCompany(Integer id) {
-        DTOCompany ret = null;
+    @Transactional(readOnly = true)
+    public Company getCompany(Integer id) {
         try {
-            Company l = daoCompany.findById(id).get();
-            ret = MapperCompany.toDTOCompany(l);
-        } catch (DAOException | HibernateException e) {
+            return daoCompany.findById(id).get();
+        } catch (RuntimeException e) {
             logger.error("Company Service - Error during getCompany : ", e);
+            throw e;
         }
-        return ret;
     }
 
 
@@ -76,8 +70,9 @@ public class ServiceCompany {
         try {
             daoComputer.deleteByCompanyId(companyId);
             daoCompany.deleteById(companyId);
-        } catch (DAOException | HibernateException e) {
+        } catch (RuntimeException e) {
             logger.error("Company Service - Error during deleteCompany : ", e);
+            throw e;
         }
     }
 }

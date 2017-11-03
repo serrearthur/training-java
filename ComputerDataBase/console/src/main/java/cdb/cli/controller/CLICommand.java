@@ -12,15 +12,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import cdb.model.Company;
 import cdb.model.Computer;
 import cdb.view.dto.DTOCompany;
 import cdb.view.dto.DTOComputer;
+import cdb.view.mapper.MapperCompany;
+import cdb.view.mapper.MapperComputer;
 
 /**
  * Class designed to parse a user input and execute backend actions accordingly.
@@ -38,7 +37,7 @@ public class CLICommand {
 
     private static final String API_URL = "http://localhost:8080/ComputerDataBase/api/";
     private static final String AUTH = Base64.getEncoder().encodeToString("bob:azerty".getBytes());
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    
     /**
      * Creates a CLICommand object from a command line input. A CLICommand contains
      * methods to convert text input to backend actions.
@@ -155,16 +154,16 @@ public class CLICommand {
         if (parsed.size() >= 2 && parsed.get(1).equals("cpt")) {
             // case when we list all computers
             System.out.println("LIST CPT");
-            HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(headers);
-            ResponseEntity<DTOComputer[]> res = restTemplate.exchange(API_URL+"computer/all", HttpMethod.GET, request, DTOComputer[].class);
-            this.result_computers.addAll(Arrays.asList(res.getBody()));
+            HttpEntity<Computer> request = new HttpEntity<Computer>(headers);
+            ResponseEntity<Computer[]> res = restTemplate.exchange(API_URL+"computer/all", HttpMethod.GET, request, Computer[].class);
+            this.result_computers.addAll(MapperComputer.toDTOComputer(Arrays.asList(res.getBody())));
             ret = true;
         } else if (parsed.get(1).equals("cpn")) {
             // case when we list all companies
             System.out.println("LIST CPN");
-            HttpEntity<DTOCompany> request = new HttpEntity<DTOCompany>(headers);
-            ResponseEntity<DTOCompany[]> res = restTemplate.exchange(API_URL+"company/all", HttpMethod.GET, request, DTOCompany[].class);
-            this.result_companies.addAll(Arrays.asList(res.getBody()));
+            HttpEntity<Company> request = new HttpEntity<Company>(headers);
+            ResponseEntity<Company[]> res = restTemplate.exchange(API_URL+"company/all", HttpMethod.GET, request, Company[].class);
+            this.result_companies.addAll(MapperCompany.toDTOCompany(Arrays.asList(res.getBody())));
             ret = true;
         } else {
             System.out.println("LIST + ERROR");
@@ -190,9 +189,9 @@ public class CLICommand {
             if (!parsed.get(2).isEmpty()) {
                 // case when we show computer with id X
                 System.out.println("SHOW -i " + parsed.get(2));
-                HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(headers);
-                ResponseEntity<DTOComputer> res = restTemplate.exchange(API_URL+"computer/"+parsed.get(2), HttpMethod.GET, request, DTOComputer.class);
-                this.result_computers.add(res.getBody());
+                HttpEntity<Computer> request = new HttpEntity<Computer>(headers);
+                ResponseEntity<Computer> res = restTemplate.exchange(API_URL+"computer/"+parsed.get(2), HttpMethod.GET, request, Computer.class);
+                this.result_computers.add(MapperComputer.toDTOComputer(res.getBody()));
                 ret = true;
             } else {
                 System.out.println("SHOW -i + EMPTY : " + command);
@@ -225,16 +224,15 @@ public class CLICommand {
      * @throws RestClientException ok
      * @see DAOFactory
      */
-    private boolean parseCreate(List<String> parsed) throws RestClientException, JsonProcessingException {
+    private boolean parseCreate(List<String> parsed) {
         boolean ret = false;
         if (parsed.size() >= 2 && !parsed.get(1).isEmpty()) {
             // case when we create a new computer with name X
             System.out.println("CREATE " + parsed.get(1));
-            DTOComputer c = new DTOComputer();
+            Computer c = new Computer();
             c.setName(parsed.get(1));
-            System.out.println(MAPPER.writeValueAsString(c));
-            HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(c, headers);
-            restTemplate.exchange(API_URL+"computer/", HttpMethod.POST, request, DTOComputer.class);
+            HttpEntity<Computer> request = new HttpEntity<Computer>(c, headers);
+            restTemplate.exchange(API_URL+"computer/", HttpMethod.POST, request, Computer.class);
             ret = true;
         } else {
             System.out.println("CREATE + ERROR : " + command);
@@ -256,7 +254,7 @@ public class CLICommand {
      * @throws RestClientException ok
      * @see DAOFactory
      */
-    private boolean parseUpdate(List<String> parsed) throws RestClientException, JsonProcessingException {
+    private boolean parseUpdate(List<String> parsed) {
         boolean ret = false;
         // we check if each parameter is present, if yes we add it to our computer object
         if (parsed.size() >= 3 && !parsed.get(2).isEmpty()) {
@@ -272,9 +270,9 @@ public class CLICommand {
                     }
                 }
             }
+            Computer comp = MapperComputer.toComputer(c);
             System.out.println("UPDATE : " + command);
-            System.out.println(MAPPER.writeValueAsString(c));
-            HttpEntity<DTOComputer> request = new HttpEntity<DTOComputer>(c, headers);
+            HttpEntity<Computer> request = new HttpEntity<Computer>(comp, headers);
             restTemplate.exchange(API_URL+"computer/", HttpMethod.PUT, request, DTOComputer.class);
             ret = true;
         } else {
@@ -297,14 +295,14 @@ public class CLICommand {
      * @throws RestClientException ok
      * @see DAOFactory
      */
-    private boolean parseDelete(List<String> parsed) throws RestClientException, JsonProcessingException {
+    private boolean parseDelete(List<String> parsed) {
         boolean ret = false;
         if (parsed.size() >= 3 && parsed.get(1).equals("-i")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -i " + parsed.get(2));
                 HttpEntity<int[]> request = new HttpEntity<int[]>(Arrays.stream(parsed.get(2).split(",")).mapToInt(Integer::valueOf).toArray(), headers);
                 System.out.println(request.getBody() + " / " + request.getHeaders().toString());
-                restTemplate.exchange(API_URL+"computer/", HttpMethod.DELETE, request, DTOComputer.class);
+                restTemplate.exchange(API_URL+"computer/", HttpMethod.DELETE, request, Computer.class);
                 ret = true;
             } else {
                 System.out.println("DELETE -i + EMPTY");
@@ -312,8 +310,8 @@ public class CLICommand {
         } else if (parsed.size() >= 3 && parsed.get(1).equals("-c")) {
             if (!parsed.get(2).isEmpty()) {
                 System.out.println("DELETE -c " + parsed.get(2));
-                HttpEntity<DTOCompany> request = new HttpEntity<DTOCompany>(headers);
-                restTemplate.exchange(API_URL+"company/"+parsed.get(2), HttpMethod.DELETE, request, DTOCompany.class);
+                HttpEntity<Company> request = new HttpEntity<Company>(headers);
+                restTemplate.exchange(API_URL+"company/"+parsed.get(2), HttpMethod.DELETE, request, Company.class);
                 ret = true;
             } else {
                 System.out.println("DELETE -c + EMPTY");

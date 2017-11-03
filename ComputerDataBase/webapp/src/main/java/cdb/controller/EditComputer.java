@@ -1,6 +1,6 @@
 package cdb.controller;
 
-import java.util.Map;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +19,8 @@ import cdb.view.dto.DTOComputer;
 import cdb.view.fields.ComputerFields;
 import cdb.view.fields.Fields;
 import cdb.view.fields.GeneralFields;
+import cdb.view.mapper.MapperCompany;
+import cdb.view.mapper.MapperComputer;
 
 /**
  * Controller implementing the mechanics behind the edition of a computer.
@@ -29,7 +31,7 @@ import cdb.view.fields.GeneralFields;
 public class EditComputer implements ComputerFields, GeneralFields {
     private static final String VIEW = "editComputer";
     private static final DTOComputer FORM = new DTOComputer();
-    private static final Fields FIELDS = new Fields();
+    private static final Fields FIELDS = Fields.getInstance();
     private ServiceComputer serviceComputer;
     private ServiceCompany serviceCompany;
 
@@ -51,9 +53,9 @@ public class EditComputer implements ComputerFields, GeneralFields {
      * @return URL of the EditComputer view
      */
     @GetMapping
-    protected String doGet(ModelMap model, @RequestParam(value = ATT_COMPUTERID, required = true) String computerId) {
-        model.addAttribute(ATT_COMPUTER, serviceComputer.getComputer(computerId));
-        model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
+    protected String doGet(ModelMap model, @RequestParam(value = ATT_COMPUTERID) String computerId) {
+        model.addAttribute(ATT_COMPUTER, MapperComputer.toDTOComputer(serviceComputer.getComputer(computerId)));
+        model.addAttribute(ATT_COMPANIES, MapperCompany.toDTOCompany(serviceCompany.getCompanies()));
         model.addAttribute(ATT_COMPUTER_FORM, FORM);
         model.addAttribute(ATT_FIELDS, FIELDS);
         return VIEW;
@@ -68,18 +70,17 @@ public class EditComputer implements ComputerFields, GeneralFields {
      * @return address of the jsp to visit
      */
     @PostMapping
-    protected String doPost(Model model, @ModelAttribute(value = ATT_COMPUTER_FORM) DTOComputer computer,
-            BindingResult result, @RequestParam(value = ATT_COMPUTERID, required = true) String computerId) {
-        Map<String, String> errors = serviceComputer.editComputer(computer);
-        if (errors.isEmpty()) {
-            return "redirect:" + VIEW_HOME;
-        } else {
-            model.addAttribute(ATT_ERRORS, errors);
-            model.addAttribute(ATT_COMPUTER, serviceComputer.getComputer(computerId));
-            model.addAttribute(ATT_COMPANIES, serviceCompany.getCompanies());
+    protected String doPost(Model model, @Valid @ModelAttribute(value = ATT_COMPUTER_FORM) DTOComputer computer,
+            BindingResult result, @RequestParam(value = ATT_COMPUTERID) String computerId) {
+        if (result.hasErrors()) {
+            model.addAttribute(ATT_COMPUTER, computer);
+            model.addAttribute(ATT_COMPANIES, MapperCompany.toDTOCompany(serviceCompany.getCompanies()));
             model.addAttribute(ATT_COMPUTER_FORM, FORM);
             model.addAttribute(ATT_FIELDS, FIELDS);
             return VIEW;
+        } else {
+            serviceComputer.saveComputer(MapperComputer.toComputer(computer));
+            return "redirect:" + VIEW_HOME;
         }
     }
 }

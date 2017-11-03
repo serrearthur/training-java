@@ -7,12 +7,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Component;
 
 import cdb.model.Computer;
-import cdb.persistence.exceptions.DAOException;
 import cdb.view.dto.DTOComputer;
 
 /**
@@ -21,14 +18,12 @@ import cdb.view.dto.DTOComputer;
  */
 @Component
 public class MapperComputer {
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MapperComputer.class);
 
     /**
      * Function converting a {@link Computer} into a {@link DTOComputer}.
      * @param c original {@link Computer}
      * @return result {@link DTOComputer}
      */
-    @Transactional
     public static DTOComputer toDTOComputer(Computer c) {
         DTOComputer ret = new DTOComputer();
         ret.setId(c.getId().toString());
@@ -45,9 +40,6 @@ public class MapperComputer {
         }
         try {
             ret.setCompanyName(c.getCompanyName());
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-            ret.setCompanyName(null);
         } catch (RuntimeException e) {
             ret.setCompanyName(null);
         }
