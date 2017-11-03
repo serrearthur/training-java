@@ -71,7 +71,7 @@ public class EditComputer implements ComputerFields, GeneralFields {
      */
     @PostMapping
     protected String doPost(Model model, @Valid @ModelAttribute(value = ATT_COMPUTER_FORM) DTOComputer computer,
-            BindingResult result, @RequestParam(value = ATT_COMPUTERID) String computerId) {
+            BindingResult result) {
         if (result.hasErrors()) {
             model.addAttribute(ATT_COMPUTER, computer);
             model.addAttribute(ATT_COMPANIES, MapperCompany.toDTOCompany(serviceCompany.getCompanies()));

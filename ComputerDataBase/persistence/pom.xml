@@ -18,6 +18,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>core</artifactId>
 			<version>${project.parent.version}</version>

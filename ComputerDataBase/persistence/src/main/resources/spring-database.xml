@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd 
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+	<context:component-scan base-package="cdb.persistence" />
+
+	<context:property-placeholder
+		location="classpath:/db.properties,classpath:/hibernate.properties" />
+	<context:annotation-config />
+
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="poolName" value="springHikariCP" />
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="maximumPoolSize" value="${db.maximumPoolSize}" />
+		<property name="jdbcUrl" value="${db.url}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+
+	<!-- HikariCP configuration -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig" />
+	</bean>
+
+	<!-- Hibernate entityManagerFactory -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="cdb.model" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="${hibernate.dialect}" />
+				<property name="showSql" value="${hibernate.showSql}" />
+				<property name="generateDdl" value="${hibernate.generateDdl}" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.enable_lazy_load_no_trans">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	
+	<jpa:repositories base-package="cdb.persistence" entity-manager-factory-ref="entityManagerFactory" />
+	<tx:annotation-driven />
+</beans>
