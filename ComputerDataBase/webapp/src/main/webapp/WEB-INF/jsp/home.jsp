@@ -2,21 +2,21 @@
 
 <section id="main">
 	<div class="container">
-		<h1 id="homeTitle">${page.totalElements} Computers found</h1>
+		<h1 id="homeTitle">${page.totalElements} <spring:message code="computer.count" /></h1>
 		<div id="actions" class="form-horizontal">
 			<div class="pull-left">
 				<form id="searchForm" action="#" method="GET" class="form-inline">
 					<input type="search" id="searchbox" name="${fields.getAttSearch()}"
-						class="form-control" placeholder="Search name" />
-					<input type="submit" id="searchsubmit" value="Filter by name"
+						class="form-control" placeholder="<spring:message code='search.field' />" />
+					<input type="submit" id="searchsubmit" value="<spring:message code='search.button' />"
 						class="btn btn-primary" />
 				</form>
 			</div>
 			<div class="pull-right">
 				<a class="btn btn-success" id="addComputer"
-					href="<c:url value="add_computer"/>">Add Computer</a>
+					href="<c:url value="add_computer"/>"><spring:message code='add.button' /></a>
 				<a class="btn btn-default" id="editComputer" href="#"
-					onclick="$.fn.toggleEditMode();">Edit</a>
+					onclick="$.fn.toggleEditMode();"><spring:message code='edit.button' /></a>
 			</div>
 		</div>
 	</div>
@@ -42,25 +42,25 @@
 						style="color: black; text-decoration: none; cursor: pointer;"
 						title="Sort this column"
 						href="<t:linker target="${fields.getViewHome()}" col="name"/>">
-							Computer name </a></th>
+							<spring:message code='computer.name' /> </a></th>
 					<!-- Table header for Introduced Date -->
 					<th><a
 						style="color: black; text-decoration: none; cursor: pointer;"
 						title="Sort this column"
 						href="<t:linker target="${fields.getViewHome()}" col="introduced"/>">
-							Introduced date </a></th>
+							<spring:message code='computer.introduced' /> </a></th>
 					<!-- Table header for Discontinued Date -->
 					<th><a
 						style="color: black; text-decoration: none; cursor: pointer;"
 						title="Sort this column"
 						href="<t:linker target="${fields.getViewHome()}" col="discontinued"/>">
-							Discontinued date </a></th>
+							<spring:message code='computer.discontinued' /></a></th>
 					<!-- Table header for Company -->
 					<th><a
 						style="color: black; text-decoration: none; cursor: pointer;"
 						title="Sort this column"
 						href="<t:linker target="${fields.getViewHome()}" col="companyName"/>">
-							Company </a></th>
+							<spring:message code='computer.company' /> </a></th>
 				</tr>
 			</thead>
 			<!-- Browse attribute computers -->
@@ -97,3 +97,10 @@
 		</div>
 	</div>
 </footer>
+<script>
+	var i18n = {
+		"view" : "<spring:message code="view.button" />",
+		"edit" : "<spring:message code="edit.button" />",
+		"confirm" : "<spring:message code="confirm.message" />"
+	};
+</script>

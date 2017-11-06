@@ -2,7 +2,7 @@
 <section id="main">
 	<div class="container">
 		<div class="alert alert-danger">
-			Error 403: Access denied! <br />
+			<spring:message code='error.message.403' /> <br />
 		</div>
 	</div>
 </section>

@@ -8,34 +8,36 @@
 					<form:label path="${fields.getAttComputerId()}"
 						value="${computer.id}" id="${fields.getAttComputerId()}"
 						class="label label-default pull-right">id: ${computer.id}</form:label>
-					<h1>Edit Computer</h1>
+					<h1><spring:message code='computer.edit' /></h1>
 					<fieldset>
 						<div class="form-group">
-							<label for="${fields.getAttName()}">Computer name</label>
+							<label for="${fields.getAttName()}"><spring:message code='computer.name' /></label>
+							<spring:message code='computer.name' var="namePlaceholder"/>
 							<form:input path="${fields.getAttName()}" type="text"
 								class="form-control" id="${fields.getAttName()}"
-								name="${fields.getAttName()}" placeholder="Computer name"
+								name="${fields.getAttName()}" placeholder="${namePlaceholder }"
 								value="${computer.name}" required="true" />
 						</div>
 						<div class="form-group">
-							<label for="${fields.getAttIntroduced()}">Introduced date</label>
+							<label for="${fields.getAttIntroduced()}"><spring:message code='computer.introduced' /></label>
+							<spring:message code='computer.introduced' var="introducedPlaceholder"/>
 							<form:input path="${fields.getAttIntroduced()}" type="date"
 								class="form-control" id="${fields.getAttIntroduced()}"
 								name="${fields.getAttIntroduced()}"
-								placeholder="Introduced date" value="${computer.introduced}"
+								placeholder="${introducedPlaceholder}" value="${computer.introduced}"
 								pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$" title="YYYY-MM-DD." />
 						</div>
 						<div class="form-group">
-							<label for="${fields.getAttDiscontinued()}">Discontinued
-								date</label>
+							<label for="${fields.getAttDiscontinued()}"><spring:message code='computer.discontinued' /></label>
+							<spring:message code='computer.discontinued' var="discontinuedPlaceholder"/>
 							<form:input path="${fields.getAttDiscontinued()}" type="date"
 								class="form-control" id="${fields.getAttDiscontinued()}"
 								name="${fields.getAttDiscontinued()}"
-								placeholder="Discontinued date" value="${computer.discontinued}"
+								placeholder="${discontinuedPlaceholder}" value="${computer.discontinued}"
 								pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$" title="YYYY-MM-DD." />
 						</div>
 						<div class="form-group">
-							<label for="${fields.getAttCompanyId()}">Company</label>
+							<label for="${fields.getAttCompanyId()}"><spring:message code='computer.company' /></label>
 							<form:select path="${fields.getAttCompanyId()}"
 								class="form-control" id="${fields.getAttCompanyId()}"
 								name="${fields.getAttCompanyId()}">
@@ -50,9 +52,9 @@
 						</div>
 					</fieldset>
 					<div class="actions pull-right">
-						<input type="submit" value="Edit" class="btn btn-primary">
-						or <a href="<c:url value="${fields.getViewHome()}"/>"
-							class="btn btn-default">Cancel</a>
+						<input type="submit" value="<spring:message code='edit.button' />" class="btn btn-primary">
+						<a href="<c:url value="${fields.getViewHome()}"/>"
+							class="btn btn-default"><spring:message code='cancel.button' /></a>
 					</div>
 				</form:form>
 			</div>

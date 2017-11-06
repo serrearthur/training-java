@@ -40,11 +40,11 @@ $(function() {
 	$.fn.toggleEditMode = function() {
 		if($(".editMode").is(":visible")) {
 			$(".editMode").hide();
-			$("#editComputer").text("Edit");
+			$("#editComputer").text(i18n["edit"]);
 		}
 		else {
 			$(".editMode").show();
-			$("#editComputer").text("View");
+			$("#editComputer").text(i18n["view"]);
 		}
 		return this;
 	};
@@ -53,7 +53,7 @@ $(function() {
 //Function delete selected: Asks for confirmation to delete selected computers, then submits it to the deleteForm
 (function ( $ ) {
 	$.fn.deleteSelected = function() {
-		if ($(".cb:checked").length != 0 && confirm("Are you sure you want to delete the selected computers?")) { 
+		if ($(".cb:checked").length != 0 && confirm(i18n["confirm"])) { 
 			$('#deleteForm input[name=selection]').setCheckboxValues('selection','cb');
 			$('#deleteForm').submit();
 		}
